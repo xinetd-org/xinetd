@@ -31,6 +31,8 @@
   #endif
   #include <rpc/types.h>
   #include <rpc/xdr.h>
+  #include <rpc/auth.h>
+  #include <rpc/clnt.h>
   #include <rpc/pmap_clnt.h>
  #endif
  #include <rpc/rpc.h>
