@@ -818,3 +818,7 @@ devel
 		child_process(), reverted changes. -Philip Armstrong
 	Remove RECORD logging option. -Steve Grubb
 	Change Sclose to make sure it always closes the fd. -Steve Grubb
+	Added better error handling to filelog.c. -Steve Grubb
+	Error messages now go to syslog instead of stderr in 
+		strparse.c. -Steve Grubb
+	
