@@ -81,19 +81,15 @@
 
 #endif	/* HAVE_MMAP */
 
-#define N_SIO_DESCRIPTORS 0
-
 /*
  * N_SIO_DESCRIPTORS is the maximum number of file descriptors
  * supported by the OS
  */
-#ifndef N_SIO_DESCRIPTORS
 #include <sys/param.h>
 #ifdef OPEN_MAX
 #define N_SIO_DESCRIPTORS		OPEN_MAX
 #else
 #define N_SIO_DESCRIPTORS		NOFILE
-#endif
 #endif
 
 
