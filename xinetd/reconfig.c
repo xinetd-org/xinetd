@@ -40,7 +40,8 @@
 #include "options.h"
 
 
-static status_e readjust(struct service *sp, struct service_config **new_conf_ptr) ;
+static status_e readjust(struct service *sp, 
+		struct service_config **new_conf_ptr) ;
 static void swap_defaults(struct configuration *confp) ;
 
 #define SWAP( x, y, temp )         (temp) = (x), (x) = (y), (y) = (temp)
@@ -96,9 +97,6 @@ void hard_reconfig( void )
    {
       char *sid = SVC_ID( osp ) ;
       boolean_e drop_service ;
-
-      if ( ! SVC_IS_AVAILABLE( osp ) )
-         continue ;
 
       /*
        * Check if this service is in the new Lconf

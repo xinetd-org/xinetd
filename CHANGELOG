@@ -792,7 +792,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 		free()'d memory.
 	Fixed a bug in the consistency check mechanism where it would
 		report the signal pipe as a problem.
-	Clear memory before freeing it.  This isn't strictly necissary,
+	Clear memory before freeing it.  This isn't strictly necessary,
 		but aids in debugging.
 	Add the pid to debugging messages.
 	Remove access control calls for special services.  The access control
@@ -831,3 +831,5 @@ devel
 	Make ident protocol work properly for multi-homed hosts. -Alan Sundell
 	Code cleanup for const warnings. -Steve Grubb
 	Make redirect protocol independent. -Cougar
+	make reconfig iterate over all services. Some may be in not started
+		state and were being missed. -Steve Grubb
