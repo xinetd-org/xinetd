@@ -193,7 +193,7 @@ void sio_init( void );
 #ifdef __GNUC__
 __attribute__ ((noreturn))
 #endif
-void terminate(const char *msg);
+void terminate(const char *);
 
 #endif /* __SIO_H */
 
