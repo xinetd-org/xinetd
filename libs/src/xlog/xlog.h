@@ -30,6 +30,7 @@
 #define XLOG_EOPEN					2
 #define XLOG_EFSTAT					3
 #define XLOG_ENOMEM					4
+#define XLOG_EWRITE					5
 
 /*
  * Interface
