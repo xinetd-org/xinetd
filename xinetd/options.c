@@ -139,7 +139,7 @@ int opt_recognize( int argc, char *argv[] )
 
 static void usage(void)
 {
-   Sprint( 2, "Usage: %s [-d] [-f config_file] [-filelog filename] [-syslog facility] [-reuse] [-limit proc_limit] [-pidfile filaneme] [-logprocs limit] [-shutdownprocs limit] [-cc interval]\n", program_name ) ;
+   Sprint( 2, "Usage: %s [-d] [-f config_file] [-filelog filename] [-syslog facility] [-reuse] [-limit proc_limit] [-pidfile filename] [-logprocs limit] [-shutdownprocs limit] [-cc interval]\n", program_name ) ;
    exit( 1 ) ;
 }
 
