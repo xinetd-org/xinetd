@@ -204,7 +204,7 @@ void parse_conf_file( int fd, struct configuration *confp )
    for ( ;; )
    {
       entry_e   entry_type ;
-      char      *service_name ;
+      char      *service_name  = NULL;
 
       /*
        * if find_next_entry is successful, service_name
@@ -263,7 +263,8 @@ void parse_conf_file( int fd, struct configuration *confp )
       case NO_ENTRY:
          return ;
       }
-      free(service_name);
+      if (service_name)
+         free(service_name);
    }
 }
 
