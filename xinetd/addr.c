@@ -185,17 +185,10 @@ int addrlist_match( const pset_h addr_list,
          } 
 	 else if( (addr->sa_family == AF_INET6) && (cap->version == 6)) 
 	 {  
-	    char str1[128], str2[128];
-
-	    /* FIXME: this needs to be optimized */
-	    inet_ntop(AF_INET6, &SAIN6(addr)->sin6_addr, str1, sizeof(str1));
-	    inet_ntop(AF_INET6, &cap->a.addr6, str2, sizeof(str2));
-
-	    /* NOTE: This is stricter than a mask since each byte must match */
-	    if (strcmp(str1, str2) == 0)
+	    if (IN6_ARE_ADDR_EQUAL(&SAIN6(addr)->sin6_addr, &cap->a.addr6))
                return( u+1 );
 	    
-	    /* Next try the old way...but I don't think this works. SG */
+	    /* Next try the old way...FIXME: I don't think this works. SG */
             if ( xmatch( addr->sa_data, 
 	                (char *)&(cap->m.mask6), 
 			(char *)&(cap->a.addr6), 16) == TRUE )
