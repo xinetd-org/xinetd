@@ -234,16 +234,22 @@ void tabprint( int fd, int tab_level, const char *fmt, ...)
 void drain( int sd )
 {
    char buf[ 256 ] ; /* This size is arbitrarily chosen */
-   char cc ;
+   int ret ;
    int old_val ;
 
    /* Put in non-blocking mode so we don't hang. */
    old_val = fcntl( sd, F_GETFL, FNDELAY );
-   fcntl( sd, F_SETFL, FNDELAY );
+   if ( fcntl( sd, F_SETFL, FNDELAY ) < 0 )
+   {
+      if ( debug.on )
+         msg( LOG_DEBUG, "drain",
+              "UDP socket could not be made non-blocking: %m" ) ;
+      return;
+   }
 
    do {
-      cc = recv( sd, buf, sizeof( buf ), 0 ) ;
-   } while (cc > 0);
+      ret = recv( sd, buf, sizeof( buf ), 0 ) ;
+   } while (ret > 0);
 
    /* Restore the value since the connection will be freed, not closed. */
    if (old_val >= 0)
