@@ -258,9 +258,9 @@ status_e mdns_parser( pset_h values,
    const char *func = "mdns_parser" ;
 
    if ( EQ( val, "yes" ) )
-      scp->sc_wait = YES ;
+      scp->sc_mdns = YES ;
    else if ( EQ( val, "no" ) )
-      scp->sc_wait = NO ;
+      scp->sc_mdns = NO ;
    else
    {
       parsemsg( LOG_ERR, func, "Bad value for wait: %s", val ) ;
