@@ -851,4 +851,4 @@ devel
 	Fixed bug where address lists had "version" uninitialized when the 
 		list used hostnames with no dots in the name. -Steve Grubb
 	Numerous memory leaks when parsing errors occurred. -Steve Grubb
-
+	Remove the servers and xadmin internal services.
