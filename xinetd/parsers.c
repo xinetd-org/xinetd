@@ -1178,6 +1178,13 @@ status_e bind_parser( pset_h values,
 
    memset(&hints, 0, sizeof(hints));
    hints.ai_flags = AI_CANONNAME;
+
+   /*
+    * Use tcp to cut down returned address records. Get addrinfo normally
+    * returns 2 address records, one for each socket type.
+    */
+   hints.ai_socktype = SOCK_STREAM;
+   
    if (check_hostname(adr) == 0)
    {
       hints.ai_family = AF_INET;
@@ -1226,17 +1233,8 @@ status_e bind_parser( pset_h values,
       } 
       memcpy(scp->sc_bind_addr, res->ai_addr, res->ai_addrlen);
    }	   
-   else {
+   else
       scp->sc_orig_bind_addr = new_string(adr);
-      freeaddrinfo(res);
-
-      /*
-       * We return failed so that SC_SPECIFY doesn't set the A_BIND flag.
-       * We will reconsider sc_orig_addr in confparse.c after we find out
-       * what the default family is to narrow choices. 
-       */
-      return( FAILED );
-   }
 
    freeaddrinfo(res);
    return( OK );

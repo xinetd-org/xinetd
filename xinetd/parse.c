@@ -245,8 +245,15 @@ void parse_conf_file( int fd, struct configuration *confp )
             skip_entry( fd ) ;
          }
          else if ( parse_entry( DEFAULTS_ENTRY, fd,
-                           default_config ) == OK )
+                           default_config ) == OK ) {
             found_defaults = YES ;
+	    /*
+	     * We must check bind_address to see if it was deferred. 
+	     */
+            if (SC_SPECIFIED( default_config, A_BIND) && 
+                  default_config->sc_bind_addr == NULL)
+               M_CLEAR( default_config->sc_specified_attributes, A_BIND ) ;
+	 }
          break ;
          
       case BAD_ENTRY:
@@ -404,6 +411,18 @@ static void get_service_entry( int fd,
    if ( SC_SPECIFIED( defaults, A_PASSENV ) &&
       ! SC_IS_PRESENT( scp, A_PASSENV ) )
       fill_attribute( A_PASSENV, scp, defaults ) ;
+   if ( SC_SPECIFIED( defaults, A_ACCESS_TIMES ) &&
+      ! SC_IS_PRESENT( scp, A_ACCESS_TIMES ) )
+      fill_attribute( A_ACCESS_TIMES, scp, defaults ) ;
+   if ( SC_SPECIFIED( defaults, A_BANNER ) &&
+      ! SC_IS_PRESENT( scp, A_BANNER ) )
+      fill_attribute( A_BANNER, scp, defaults ) ;
+   if ( SC_SPECIFIED( defaults, A_BANNER_SUCCESS ) &&
+      ! SC_IS_PRESENT( scp, A_BANNER_SUCCESS ) )
+      fill_attribute( A_BANNER_SUCCESS, scp, defaults ) ;
+   if ( SC_SPECIFIED( defaults, A_BANNER_FAIL ) &&
+      ! SC_IS_PRESENT( scp, A_BANNER_FAIL ) )
+      fill_attribute( A_BANNER_FAIL, scp, defaults ) ;
   
    if ( parse_entry( SERVICE_ENTRY, fd, scp ) == FAILED )
    {
@@ -474,6 +493,28 @@ static void fill_attribute( unsigned attr_id,
          if ( copy_pset( def->sc_pass_env_vars,
                            &scp->sc_pass_env_vars, 0 ) == OK )
             SC_PRESENT( scp, A_PASSENV ) ;
+         break ;
+      
+      case A_ACCESS_TIMES:
+         if ( copy_pset( def->sc_access_times,
+                           &scp->sc_access_times, 0 ) == OK )
+            SC_PRESENT( scp, A_ACCESS_TIMES ) ;
+         break ;
+
+      case A_BANNER:
+	    if ((scp->sc_banner = new_string(def->sc_banner)) != NULL)
+               SC_PRESENT( scp, A_BANNER );
+         break ;
+
+      case A_BANNER_SUCCESS:
+	    if ((scp->sc_banner_success = new_string(def->sc_banner_success))
+                  != NULL)
+               SC_PRESENT( scp, A_BANNER_SUCCESS );
+         break ;
+
+      case A_BANNER_FAIL:
+	    if ((scp->sc_banner_fail = new_string(def->sc_banner_fail)) != NULL)
+               SC_PRESENT( scp, A_BANNER_FAIL );
          break ;
    }
 }

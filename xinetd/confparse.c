@@ -141,8 +141,10 @@ static status_e service_fill( struct service_config *scp,
       return( FAILED ) ;
 
    /* 
-    * FIXME: Should all these set SPECIFY or PRESENT ? 
-    * PRESENT makes more sense. Also, these sb documented on manpage. -SG
+    * FIXME: Should all these set SPECIFY or PRESENT ?
+    * PRESENT means that either a default or specified value.
+    * SPECIFIED means that the user specified a value. 
+    * PRESENT makes more sense for default values. -SG
     */
    if ( ! SC_SPECIFIED( scp, A_INSTANCES ) )
    {
@@ -159,7 +161,8 @@ static status_e service_fill( struct service_config *scp,
 
    if ( ! SC_SPECIFIED( scp, A_PER_SOURCE ) )
    {
-      scp->sc_per_source = SC_SPECIFIED( def, A_PER_SOURCE ) ? def->sc_per_source : DEFAULT_INSTANCE_LIMIT ;
+      scp->sc_per_source = SC_SPECIFIED( def, A_PER_SOURCE ) ? 
+         def->sc_per_source : DEFAULT_INSTANCE_LIMIT ;
       SC_SPECIFY( scp, A_PER_SOURCE ) ;
    }
 
@@ -183,6 +186,15 @@ static status_e service_fill( struct service_config *scp,
       SC_SPECIFY( scp, A_MAX_LOAD ) ;
    }
 
+   /* 
+    * we need to check a few things. A_BIND can be specified & sc_bind_addr
+    * is NULL. This means the address couldn't be determined in bind_parser
+    * and it was stored into sc_orig_bind_addr. We unset the attribute
+    * so that its processed correctly.
+    */
+   if (SC_SPECIFIED( scp, A_BIND) && scp->sc_bind_addr == NULL)
+      M_CLEAR( scp->sc_specified_attributes, A_BIND ) ;
+   
    if ( (! SC_SPECIFIED( scp, A_BIND )) && (scp->sc_orig_bind_addr == 0) ) {
       if ( SC_SPECIFIED( def, A_BIND ) ) {
          scp->sc_bind_addr = (union xsockaddr *)malloc(sizeof(union xsockaddr));
