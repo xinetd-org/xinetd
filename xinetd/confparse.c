@@ -821,7 +821,7 @@ status_e cnf_get( struct configuration *confp )
 
    else if ( get_conf( config_fd, confp ) == FAILED )
    {
-      close( config_fd ) ;
+      Sclose( config_fd ) ;
       cnf_free( confp ) ;
       psi_destroy( iter ) ;
       return( FAILED ) ;

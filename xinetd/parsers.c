@@ -409,6 +409,7 @@ status_e server_args_parser( pset_h values,
    if ( count == 0 )
    {
        missing_attr_msg("server_args_parser", "server_args");
+       free( (char *) argv ) ;
        return FAILED;
    }
    
