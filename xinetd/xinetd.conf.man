@@ -637,6 +637,7 @@ don't specify those attributes. Possible default attributes:
 .RS
 .TP 18
 .B log_type
+(cumulative effect)
 .TP
 .B bind 
 .TP
@@ -666,6 +667,21 @@ don't specify those attributes. Possible default attributes:
 .TP
 .B enabled
 (cumulative effect)
+.TP
+.B banner 
+.TP
+.B banner_success 
+.TP
+.B banner_fail
+.TP
+.B per_source 
+.TP
+.B groups 
+.TP
+.B cps 
+.TP
+.B max_load 
+.TP
 .RE
 .PD
 .LP
