@@ -161,6 +161,9 @@ unsigned cnf_start_services( struct configuration *confp )
 
       if ( svc_activate( sp ) == FAILED )
       {
+         msg( LOG_ERR, func,
+            "Service %s failed to start and is deactivated.",
+               SVC_ID( sp ) ) ;
          svc_free( sp ) ;
          scp = NULL;
          continue ;
