@@ -182,7 +182,7 @@ static void start_server( struct intercept_s *ip )
       
       default:
          SERVER_SET_PID( serp, pid ) ;
-         (void) close( server_socket ) ;
+         (void) Sclose( server_socket ) ;
    }
 }
 

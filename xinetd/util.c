@@ -181,7 +181,7 @@ void no_control_tty(void)
    {
       if ( ioctl( fd, TIOCNOTTY, (caddr_t)0 ) == -1 )
          msg( LOG_WARNING, func, "ioctl on /dev/tty failed: %m" ) ;
-      (void) close( fd ) ;
+      (void) Sclose( fd ) ;
    }
    (void) setpgrp( getpid(), 0 ) ;
 #else

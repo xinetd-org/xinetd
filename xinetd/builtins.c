@@ -162,7 +162,7 @@ static void stream_echo( const struct server *serp )
          break ;
    }
    if( SVC_WAITS( svc ) )
-      close(descriptor);
+      Sclose(descriptor);
 }
 
 /* For internal UDP services, make sure we don't respond to our ports
@@ -226,7 +226,7 @@ static void stream_discard( const struct server *serp )
          break ;
    }
    if( SVC_WAITS( svc ) )
-      close(descriptor);
+      Sclose(descriptor);
 }
 
 
@@ -293,7 +293,7 @@ static void stream_daytime( const struct server *serp )
    }
    daytime_protocol( time_buf, &buflen ) ;
    (void) write_buf( descriptor, time_buf, buflen ) ;
-   close(descriptor);
+   Sclose(descriptor);
 }
 
 
@@ -357,7 +357,7 @@ static void stream_time( const struct server *serp )
    time_protocol( time_buf ) ;
    (void) write_buf( descriptor, (char *) time_buf, 4 ) ;
 
-   close(descriptor);
+   Sclose(descriptor);
 }
 
 
@@ -458,7 +458,7 @@ static void stream_chargen( const struct server *serp )
          break ;
    }
    if( SVC_WAITS( svc ) )
-      close(descriptor);
+      Sclose(descriptor);
 }
 
 
@@ -650,7 +650,7 @@ static void tcpmux_handler( const struct server *serp )
    }
 
    if( SVC_WAITS( svc ) )
-      close(descriptor);
+      Sclose(descriptor);
 
    server.svr_sp = sp;
    server.svr_conn = serp->svr_conn;
@@ -705,7 +705,7 @@ static void xadmin_handler( const struct server *serp )
       {
          Sprint(descriptor, "bye bye\n");
          Sflush(descriptor);
-         close(descriptor);
+         Sclose(descriptor);
          exit(0);
       }
 

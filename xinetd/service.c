@@ -349,7 +349,7 @@ status_e svc_activate( struct service *sp )
 
    if ( set_fd_modes( sp ) == FAILED )
    {
-      (void) close( sp->svc_fd ) ;
+      (void) Sclose( sp->svc_fd ) ;
       return( FAILED ) ;
    }
 
@@ -362,7 +362,7 @@ status_e svc_activate( struct service *sp )
    
    if ( status == FAILED )
    {
-      (void) close( sp->svc_fd ) ;
+      (void) Sclose( sp->svc_fd ) ;
       return( FAILED ) ;
    }
 
@@ -413,7 +413,7 @@ status_e svc_activate( struct service *sp )
 
 static void deactivate( const struct service *sp )
 {
-   (void) close( SVC_FD( sp ) ) ;
+   (void) Sclose( SVC_FD( sp ) ) ;
 
 #ifdef HAVE_DNSREGISTRATION
    if( SVC_CONF(sp)->sc_mdnscon )

@@ -44,7 +44,7 @@ static int RedirServerFd = -1;
  */
 static void redir_sigpipe( int signum ) 
 {
-   close(RedirServerFd);
+   Sclose(RedirServerFd);
    _exit(0);
 }
 

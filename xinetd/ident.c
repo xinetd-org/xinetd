@@ -128,13 +128,13 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    if ( bind(sd, &sin_bind.sa, sizeof(sin_bind.sa)) == -1 )
    { 
       msg( LOG_ERR, func, "socket bind: %m" ) ;
-      (void) close( sd ) ;
+      (void) Sclose( sd ) ;
       return( IDR_ERROR ) ;
    }
    if ( fcntl( sd, F_SETFD, FD_CLOEXEC ) == -1 )
    {
       msg( LOG_ERR, func, "fcntl F_SETFD: %m" ) ;
-      (void) close( sd ) ;
+      (void) Sclose( sd ) ;
       return( IDR_ERROR ) ;
    }
 
@@ -142,7 +142,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
       if ( sigsetjmp( env, 1 ) == 0 )
          START_TIMER( timeout ) ;
       else {
-         close( sd ) ;
+         Sclose( sd ) ;
          return( IDR_TIMEDOUT ) ;
       }
    }
@@ -153,7 +153,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
          STOP_TIMER() ;
          signal ( SIGALRM, SIG_DFL ) ;
       }
-      close( sd );
+      Sclose( sd );
       return( IDR_NOSERVER ) ;
    }
 
@@ -165,7 +165,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
          STOP_TIMER() ;
          signal ( SIGALRM, SIG_DFL ) ;
       }
-      close( sd );
+      Sclose( sd );
       return( IDR_ERROR ) ;
    }
 
@@ -177,7 +177,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    }
 
    if ( p == NULL ) {
-      close( sd );
+      Sclose( sd );
       return( IDR_RESPERR ) ;
    }
    
@@ -188,7 +188,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    {
       msg(LOG_ERR, func, "Bad line received from identity server at %s: %s",
          xaddrname( &sin_remote ), buf ) ;
-      close( sd );
+      Sclose( sd );
       return( IDR_BADRESP ) ;
    }
 

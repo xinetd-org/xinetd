@@ -134,7 +134,7 @@ void exec_server( const struct server *serp )
    }
 #endif
 
-   (void) close( descriptor ) ;
+   (void) Sclose( descriptor ) ;
 
 #ifndef solaris
    no_control_tty() ;
@@ -274,8 +274,8 @@ void child_process( struct server *serp )
 
    signal_default_state();
 
-   if ((signals_pending[0] >= 0 && close(signals_pending[0])) ||
-       (signals_pending[1] >= 0 && close(signals_pending[1])))
+   if ((signals_pending[0] >= 0 && Sclose(signals_pending[0])) ||
+       (signals_pending[1] >= 0 && Sclose(signals_pending[1])))
    {
       msg(LOG_ERR, func, "Failed to close the signal pipe: %m");
       _exit(1);
@@ -283,9 +283,9 @@ void child_process( struct server *serp )
    signals_pending[0] = -1;
    signals_pending[1] = -1;
 
-   close(0);
-   close(1);
-   close(2);
+   Sclose(0);
+   Sclose(1);
+   Sclose(2);
 
 
 #ifdef DEBUG_SERVER

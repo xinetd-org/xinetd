@@ -100,9 +100,9 @@ static void setup_file_descriptors(void)
     * Close all unneeded descriptors
     */
    for ( fd = STDERR_FD + 1 ; fd < ps.ros.max_descriptors ; fd++ )
-      if ( close( fd ) && errno != EBADF )
+      if ( Sclose( fd ) && errno != EBADF )
       {
-         syscall_failed("close");
+         syscall_failed("Sclose");
          exit( 1 ) ;
       }
    
@@ -113,7 +113,7 @@ static void setup_file_descriptors(void)
    if ( new_fd != -1 )
    {
       have_stderr = TRUE ;
-      (void) close( new_fd ) ;
+      (void) Sclose( new_fd ) ;
    }
 
    if ( ( null_fd = open( "/dev/null", O_RDONLY ) ) == -1 )
@@ -128,7 +128,7 @@ static void setup_file_descriptors(void)
    }
 
    if ( null_fd > MAX_PASS_FD )
-      (void) close( null_fd ) ;
+      (void) Sclose( null_fd ) ;
 }
 
 
@@ -246,7 +246,7 @@ static void become_daemon(void)
                   fclose(pidfile);
                } else {
                   perror("fdopen");
-                  close(pidfd);
+                  Sclose(pidfd);
                }
             } else
                perror("open");
