@@ -328,7 +328,7 @@ increased by 1% but the extra size must be within the parameters
 and
 .SM LOG_EXTRA_MAX
 which default to 5K and 20K respectively (these constants are defined in 
-\fIconfig.h\fP).
+\fIxconfig.h\fP).
 .RE
 .TP
 .B log_on_success
