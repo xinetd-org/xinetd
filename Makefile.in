@@ -25,10 +25,10 @@ MISC_DEFS = @DEFS@
 LIB_DEFS = @DEFS@ 
 PROG_DEFS = @DEFS@
 
-LIBMAKEDEFS = CC=$(CC) CFLAGS='$(CFLAGS) -I../../include'
-PROGMAKEDEFS = CC=$(CC) CFLAGS='$(CFLAGS) -I../libs/include' LDFLAGS='$(LDFLAGS) -L../libs/lib'
-DEBUGLIBMAKEDEFS = CC=$(CC) CFLAGS='$(DCFLAGS) -I../../include'
-DEBUGMAKEDEFS = CC=$(CC) CFLAGS='$(DCFLAGS) -I../libs/include' LDFLAGS='$(LDFLAGS) -L../libs/lib'
+LIBMAKEDEFS = CC='$(CC)' CFLAGS='$(CFLAGS) -I../../include'
+PROGMAKEDEFS = CC='$(CC)' CFLAGS='$(CFLAGS) -I../libs/include' LDFLAGS='$(LDFLAGS) -L../libs/lib'
+DEBUGLIBMAKEDEFS = CC='$(CC)' CFLAGS='$(DCFLAGS) -I../../include'
+DEBUGMAKEDEFS = CC='$(CC)' CFLAGS='$(DCFLAGS) -I../libs/include' LDFLAGS='$(LDFLAGS) -L../libs/lib'
 
 MANDATORY_LIBS	= portable sio str misc xlog pset 
 ALL_LIBS	= portable sio str misc xlog pset 
