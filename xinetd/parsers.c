@@ -263,7 +263,7 @@ status_e mdns_parser( pset_h values,
       scp->sc_mdns = NO ;
    else
    {
-      parsemsg( LOG_ERR, func, "Bad value for wait: %s", val ) ;
+      parsemsg( LOG_ERR, func, "Bad value for mdns: %s", val ) ;
       return( FAILED );
    }
    return( OK ) ;
