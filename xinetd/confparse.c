@@ -635,8 +635,8 @@ static status_e check_entry( struct service_config *scp,
 #if defined(HAVE_RPC_RPCENT_H) || defined(HAVE_NETDB_H)
       if ( SC_IS_RPC( scp ) && SC_IS_RPC ( tmp_scp ) )
       {
-         struct rpc_data *rdp1 = SC_RPCDATA( scp ) ;
-         struct rpc_data *rdp2 = SC_RPCDATA( tmp_scp ) ;
+         const struct rpc_data *rdp1 = SC_RPCDATA( scp ) ;
+         const struct rpc_data *rdp2 = SC_RPCDATA( tmp_scp ) ;
          if ( rdp1->rd_program_number != rdp2->rd_program_number )
            continue;
         if ( rdp1->rd_min_version > rdp2->rd_max_version ||
