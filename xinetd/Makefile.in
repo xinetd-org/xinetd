@@ -19,6 +19,7 @@
 NAME		= xinetd
 VPATH		= @srcdir@
 SRCDIR		= @srcdir@
+TOPSRC		= @top_srcdir@
 
 # Available debug flags:
 #     DEBUG                      code is being debugged
@@ -115,7 +116,7 @@ INSTALL		= @INSTALL@
 all: xinetd itox
 
 itox: itox.c
-	$(CC) $(DEBUG) $(INCLUDEDIR) $(SRCDIR)/itox.c -o $@ $(LDFLAGS) -lmisc -lsio -lstr -lportable $(LIBS)
+	$(CC) $(CFLAGS) $(DEBUG) $(INCLUDEDIR) $(SRCDIR)/itox.c -o $@ $(LDFLAGS) -lmisc -lsio -lstr -lportable $(LIBS)
 
 xinetd: $(OBJS)
 	$(CC) $(CFLAGS) $(DEBUG) -o $@ $(OBJS) $(LDFLAGS) $(LIBS) || rm -f $@
@@ -157,37 +158,37 @@ uninstall:
 #
 # Header file dependencies
 #
-addr.h: defs.h
+$(SRCDIR)/addr.h: defs.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-builtins.h: defs.h
+$(SRCDIR)/builtins.h: defs.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-conf.h: service.h
+$(SRCDIR)/conf.h: service.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-int.h: server.h
+$(SRCDIR)/int.h: server.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-parse.h: defs.h
+$(SRCDIR)/parse.h: defs.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-sconf.h: defs.h log.h mask.h
+$(SRCDIR)/sconf.h: defs.h log.h mask.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-sensor.h: defs.h service.h
+$(SRCDIR)/sensor.h: defs.h service.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-server.h: defs.h service.h connection.h
+$(SRCDIR)/server.h: defs.h service.h connection.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-service.h: defs.h sconf.h builtins.h
+$(SRCDIR)/service.h: defs.h sconf.h builtins.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-state.h: mask.h sconf.h conf.h
+$(SRCDIR)/state.h: mask.h sconf.h conf.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
-connection.h: mask.h service.h
+$(SRCDIR)/connection.h: mask.h service.h
 	@if test -f $@ ; then touch $@ ; else echo $@ is missing ; exit 1 ; fi
 
 #

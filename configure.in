@@ -7,19 +7,10 @@ AC_PROG_INSTALL
 AC_PROG_RANLIB
 
 AC_CHECK_LIB(compat, main)
-
-AC_CHECK_FUNC(gethostbyname, ,
-   AC_CHECK_LIB(nsl, gethostbyname, ,
-      AC_CHECK_LIB(socket, gethostbyname, ,
-         AC_CHECK_LIB(resolv, gethostbyname))))
-AC_CHECK_FUNCS(getnameinfo, ,
-   AC_CHECK_LIB(nsl, getnameinfo, ,
-      AC_CHECK_LIB(socket, getnameinfo, ,
-         AC_CHECK_LIB(resolv, getnameinfo))))
-AC_CHECK_FUNCS(inet_ntop, ,
-   AC_CHECK_LIB(nsl, inet_ntop, ,
-      AC_CHECK_LIB(socket, inet_ntop, ,
-         AC_CHECK_LIB(resolv, inet_ntop))))
+AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
+AC_SEARCH_LIBS(getnameinfo, nsl socket resolv)
+AC_SEARCH_LIBS(inet_ntop, nsl socket resolv)
+AC_CHECK_FUNCS(getnameinfo inet_ntop)
 AC_CHECK_FUNCS(difftime, ,
    AC_CHECK_LIB(m, difftime))
 AC_CHECK_FUNCS(fcvt, ,

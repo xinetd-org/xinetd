@@ -15,7 +15,8 @@ topdir = @top_srcdir@
 LIBS = -lsio -lstr -lmisc -lxlog -lportable -lpset @LIBS@
 
 CFLAGS += @CFLAGS@ 
-DCFLAGS = -Wall -Wshadow -Wredundant-decls -Wcast-align -Wpointer-arith -g
+DCFLAGS = -Wall -Wredundant-decls -W -Wfloat-equal -Wundef -Wcast-qual -Wwrite-strings -Wconversion -Wmissing-noreturn -Wmissing-format-attribute -Wshadow -Wpointer-arith -g
+
 
 DEFS = @DEFS@
 
@@ -25,9 +26,9 @@ LIB_DEFS = @DEFS@
 PROG_DEFS = @DEFS@
 
 LIBMAKEDEFS = CC=$(CC) CFLAGS='$(CFLAGS) -I../../include'
-PROGMAKEDEFS = CC=$(CC) CFLAGS='$(CFLAGS) -I../libs/include' LDFLAGS='-L../libs/lib'
+PROGMAKEDEFS = CC=$(CC) CFLAGS='$(CFLAGS) -I../libs/include' LDFLAGS='$(LDFLAGS) -L../libs/lib'
 DEBUGLIBMAKEDEFS = CC=$(CC) CFLAGS='$(DCFLAGS) -I../../include'
-DEBUGMAKEDEFS = CC=$(CC) CFLAGS='$(DCFLAGS) -I../libs/include' LDFLAGS=' -L../libs/lib'
+DEBUGMAKEDEFS = CC=$(CC) CFLAGS='$(DCFLAGS) -I../libs/include' LDFLAGS='$(LDFLAGS) -L../libs/lib'
 
 MANDATORY_LIBS	= portable sio str misc xlog pset 
 ALL_LIBS	= portable sio str misc xlog pset 

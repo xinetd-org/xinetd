@@ -325,7 +325,7 @@ void sc_dump( struct service_config *scp,
 		  tabprint( fd, tab_level+1, "Bind = %s\n", 
                             scp->sc_orig_bind_addr );
 	   }
-	   else { // This should NEVER happen
+	   else { /* This should NEVER happen */
 		msg(LOG_ERR, "sc_dump", "bad configuration for %s:", 
                     scp->sc_name);
 	   }

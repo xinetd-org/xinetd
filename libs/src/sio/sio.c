@@ -14,6 +14,7 @@
 #undef HAVE_MMAP
 #endif
 
+#include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
 
