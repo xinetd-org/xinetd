@@ -70,6 +70,7 @@ const struct name_value success_log_options[] =
       { "PID",         LO_PID      },
       { "USERID",      LO_USERID   },
       { "TRAFFIC",     LO_TRAFFIC  },
+      { CHAR_NULL,     0           }
    } ;
 
 
