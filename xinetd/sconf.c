@@ -298,18 +298,27 @@ void sc_dump( struct service_config *scp,
       tabprint( fd, tab_level+1, "PER_SOURCE = %d\n", 
          scp->sc_per_source );
 
-   if ( SC_SPECIFIED( scp, A_BIND ) && scp->sc_bind_addr ) {
-      char bindname[NI_MAXHOST];
-      int len = 0;
-      if( scp->sc_bind_addr->sa.sa_family == AF_INET ) 
-         len = sizeof(struct sockaddr_in);
-      else  
-         len = sizeof(struct sockaddr_in6);
-      memset(bindname, 0, sizeof(bindname));
-      if( getnameinfo(&scp->sc_bind_addr->sa, len, bindname, NI_MAXHOST, 
-            NULL, 0, 0) != 0 ) 
-         strcpy(bindname, "unknown");
-      tabprint( fd, tab_level+1, "Bind = %s\n", bindname );
+   if ( SC_SPECIFIED( scp, A_BIND ) ) {
+	   if (  scp->sc_bind_addr ) {
+		  char bindname[NI_MAXHOST];
+		  int len = 0;
+		  if( scp->sc_bind_addr->sa.sa_family == AF_INET ) 
+			 len = sizeof(struct sockaddr_in);
+		  else  
+			 len = sizeof(struct sockaddr_in6);
+		  memset(bindname, 0, sizeof(bindname));
+		  if( getnameinfo(&scp->sc_bind_addr->sa, len, bindname, NI_MAXHOST, 
+				NULL, 0, 0) != 0 ) 
+			 strcpy(bindname, "unknown");
+		  tabprint( fd, tab_level+1, "Bind = %s\n", bindname );
+	   }
+	   else if ( scp->sc_orig_bind_addr ) {
+		  tabprint( fd, tab_level+1, "Bind = %s\n", scp->sc_orig_bind_addr );
+	   }
+	   else {
+			// This should NEVER happen
+			msg(LOG_ERR, "sc_dump", "bad configuration for %s:", scp->sc_name);
+	   }
    }
    else
       tabprint( fd, tab_level+1, "Bind = All addresses.\n" );

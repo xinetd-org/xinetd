@@ -38,6 +38,7 @@
 #include "sconf.h"
 #include "sensor.h"
 #include "inet.h"
+#include "addr.h"
 
 extern int inetd_compat;
 
@@ -183,10 +184,13 @@ static status_e service_fill( struct service_config *scp,
       SC_SPECIFY( scp, A_MAX_LOAD ) ;
    }
 
-   if ( (! SC_SPECIFIED( scp, A_BIND )) && (scp->sc_orig_bind_addr == 0) ) {
-      scp->sc_bind_addr = SC_SPECIFIED( def, A_BIND ) ? def->sc_bind_addr : 0 ;
-      if (scp->sc_bind_addr != 0)
-         SC_SPECIFY( scp, A_BIND ) ;
+   if ( ! SC_SPECIFIED( scp, A_BIND ) )  {
+	   if ( SC_SPECIFIED( def, A_BIND ) )  {
+		  scp->sc_bind_addr = def->sc_bind_addr;
+		  scp->sc_orig_bind_addr = def->sc_orig_bind_addr;
+		  if (scp->sc_bind_addr != 0 )
+			 SC_SPECIFY( scp, A_BIND );
+	   }
    }
 
    if ( ! SC_SPECIFIED( scp, A_V6ONLY ) ) {
@@ -234,6 +238,12 @@ static status_e service_fill( struct service_config *scp,
       else
          hints.ai_family = AF_INET;
 
+	   if (check_hostname(scp->sc_orig_bind_addr) == 0 || 
+	   	   strchr(scp->sc_orig_bind_addr, ':'))
+	   {
+		  hints.ai_flags |= AI_NUMERICHOST;
+	   }
+
       if( getaddrinfo(scp->sc_orig_bind_addr, NULL, &hints, &res) < 0 ) 
       {
          msg(LOG_ERR, func, "bad address given for:%s", scp->sc_name);
@@ -258,8 +268,7 @@ static status_e service_fill( struct service_config *scp,
          }
          memset(scp->sc_bind_addr, 0, sizeof(union xsockaddr));
          memcpy(scp->sc_bind_addr, res->ai_addr, res->ai_addrlen);
-         free(scp->sc_orig_bind_addr);
-         scp->sc_orig_bind_addr = 0;
+		 SC_SPECIFY( scp, A_BIND );
       }
       freeaddrinfo(res);
    }

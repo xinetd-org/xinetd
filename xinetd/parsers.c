@@ -1174,7 +1174,7 @@ status_e bind_parser( pset_h values,
    char *adr = (char *)pset_pointer(values, 0);
    const char *func = "bind_parser";
    struct addrinfo hints, *res, *ressave;
-   int numeric, addr_cnt = 0;
+   int addr_cnt = 0;
 
    memset(&hints, 0, sizeof(hints));
    hints.ai_flags = AI_CANONNAME;
@@ -1182,18 +1182,15 @@ status_e bind_parser( pset_h values,
    {
       hints.ai_family = AF_INET;
       hints.ai_flags |= AI_NUMERICHOST;
-      numeric = 1;
    }
    else if (strchr(adr, ':'))
    {
       hints.ai_family = AF_INET6;
       hints.ai_flags |= AI_NUMERICHOST;
-      numeric = 2;
    }
    else
    {
       hints.ai_family = AF_UNSPEC;
-      numeric = 0;
    }
    
    if( getaddrinfo(adr, NULL, &hints, &res) < 0 ) {
@@ -1230,7 +1227,7 @@ status_e bind_parser( pset_h values,
       memcpy(scp->sc_bind_addr, res->ai_addr, res->ai_addrlen);
    }	   
    else
-      scp->sc_orig_bind_addr = new_string(adr);
+      scp->sc_orig_bind_addr = adr;
 
    freeaddrinfo(res);
    return( OK );
