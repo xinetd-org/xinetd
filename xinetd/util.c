@@ -113,7 +113,7 @@ char **argv_alloc( unsigned count )
       out_of_memory( func ) ;
       return( NULL ) ;
    }
-   (void) memset( (char *)argv, 0, (int) argv_size ) ;
+   (void) memset( (char *)argv, 0, argv_size ) ;
    return( argv ) ;
 }
 
@@ -153,7 +153,7 @@ status_e copy_pset( const pset_h from, pset_h *to, unsigned size )
       }
 
       if ( size != 0 )
-         (void) memcpy( new_s, p, (int) size ) ;
+         (void) memcpy( new_s, p, size ) ;
 
       if ( pset_add( *to, new_s ) == NULL )
       {

@@ -234,7 +234,7 @@ static char *verify_line( char *line,
     */
    {
       const char *line_id = "USERID" ;
-      int line_id_len = strlen( line_id ) ;
+      unsigned int line_id_len = strlen( line_id ) ;
 
       start = p+1 ;
       for ( p = start ; isspace( *p ) ; p++ ) ;

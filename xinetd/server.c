@@ -278,7 +278,7 @@ void server_end( struct server *serp )
    if ( PROC_EXITED( serp->svr_exit_status ) || 
          PROC_SIGNALED( serp->svr_exit_status ) )
    {
-      char *death_type = PROC_EXITED( serp->svr_exit_status ) ? "exited"
+      const char *death_type = PROC_EXITED( serp->svr_exit_status ) ? "exited"
            : "died" ;
       if ( debug.on )
       {

@@ -297,7 +297,7 @@ void sc_dump( struct service_config *scp,
    if ( SC_SPECIFIED( scp, A_BIND ) ) {
 	   if (  scp->sc_bind_addr ) {
 		  char bindname[NI_MAXHOST];
-		  int len = 0;
+		  unsigned int len = 0;
 		  if( scp->sc_bind_addr->sa.sa_family == AF_INET ) 
 			 len = sizeof(struct sockaddr_in);
 		  else  
@@ -338,7 +338,7 @@ void sc_dump( struct service_config *scp,
       if ( scp->sc_redir_addr != NULL ) 
       {
          char redirname[NI_MAXHOST];
-         int len = 0;
+         unsigned int len = 0;
          if( scp->sc_redir_addr->sa.sa_family == AF_INET ) 
             len = sizeof(struct sockaddr_in);
          if( scp->sc_redir_addr->sa.sa_family == AF_INET6 ) 

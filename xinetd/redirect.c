@@ -55,7 +55,8 @@ void redir_handler( struct server *serp )
    struct service *sp = SERVER_SERVICE( serp );
    struct service_config *scp = SVC_CONF( sp );
    int RedirDescrip = SERVER_FD( serp );
-   int maxfd, num_read, num_wrote=0, ret=0, sin_len = 0;
+   int maxfd, num_read, num_wrote=0, ret=0;
+   unsigned int sin_len = 0;
    int no_to_nagle = 1;
    int on = 1, v6on;
    char buff[NET_BUFFER];

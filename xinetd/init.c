@@ -35,7 +35,7 @@
 
 struct module
 {
-   char *name ;
+   const char *name ;
    status_e (*initializer)() ;
 } ;
 
@@ -45,7 +45,7 @@ static const struct module program_modules[] =
    {
       { "signal",                       signal_init       },
       { "environment",                  initenv           },
-      { CHAR_NULL }
+      { CHAR_NULL,                      NULL              }
    } ;
 
 
@@ -53,13 +53,13 @@ static bool_int have_stderr ;
 
 #define STDERR_FD                  2
 
-static void set_fd_limit();
+static void set_fd_limit(void);
 
 /*
  * This function is invoked when a system call fails during initialization.
  * A message is printed to stderr, and the program is terminated
  */
-static void syscall_failed( char *call )
+static void syscall_failed( const char *call )
 {
    char *err ;
 
@@ -133,7 +133,7 @@ static void setup_file_descriptors(void)
 
 
 /* msg() cannot be used in this function, as it has not been initialized yet. */
-static void set_fd_limit()
+static void set_fd_limit(void)
 {
 #ifdef RLIMIT_NOFILE
    struct rlimit rl ;

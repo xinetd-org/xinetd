@@ -45,7 +45,7 @@ struct attribute
 
 extern int line_count;
 
-const char *attr_name_lookup(int id);
+const char *attr_name_lookup(unsigned int id);
 void parse_end(void);
 void parse_conf_file(int fd,struct configuration *confp);
 

@@ -139,7 +139,7 @@ static const struct attribute default_attributes[] =
 
 int line_count ;
 
-static void get_service_entry( int fd, pset_h, char *, 
+static void get_service_entry( int fd, pset_h, const char *, 
 	struct service_config * );
 static void fill_attribute( unsigned attr_id, struct service_config *scp, 
         struct service_config *def );
@@ -149,7 +149,7 @@ static status_e parse_entry(entry_e, int, struct service_config *) ;
 /*
  * Given the id, return the name (only the service attributes are searched)
  */
-const char *attr_name_lookup( int id )
+const char *attr_name_lookup( unsigned int id )
 {
    const struct attribute *ap ;
 
@@ -385,7 +385,7 @@ static entry_e find_next_entry( int fd, char **snamep )
  */
 static void get_service_entry( int fd, 
                                 pset_h sconfs,
-                                char *name,
+                                const char *name,
                                 struct service_config *defaults )
 {
    struct service_config   *scp ;
@@ -527,7 +527,7 @@ static void fill_attribute( unsigned attr_id,
  * Find the attribute with the specified name
  */
 static const struct attribute *attr_lookup( 
-	const struct attribute attr_array[], char *attr_name )
+	const struct attribute attr_array[], const char *attr_name )
 {
    const struct attribute *ap ;
    const char *func = "attr_lookup" ;
@@ -559,7 +559,7 @@ static const struct attribute *attr_lookup(
  */
 static status_e identify_attribute( entry_e entry_type, 
                                  struct service_config *scp, 
-                                 char *attr_name, 
+                                 const char *attr_name, 
                                  enum assign_op op, 
                                  pset_h attr_values )
 {

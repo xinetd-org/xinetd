@@ -31,7 +31,7 @@ static char ipv6_ret[NI_MAXHOST];
 
 const char *xaddrname(const union xsockaddr *inaddr)
 {
-   int len = 0;
+   unsigned int len = 0;
    if( inaddr->sa.sa_family == AF_INET )  len = sizeof(struct sockaddr_in);
    if( inaddr->sa.sa_family == AF_INET6 ) len = sizeof(struct sockaddr_in6);
    memset(ipv6_ret, 0, sizeof(ipv6_ret));

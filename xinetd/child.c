@@ -190,7 +190,7 @@ static void set_credentials( const struct service_config *scp )
    if ( SC_SPECIFIED( scp, A_GROUP ) || SC_SPECIFIED( scp, A_USER ) ) {
       if ( ps.ros.is_superuser )
       {
-         int gid = SC_GETGID( scp ) ;
+         gid_t gid = SC_GETGID( scp ) ;
 
          if ( setgid( gid ) == -1 )
          {

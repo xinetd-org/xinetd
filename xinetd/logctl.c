@@ -19,7 +19,7 @@
 #include "sconf.h"
 
 
-static xlog_h start_filelog( char *id, struct filelog *flp )
+static xlog_h start_filelog( const char *id, struct filelog *flp )
 {
    xlog_h   xh ;
    int      fd ;
@@ -62,7 +62,7 @@ static xlog_h start_filelog( char *id, struct filelog *flp )
 static void log_in_error( xlog_h xh, int error_code, void *arg )
 {
    struct service     *sp       = SP( arg ) ;
-   char               *log_id   = ( sp == NULL ) ? "common" : SVC_ID( sp ) ;
+   const char         *log_id   = ( sp == NULL ) ? "common" : SVC_ID( sp ) ;
    const char         *func     = "log_in_error" ;
 
 #ifdef lint
@@ -81,7 +81,7 @@ static void log_in_error( xlog_h xh, int error_code, void *arg )
 status_e log_start( struct service *sp, xlog_h *xhp )
 {
    xlog_h        xh ;
-   char         *sid   = SVC_ID( sp ) ;
+   const char   *sid   = SVC_ID( sp ) ;
    struct log   *lp    = SC_LOG( SVC_CONF( sp ) ) ;
    const char   *func  = "log_start" ;
 

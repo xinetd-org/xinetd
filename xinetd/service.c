@@ -167,7 +167,7 @@ static status_e set_fd_modes( struct service *sp )
 static status_e activate_rpc( struct service *sp )
 {
    union xsockaddr        tsin;
-   int                    sin_len = sizeof(tsin);
+   unsigned int           sin_len = sizeof(tsin);
    unsigned long          vers ;
    struct service_config *scp = SVC_CONF( sp ) ;
    struct rpc_data       *rdp = SC_RPCDATA( scp ) ;
@@ -252,7 +252,7 @@ static status_e activate_normal( struct service *sp )
    uint16_t                service_port   = SC_PORT( scp ) ;
    char                   *sid            = SC_ID( scp ) ;
    const char             *func           = "activate_normal" ;
-   int                     sin_len        = sizeof(tsin);
+   unsigned int            sin_len        = sizeof(tsin);
    int                     on             = 1;
    int                     v6on           = 0;
 
@@ -859,7 +859,7 @@ void svc_postmortem( struct service *sp, struct server *serp )
 {
    struct service  *co_sp   = SERVER_CONNSERVICE( serp ) ;
    connection_s    *cp      = SERVER_CONNECTION( serp ) ;
-   char            *func    = "svc_postmortem" ;
+   const char      *func    = "svc_postmortem" ;
 
    SVC_DEC_RUNNING_SERVERS( sp ) ;
 

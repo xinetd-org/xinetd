@@ -97,7 +97,7 @@ char *str_casefind( const char *s1, const char *s2 )
 /*
  * Fill string s with character c
  */
-void str_fill( register char *s, register char c )
+void str_fill( char *s, char c )
 {
 	while ( *s ) *s++ = c ;
 }

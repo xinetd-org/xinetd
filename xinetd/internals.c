@@ -50,7 +50,7 @@ static void dump_services( int fd )
 void dump_internal_state(void)
 {
    int dump_fd ;
-   char *dump_file = DUMP_FILE ;
+   const char *dump_file = DUMP_FILE ;
    time_t current_time ;
    int fd ;
    unsigned u ;

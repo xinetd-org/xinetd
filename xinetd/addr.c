@@ -74,7 +74,7 @@ struct comp_addr
  * mask is a pointer to the in6_addr structure, bits is the
  * number of bits to set in the mask, and len is the length of mask.
  */
-static void xsetmask(char *mask, unsigned int bits, int len)
+static void xsetmask(char *mask, unsigned int bits, unsigned int len)
 {
    int i;
    int bytes = bits/8;
@@ -223,7 +223,7 @@ void addrlist_dump( const pset_h addr_list, int fd )
    for ( u = 0 ; u < num ; u++ )
    {
       struct comp_addr *cap = CAP( pset_pointer( addr_list, u ) ) ;
-      char *type ;
+      const char *type ;
 
       if ( cap->addr_type == NUMERIC_ADDR )
          type = "NUMERIC" ;
