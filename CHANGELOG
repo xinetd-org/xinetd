@@ -864,7 +864,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 	Sclose dump_fd if SIO error causes dump abort. -Steve Grubb
 	Smorefds wasn't allocating the proper amount of sio descriptor space
 		if the fd was > 5 over its last known fd. -Steve Grubb
-devel
+2.3.13
 	Add NULL entry to success_log_options to properly end the
 		 nvlist. -Steve Grubb
 	Portability updates to libportable.h. -Matthias Andree

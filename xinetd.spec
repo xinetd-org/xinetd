@@ -78,9 +78,9 @@ fi
 %doc CHANGELOG COPYRIGHT README xinetd/sample.conf contrib/empty.conf 
 %{_sbindir}/*
 %{_datadir}/man/*/*
-%config(noreplace) /etc/rc.d/init.d/xinetd
-%config(noreplace) /etc/xinetd.conf
-%config(noreplace) /etc/xinetd.d/*
+%attr(0750, root, root) %config(noreplace) /etc/rc.d/init.d/xinetd
+%attr(0750, root, root) %config(noreplace) /etc/xinetd.conf
+%attr(0750, root, root) %config(noreplace) /etc/xinetd.d/*
 
 %changelog
 * Sun Sep 07 2003 Steve Grubb <linux_4ever@yahoo.com>
