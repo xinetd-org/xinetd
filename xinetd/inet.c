@@ -48,15 +48,15 @@ int get_next_inet_entry( int fd, pset_h sconfs,
    char *line = next_line(fd);
    struct service_config *scp;
    unsigned u, i;
-   char *func = "get_next_inet_entry";
+   const char *func = "get_next_inet_entry";
    char *name = NULL, *rpcvers = NULL, *rpcproto = NULL;
    char *group, *proto, *stype;
    const struct name_value *nvp;
    struct protoent *pep ;
    struct passwd *pw ;
    struct group *grp ;
-   char *dot = ".";
-   char *slash = "/";
+   const char *dot = ".";
+   const char *slash = "/";
    pset_h args;
    
    if( line == CHAR_NULL )

@@ -39,7 +39,7 @@ static const struct name_value priorities[] =
 
 #define DEFAULT_SYSLOG_LEVEL         LOG_INFO
 
-char *msg_init(void)
+const char *msg_init(void)
 {
    xlog_h      xh ;
    int         fd ;

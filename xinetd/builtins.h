@@ -36,7 +36,7 @@ typedef struct builtin builtin_s ;
 
 struct builtin_service
 {
-   char        *bs_name ;               /* for identification purposes      */
+   const char  *bs_name ;               /* for identification purposes      */
    int         bs_socket_type ;         /* for identification purposes      */
    builtin_s   bs_handle ;
 } ;

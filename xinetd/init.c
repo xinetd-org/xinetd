@@ -304,7 +304,7 @@ static void init_rw_state( void )
  */
 void init_daemon( int argc, char *argv[] )
 {
-   char *fail = NULL;
+   const char *fail = NULL;
 
    debug.on = 0;
    memset(&ps, 0, sizeof(ps));

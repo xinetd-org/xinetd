@@ -105,7 +105,7 @@ struct service_config
    char                *sc_id ;                /* e.g. "echo-stream"          */
    uint16_t             sc_port ;              /* in host byte order          */
    int                  sc_socket_type ;       /* e.g. SOCK_DGRAM             */
-   struct name_value    sc_protocol ;          /* e.g. "TCP", IPPROTO_TCP     */
+   struct protocol_name_value sc_protocol ;    /* e.g. "TCP", IPPROTO_TCP     */
    boolean_e            sc_wait ;
    uid_t                sc_uid ;
    gid_t                sc_user_gid ;          /* gid corresponding to uid    */

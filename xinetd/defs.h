@@ -151,10 +151,15 @@ typedef status_e (*statfunc)() ;
  */
 struct name_value
 {
+   const char   *name ;
+   int          value ;
+} ;
+
+struct protocol_name_value
+{
    char   *name ;
    int    value ;
 } ;
-
 
 struct debug
 {

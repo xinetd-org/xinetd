@@ -147,7 +147,7 @@ static status_e parse_entry(entry_e, int, struct service_config *) ;
 /*
  * Given the id, return the name (only the service attributes are searched)
  */
-char *attr_name_lookup( int id )
+const char *attr_name_lookup( int id )
 {
    const struct attribute *ap ;
 

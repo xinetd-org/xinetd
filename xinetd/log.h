@@ -56,12 +56,12 @@ struct log
 #define LOG_GET_FILELOG( lp )        (&(lp)->l_fl)
 #define LOG_GET_SYSLOG( lp )         (&(lp)->l_sl)
 
-char *xaddrname(const union xsockaddr *inaddr);
+const char *xaddrname(const union xsockaddr *inaddr);
 uint16_t xaddrport(const union xsockaddr *inaddr);
 void svc_log_success(struct service *sp, const connection_s *cp,pid_t pid);
 void svc_log_failure(struct service *sp, const connection_s *cp,access_e access_failure);
 void svc_log_exit(struct service *sp,const struct server *serp);
-void svc_logprint(struct service *sp,char *line_id,const char *fmt,...)
+void svc_logprint(struct service *sp,const char *line_id,const char *fmt,...)
 #ifdef __GNUC__
 	__attribute__ ((format (printf, 3, 4)));
 #else

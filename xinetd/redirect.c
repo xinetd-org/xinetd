@@ -71,7 +71,6 @@ void redir_handler( struct server *serp )
    /* If it's a tcp service we are redirecting */
    if( scp->sc_protocol.value == IPPROTO_TCP )
    {
-      char *foo = NULL;
       if( SC_IPV4(scp) ) {
          sin_len = sizeof( struct sockaddr_in );
          RedirServerFd = socket(AF_INET, SOCK_STREAM, 0);
@@ -103,8 +102,8 @@ void redir_handler( struct server *serp )
 
       if( connect(RedirServerFd, &serveraddr.sa, sin_len) < 0 )
       {
-         foo = xaddrname( &serveraddr );
-         msg(LOG_ERR, func, "can't connect to remote host %s: %m", foo);
+         msg(LOG_ERR, func, "can't connect to remote host %s: %m",
+            xaddrname( &serveraddr ) );
          exit(0);
       }
 
