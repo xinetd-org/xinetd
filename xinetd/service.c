@@ -890,6 +890,8 @@ void svc_postmortem( struct service *sp, struct server *serp )
       cp = NULL;
    } else {
       if (cp) {
+         if ( SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM )
+            drain( cp->co_descriptor ) ;
          free(cp);
 	 cp = NULL;
       }

@@ -854,3 +854,5 @@ devel
 	Remove the servers and xadmin internal services.
 	Update addrlist_match to use the address part of the IPv6 address
 		structure. -Christof Meerwald 
+	Correct looping problems for udp connections rejected by the child
+		access controls. -Steve Grubb

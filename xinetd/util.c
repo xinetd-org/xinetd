@@ -226,14 +226,22 @@ void tabprint( int fd, int tab_level, const char *fmt, ...)
 
 
 /*
- * Receive a single IP packet worth of data.
+ * Empty the socket receive buffers of all data.
  */
 void drain( int sd )
 {
-   char buf[ 1 ] ;
+   char buf[ 128 ] ; /* This size is arbitrarily chosen */
    char cc ;
 
-   cc = recv( sd, buf, sizeof( buf ), 0 ) ;
+   /* Put in non-blocking mode. We don't care if we leave socket in
+      non-blocking mode since it will always be closed immediately. */
+   fcntl( sd, F_SETFL, FNDELAY );
+   do {
+     cc = recv( sd, buf, sizeof( buf ), 0 ) ;
+   } while (cc > 0);
+
+   if ( debug.on )
+      msg( LOG_DEBUG, "drain", "Socket is empty" ) ;
 }
 
 /*
