@@ -348,7 +348,7 @@ static status_e service_fill( struct service_config *scp,
    if (! SC_SPECIFIED( scp, A_PORT ) && ! SC_IS_MUXCLIENT( scp ) && 
                                         ! SC_IS_RPC( scp )) {
        if ( SC_IS_UNLISTED( scp ) ) {
-          msg(LOG_ERR, func, "Unlisted service:%s most have a port entry",
+          msg(LOG_ERR, func, "Unlisted service:%s must have a port entry",
               scp->sc_name);
           return(FAILED);
        }
