@@ -108,8 +108,6 @@ struct service
       ( SVC_IS_LOGGING( sp ) && SC_LOGS_USERID_ON_SUCCESS( SVC_CONF( sp ) ) )
 #define SVC_LOGS_USERID_ON_FAILURE( sp )   \
       ( SVC_IS_LOGGING( sp ) && SC_LOGS_USERID_ON_FAILURE( SVC_CONF( sp ) ) )
-#define SVC_RECORDS( sp )                  \
-      ( SVC_IS_LOGGING( sp ) && SC_RECORDS( SVC_CONF( sp ) ) )
 
 /*
  * Reference counting macros
