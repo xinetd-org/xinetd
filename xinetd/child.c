@@ -223,6 +223,7 @@ static void set_credentials( const struct service_config *scp )
                   SC_UID( scp ), SC_ID( scp ) ) ;
                _exit( 1 ) ;
             }
+            str_fill( pwd->pw_passwd, ' ' );
 
             if ( initgroups( pwd->pw_name, pwd->pw_gid ) == -1 )
             {
