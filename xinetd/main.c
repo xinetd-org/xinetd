@@ -24,6 +24,7 @@
 #include "sconf.h"
 #include "xtimer.h"
 #include "sio.h"
+#include "sensor.h"
 
 static void main_loop(void);
 static void find_bad_fd(void) ;
@@ -239,6 +240,8 @@ void quit_program(void)
    struct service_config *scp = NULL;
    const char *func = "quit_program" ;
 
+   destroy_global_access_list() ;
+   
    for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ ) {
       scp = SVC_CONF( SP(pset_pointer(SERVICES(ps), u)) );
       

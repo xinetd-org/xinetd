@@ -28,7 +28,6 @@
                                  {                          \
                                     *x = NUL ;              \
                                     free( (char *) x ) ;    \
-                                    x = NULL ;              \
                                  }
 
 
@@ -70,9 +69,12 @@ void sc_free( struct service_config *scp )
    COND_FREE( scp->sc_id ) ;
    COND_FREE( scp->sc_protocol.name ) ;
    COND_FREE( scp->sc_server ) ;
+   COND_FREE( (char *)scp->sc_redir_addr ) ;
    COND_FREE( (char *)scp->sc_bind_addr ) ;
    COND_FREE( (char *)scp->sc_orig_bind_addr ) ;
    COND_FREE( (char *)scp->sc_banner ) ;
+   COND_FREE( (char *)scp->sc_banner_success ) ;
+   COND_FREE( (char *)scp->sc_banner_fail ) ;
    if ( scp->sc_server_argv )
    {
       char **pp ;
@@ -113,6 +115,10 @@ void sc_free( struct service_config *scp )
    if ( SC_ENV( scp )->env_type == CUSTOM_ENV && 
                                     SC_ENV( scp )->env_handle != ENV_NULL )
       env_destroy( SC_ENV( scp )->env_handle ) ;
+   if (scp->sc_disabled ) 
+      release_string_pset( scp->sc_disabled ) ;
+   if (scp->sc_enabled ) 
+      release_string_pset( scp->sc_enabled ) ;
    
    CLEAR( *scp ) ;
    FREE_SCONF( scp ) ;
