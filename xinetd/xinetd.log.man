@@ -33,10 +33,6 @@ generated when a server exits
 .B FAIL
 generated when it is not possible to start a server
 .TP
-.B DATA
-generated when an attempt to start a server fails and the service supports
-the \fIRECORD\fP log option.
-.TP
 .B USERID
 generated if the \fIUSERID\fP log option is used.
 .TP

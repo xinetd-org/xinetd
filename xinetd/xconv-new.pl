@@ -98,7 +98,7 @@ defaults
 	log_on_success = HOST PID
 
 	# What to log when the connection fails.  Same options as above
-	log_on_failure = HOST RECORD
+	log_on_failure = HOST 
 
 	# The maximum number of connections a specific IP address can
 	# have to a specific service.

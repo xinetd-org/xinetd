@@ -91,7 +91,7 @@ sub print_defaults
 	print "\tlog_on_success = HOST PID\n";
 	print "\n";
 	print "\t# What to log when the connection fails.  Same options as above\n";
-	print "\tlog_on_failure = HOST RECORD\n";
+	print "\tlog_on_failure = HOST\n";
 	print "\n";
 	print "\t# The maximum number of connections a specific IP address can\n";
 	print "\t# have to a specific service.  \n";

@@ -948,7 +948,7 @@ defaults
 .IP log_on_success
 = PID
 .IP log_on_failure 
-= HOST RECORD
+= HOST 
 .IP only_from
 = 128.138.193.0 128.138.204.0 
 .IP only_from
@@ -1000,7 +1000,7 @@ service shell
 .IP server
 = /usr/etc/in.rshd
 .IP log_on_success
-+= HOST RECORD
++= HOST 
 .RE
 }
 
