@@ -211,7 +211,6 @@ static status_e service_fill( struct service_config *scp,
    
    if ( ! SC_SPECIFIED( scp, A_V6ONLY ) ) {
       scp->sc_v6only = SC_SPECIFIED( def, A_V6ONLY ) ? def->sc_v6only : NO;
-      SC_SPECIFY( scp, A_V6ONLY );
    }
 
    if ( ! SC_SPECIFIED( scp, A_DENY_TIME ) )

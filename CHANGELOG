@@ -835,3 +835,5 @@ devel
 		state and were being missed. -Steve Grubb
 	Make redirected, forking builtins, & tcpmux close all listening
 		descriptors so reconfig works. -Jay Fenlason
+	Add support for the IPV6_V6ONLY socket option.  Don't assume
+		a default setting, as the default seems to be in flux.

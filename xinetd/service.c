@@ -254,6 +254,7 @@ static status_e activate_normal( struct service *sp )
    const char             *func           = "activate_normal" ;
    int                     sin_len        = sizeof(tsin);
    int                     on             = 1;
+   int                     v6on           = 0;
 
    if( scp->sc_bind_addr != NULL )
       memcpy(&tsin, scp->sc_bind_addr, sin_len);
@@ -269,6 +270,19 @@ static status_e activate_normal( struct service *sp )
       tsin.sa_in6.sin6_port = htons( service_port );
       sin_len = sizeof(struct sockaddr_in6);
    }
+
+#ifdef IPV6_V6ONLY
+   if( SC_IPV6(scp) ) {
+      if( SC_SPECIFIED(scp, A_V6ONLY) ) {
+         v6on = 1;
+      } else {
+         v6on = 0;
+      }
+      if( setsockopt(sd, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&v6on, sizeof(v6on)) < 0 ) {
+         msg( LOG_ERR, func, "Setting IPV6_V6ONLY option failed (%m)" );
+      }
+   }
+#endif
 
    if ( setsockopt( sd, SOL_SOCKET, SO_REUSEADDR, 
                     (char *) &on, sizeof( on ) ) == -1 )

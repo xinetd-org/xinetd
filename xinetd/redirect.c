@@ -57,7 +57,7 @@ void redir_handler( struct server *serp )
    int RedirDescrip = SERVER_FD( serp );
    int maxfd, num_read, num_wrote=0, ret=0, sin_len = 0;
    int no_to_nagle = 1;
-   int on = 1;
+   int on = 1, v6on;
    char buff[NET_BUFFER];
    fd_set rdfd, msfd;
    struct timeval *timep = NULL;
@@ -90,6 +90,19 @@ void redir_handler( struct server *serp )
          exit(0);
       }
 
+      if( SC_IPV6( scp ) ) {
+         if( SC_V6ONLY( scp ) ) {
+            v6on = 1;
+         } else {
+            v6on = 0;
+         }
+#ifdef IPV6_V6ONLY
+         if( setsockopt(RedirServerFd, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&v6on, sizeof(v6on)) < 0 ) { 
+            msg( LOG_ERR, func, "Setting IPV6_V6ONLY option failed (%m)" );
+         }
+#endif
+
+      }
       if( SC_KEEPALIVE( scp ) )
          if (setsockopt(RedirServerFd, SOL_SOCKET, SO_KEEPALIVE, 
                         (char *)&on, sizeof( on ) ) < 0 )
