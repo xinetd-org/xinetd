@@ -1223,11 +1223,11 @@ status_e bind_parser( pset_h values,
       {
          parsemsg(LOG_ERR, func, "can't allocate space for bind addr");
          return( FAILED );
-      }
+      } 
       memcpy(scp->sc_bind_addr, res->ai_addr, res->ai_addrlen);
    }	   
    else
-      scp->sc_orig_bind_addr = adr;
+      scp->sc_orig_bind_addr = new_string(adr);
 
    freeaddrinfo(res);
    return( OK );
