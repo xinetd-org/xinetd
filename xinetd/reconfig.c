@@ -141,7 +141,8 @@ void hard_reconfig( void )
           */
          svc_deactivate( osp ) ;
          msg( LOG_NOTICE, func, "service %s deactivated", sid ) ;
-         psi_remove( iter ) ;
+         if ( SVC_RELE( osp ) == 0 )
+            psi_remove( iter ) ;
          dropped_services++ ;
       }
    }
@@ -242,6 +243,12 @@ static void sendsig( struct server *serp, int sig )
          if (!killed)
             msg( LOG_WARNING, func, "Server %d did not exit after SIGKILL", 
 	          pid ) ;
+         else {
+            struct server *serp;
+            if( (serp = server_lookup(pid)) != NULL ) {
+               server_end(serp);
+            }
+         }
       }
    } 
    else if ( pid != 0 )
