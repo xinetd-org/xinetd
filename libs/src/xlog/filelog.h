@@ -24,7 +24,7 @@
  */
 typedef enum { FL_CLOSED = 0, FL_OPEN, FL_SIZE, FL_ERROR } filelog_state_e ;
 
-struct filelog
+struct filelog_s
 {
 	int					fl_fd ;
 	filelog_state_e	fl_state ;
@@ -40,7 +40,7 @@ struct filelog
 #define FILELOG_DISABLE_SIZE_CONTROL( flp )	(flp)->fl_size_control = FALSE
 #define FILELOG_SIZE_CONTROL( flp )    		( (flp)->fl_size_control )
 
-#define FILELOG( xp )			((struct filelog *)xp->xl_data)
+#define FILELOG( xp )			((struct filelog_s *)xp->xl_data)
 
 #endif
 

@@ -11,7 +11,7 @@
 #ifndef __SLOG_H
 #define __SLOG_H
 
-struct syslog
+struct syslog_s
 {
 	int sl_facility ;
 	int sl_default_level ;
@@ -27,7 +27,7 @@ struct syslog_parms
    /* bool_int slp_ident_is_malloced ; */
 } ;
 
-#define SYSLOG( xp )         ((struct syslog *)xp->xl_data)
+#define SYSLOG( xp )         ((struct syslog_s *)xp->xl_data)
 
 #endif
 
