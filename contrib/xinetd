@@ -35,8 +35,8 @@ test -f /etc/sysconfig/xinetd && . /etc/sysconfig/xinetd
 
 RETVAL=0
 
-if [ "$NETWORKING_IPV6" = "yes" ] && [ -x /usr/sbin/xinetd-ipv6 ]; then
-    prog="xinetd-ipv6"
+if [ "$NETWORKING_IPV6" = "yes" ] && [ -x /usr/sbin/xinetd6 ]; then
+    prog="xinetd6"
 else
     prog="xinetd"
 fi
