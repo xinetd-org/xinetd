@@ -344,21 +344,37 @@ static status_e service_fill( struct service_config *scp,
     * protocol is specied, the other gets set appropriately. We will only
     * use protocol for this code.
     */
-   if (! SC_SPECIFIED( scp, A_PORT ) && SC_SPECIFIED( scp, A_PROTOCOL ) &&
-       ! SC_IS_UNLISTED( scp ) && ! SC_IS_MUXCLIENT( scp ) )
-   {
-       /*
-        * Look up the service based on the protocol and service name.
-	* If not found, don't worry. Message will be emitted in
-	* check_entry().
-        */
-      struct servent *sep = getservbyname( scp->sc_name, 
+   if (! SC_SPECIFIED( scp, A_PORT ) && ! SC_IS_MUXCLIENT( scp )) {
+       if ( SC_IS_UNLISTED( scp ) ) {
+          msg(LOG_ERR, func, "Unlisted service:%s most have a port entry",
+              scp->sc_name);
+          return(FAILED);
+       }
+       if ( SC_SPECIFIED( scp, A_PROTOCOL ) ) {
+          /*
+           * Look up the service based on the protocol and service name.
+	   * If not found, don't worry. Message will be emitted in
+	   * check_entry().
+           */
+         struct servent *sep = getservbyname( scp->sc_name, 
                                            scp->sc_protocol.name ) ;
-      if ( sep != NULL )
-      {
-         /* s_port is in network-byte-order */
-         scp->sc_port = ntohs(sep->s_port);
-         SC_SPECIFY(scp, A_PORT);
+         if ( sep != NULL ) {
+            /* s_port is in network-byte-order */
+            scp->sc_port = ntohs(sep->s_port);
+            SC_SPECIFY(scp, A_PORT);
+         }
+         else {
+            msg(LOG_ERR, func, 
+              "Port not specified and can't find service:%s with getservbyname",
+               scp->sc_name);
+            return(FAILED);
+         }
+      }
+      else {
+         msg(LOG_ERR, func, 
+             "Port not specified for service:%s and no protocol given", 
+             scp->sc_name);
+         return(FAILED);
       }
    }
    
