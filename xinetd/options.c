@@ -77,19 +77,18 @@ int opt_recognize( int argc, char *argv[] )
                usage() ;
             ps.ros.process_limit = arg_1 ;
          }
-         else if ( strcmp( &argv[ arg ][ 1 ], "pidfile" ) == 0 ){
-                            if( ++arg ==argc )
-                                usage () ;
-                            ps.ros.pid_file = (char *)new_string( argv[arg] );
-                        }
-         else if ( strcmp( &argv[ arg ][ 1 ], "stayalive" )==0) {
+         else if ( strcmp( &argv[ arg ][ 1 ], "pidfile" ) == 0 ) {
+            if( ++arg ==argc )
+               usage () ;
+            ps.ros.pid_file = (char *)new_string( argv[arg] );
+         }
+         else if ( strcmp( &argv[ arg ][ 1 ], "stayalive" )==0)
             stayalive_option = 1;
-                        }
          else if ( strcmp( &argv[ arg ][ 1 ], "dontfork" )==0) {
             dont_fork = 1;
-                        }
-         else if ( strcmp( &argv[ arg ][ 1 ], "logprocs" ) == 0 ) 
-         {
+            stayalive_option = 1;
+         }
+         else if ( strcmp( &argv[ arg ][ 1 ], "logprocs" ) == 0 ) {
             if ( ++arg == argc )
                usage() ;
             if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
@@ -103,8 +102,7 @@ int opt_recognize( int argc, char *argv[] )
                usage() ;
             Sprint(2, "The shutdownprocs option has been deprecated.\n");
          }
-         else if ( strcmp( &argv[ arg ][ 1 ], "cc" ) == 0 ) 
-         {
+         else if ( strcmp( &argv[ arg ][ 1 ], "cc" ) == 0 ) {
             if ( ++arg == argc )
                usage() ;
             if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
@@ -112,8 +110,7 @@ int opt_recognize( int argc, char *argv[] )
             ps.ros.cc_interval = arg_1;
             enable_periodic_check( arg_1 ) ;
          }
-         else if ( strcmp( &argv[ arg ][ 1 ], "version" ) == 0 )
-         {
+         else if ( strcmp( &argv[ arg ][ 1 ], "version" ) == 0 ) {
             fprintf(stderr, "%s", program_version);
 #ifdef LIBWRAP       
             fprintf(stderr, " libwrap");
@@ -125,16 +122,13 @@ int opt_recognize( int argc, char *argv[] )
             exit(0);
          }
          else if ( strcmp ( &argv[ arg ][ 1 ], "inetd_compat" ) == 0 )
-         {
             inetd_compat = 1;
-         }
       }
       else
          break ;
 
    if ( filelog_option + syslog_option > 1 )
       usage() ;
-
 
    if ( argc - arg != 0 )
       usage() ;

@@ -81,8 +81,7 @@ The process ID is written to the file. This option is ineffective in debug mode.
 .TP
 .BI \-dontfork 
 Tells xinetd to stay in the foreground rather than detaching itself, to
-support being run from init or daemontools. It is recommended that you
-also use
+support being run from init or daemontools. This option automatically sets 
 .B \-stayalive
 (see below).
 .TP
