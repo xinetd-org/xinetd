@@ -762,14 +762,6 @@ The former lists information about running servers while the latter
 provides a list of currently active services. 
 There is one service per line and each line contains the service name,
 protocol (e.g. "tcp") and port number.
-.LP
-There is also now an administrative interface that is an internal
-service.  The service name "xadmin" is reserved, and will always be
-an internal service.  You should specify a port number for this
-service, and probably also some IP based access control, since at
-the time of this writing it does not have any password protection.
-You can telnet to this port and query xinetd for some information.
-
 .\" *********************** TCPMUX Services ****************************
 .SH "TCPMUX Services"
 .LP

@@ -51,7 +51,6 @@ static void dgram_daytime(const struct server *) ;
 static void stream_chargen(const struct server *) ;
 static void dgram_chargen(const struct server *) ;
 static void stream_services(const struct server *) ;
-static void xadmin_handler(const struct server *) ;
 static void tcpmux_handler(const struct server *) ;
 static int bad_port_check(const union xsockaddr *, const char *);
 
@@ -81,7 +80,6 @@ static const struct builtin_service builtin_services[] =
       { "chargen",   SOCK_STREAM,   { stream_chargen,  FORK    } },
       { "chargen",   SOCK_DGRAM,    { dgram_chargen,   NO_FORK } },
       { "services",  SOCK_STREAM,   { stream_services, FORK    } },
-      { "xadmin",    SOCK_STREAM,   { xadmin_handler,  FORK    } },
       { "sensor",    SOCK_STREAM,   { stream_discard,  NO_FORK } },
       { "sensor",    SOCK_DGRAM,    { dgram_discard,   NO_FORK } },
       { "tcpmux",    SOCK_STREAM,   { tcpmux_handler,  FORK    } },
@@ -640,159 +638,3 @@ static void tcpmux_handler( const struct server *serp )
    }
 }
 
-#define MAX_CMD 100
-
-/* Do the redirection of a service */
-/* This function gets called from child.c after we have been forked */
-#ifdef __GNUC__
-__attribute__ ((noreturn))
-#endif
-static void xadmin_handler( const struct server *serp )
-{
-   int  descriptor = SERVER_FD( serp );
-   char cmd[MAX_CMD]; 
-   int  red = 0;
-   unsigned  u = 0;
-   const char *func = "xadmin_handler";
-   
-   close_all_svc_descriptors();
-
-   while(1)
-   {
-      Sprint(descriptor, "> ");
-      Sflush(descriptor);
-      bzero(cmd, MAX_CMD);
-      red = read(descriptor, cmd, MAX_CMD);
-      if( red < 0 )
-      {
-         msg(LOG_ERR, func, "xadmin:reading command: %s", strerror(errno));
-         exit(1);
-      }
-      if( red > MAX_CMD )
-      {
-         /* shouldn't ever happen */
-         msg(LOG_ERR, func, 
-	   "xadmin:reading command: read more bytes than MAX_CMD");
-         continue;
-      }
-
-      if( red == 0 )
-         exit(0);
-
-      if(   (strncmp(cmd, "bye",(red<3)?red:3) == 0)   ||
-         (strncmp(cmd, "exit", (red<4)?red:4) == 0)   ||
-         (strncmp(cmd, "quit", (red<4)?red:4) == 0) )
-      {
-         Sprint(descriptor, "bye bye\n");
-         Sflush(descriptor);
-         Sclose(descriptor);
-         exit(0);
-      }
-
-      if( strncmp(cmd, "help", (red<4)?red:4) == 0 ) 
-      {
-         Sprint(descriptor, "xinetd admin help:\n");
-         Sprint(descriptor, 
-                 "show run  :   shows information about running services\n");
-         Sprint(descriptor, 
-                 "show avail:   shows what services are currently available\n");
-         Sprint(descriptor, "bye, exit :   exits the admin shell\n");
-      }
-
-      if( strncmp(cmd, "show", (red<4)?red:4) == 0 )
-      {
-         char *tmp = cmd+4;
-         red -= 4;
-         if( tmp[0] == ' ' )
-         {
-              tmp++;
-            red--;
-         }
-
-         if( red <= 0 )
-              continue;
-
-         if( strncmp(tmp, "run", (red<3)?red:3) == 0 )
-         {
-            Sprint(descriptor, "Running services:\n");
-            Sprint(descriptor, "service  run retry attempts descriptor\n");
-            for( u = 0 ; u < pset_count( SERVERS( ps ) ) ; u++ )
-            {
-               server_dump( SERP( pset_pointer( SERVERS(ps), u )), descriptor );
-  
-#ifdef FOO
-               Sprint(descriptor, "%-10s %-3d %-5d %-7d %-5d\n", 
-               (char *)SVC_ID( sp ), sp->svc_running_servers+1, 
-               sp->svc_retry_servers, sp->svc_attempts, sp->svc_fd );
-#endif
-            }
-         }
-         else if( strncmp(tmp, "avail", (red<5)?red:5) == 0 )
-         {
-      
-            Sprint(descriptor, "Available services:\n");
-            Sprint(descriptor, 
-              "service    port   bound address    uid redir addr redir port\n");
-
-            for( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )
-            {
-               struct service *sp=NULL;
-               char bname[NI_MAXHOST];
-               char rname[NI_MAXHOST];
-               unsigned int length = 0;
-
-               memset(bname, 0, sizeof(bname));
-               memset(rname, 0, sizeof(rname));
-
-               sp = SP( pset_pointer( SERVICES( ps ), u ) );
-
-               if( SVC_CONF(sp)->sc_bind_addr != NULL ) {
-                  if( SVC_CONF(sp)->sc_bind_addr->sa.sa_family == AF_INET )
-                     length = sizeof(struct sockaddr_in);
-                  else if( SVC_CONF(sp)->sc_bind_addr->sa.sa_family == AF_INET6)
-                     length = sizeof(struct sockaddr_in6);
-                  if( getnameinfo(&SVC_CONF(sp)->sc_bind_addr->sa, length, 
-                        bname, NI_MAXHOST, NULL, 0, 0) )
-                     strcpy(bname, "unknown");
-               }
-  
-               if( SVC_CONF(sp)->sc_redir_addr != NULL )
-               {
-                  if( SVC_CONF(sp)->sc_redir_addr->sa.sa_family == AF_INET )
-                     length = sizeof(struct sockaddr_in);
-                  else if(SVC_CONF(sp)->sc_redir_addr->sa.sa_family == AF_INET6)
-                     length = sizeof(struct sockaddr_in6);
-                  if( getnameinfo(&SVC_CONF(sp)->sc_redir_addr->sa, length, 
-                        rname, NI_MAXHOST, NULL, 0, 0) )
-                     strcpy(rname, "unknown");
-                  Sprint(descriptor, "%-10s ", SC_NAME( SVC_CONF( sp ) ) );
-                  Sprint(descriptor, "%-6d ", SC_PORT( SVC_CONF( sp ) ) );
-                  Sprint(descriptor, "%-16s ", bname );
-                  Sprint(descriptor, "%-6d ", SVC_CONF(sp)->sc_uid );
-                  Sprint(descriptor, "%-16s ", rname );
-                  Sprint(descriptor, "%-6d\n", 
-                                      xaddrport(SVC_CONF(sp)->sc_redir_addr) );
-               }
-               else
-               {
-                  Sprint(descriptor, "%-10s ", SC_NAME( SVC_CONF( sp ) ) );
-                  Sprint(descriptor, "%-6d ", SC_PORT( SVC_CONF( sp ) ) );
-                  Sprint(descriptor, "%-16s ", bname );
-                  Sprint(descriptor, "%-6d\n", SVC_CONF(sp)->sc_uid );
-               }
-            }
-         }
-         else
-         {
-            Sprint(descriptor, "Relevant commands:\n");
-            Sprint(descriptor, "run   : Show currently running servers\n");
-            Sprint(descriptor, "avail : Show currently available servers\n");
-         }
-      }
-   }
-   /* XXX: NOTREACHED (the compiler agrees) */
-#if 0
-   Sprint(descriptor, "exiting\n");
-   Sflush(descriptor);
-#endif
-}
