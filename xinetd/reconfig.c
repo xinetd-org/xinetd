@@ -141,8 +141,7 @@ void hard_reconfig( void )
           */
          svc_deactivate( osp ) ;
          msg( LOG_NOTICE, func, "service %s deactivated", sid ) ;
-         if ( SVC_RELE( osp ) == 0 )
-            psi_remove( iter ) ;
+         psi_remove( iter ) ;
          dropped_services++ ;
       }
    }
