@@ -67,7 +67,7 @@ void strx_printv ( int *cnt, char *buf, int len, const char *fmt, va_list )
 typedef void *str_h ;
 
 char *new_string(const char *) ;
-str_h str_parse ( char *str, char *separ, int flags, int *errnop ) ;
+str_h str_parse ( char *str, const char *separ, int flags, int *errnop ) ;
 void str_endparse ( str_h handle ) ;
 char *str_component ( str_h handle ) ;
 

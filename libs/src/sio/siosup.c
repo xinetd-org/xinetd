@@ -24,7 +24,7 @@ int __sio_n_descriptors = N_SIO_DESCRIPTORS ;
 __sio_descriptor_t *__sio_descriptors = static_descriptor_array ;
 
 static void terminate(const char *s);
-static status_e setup_read_buffer( __sio_id_t *idp, unsigned buf_size );
+static sio_status_e setup_read_buffer( __sio_id_t *idp, unsigned buf_size );
 
 #ifndef MAP_FAILED
 #define MAP_FAILED ((void *)-1)
@@ -114,7 +114,7 @@ static mapd_s *mmap_descriptors = static_mapd_array ;
  *    file_offset, file_size, buffer_size
  *
  */
-static status_e try_memory_mapping( int fd, __sio_id_t *idp, const struct stat *stp )
+static sio_status_e try_memory_mapping( int fd, __sio_id_t *idp, const struct stat *stp )
 {
    int access_f ;
 
@@ -172,7 +172,7 @@ static status_e try_memory_mapping( int fd, __sio_id_t *idp, const struct stat *
  * Sets fields: start, end, nextb
  * Also sets the file pointer
  */
-static void buffer_setup( __sio_id_t *idp, int fd, const struct map_unit *mu_cur, struct map_unit *mu_next )
+static void buffer_setup( __sio_id_t *idp, int fd, const struct map_unit *mu_cur, const struct map_unit *mu_next )
 {
    off_t new_offset ;
 
@@ -190,7 +190,7 @@ static void buffer_setup( __sio_id_t *idp, int fd, const struct map_unit *mu_cur
 
 /*
  * Switch from memory mapping to buffered I/O
- * If any mapping has occured, then the current unit is
+ * If any mapping has occurred, then the current unit is
  * copied into the buffer that is allocated.
  * Any data in the next unit is ignored.
  * We rely on idp->buf to identify the current unit (so it
@@ -199,7 +199,7 @@ static void buffer_setup( __sio_id_t *idp, int fd, const struct map_unit *mu_cur
  * Sets fields:
  *         start, end, nextb
  */
-status_e __sio_switch( __sio_id_t *idp, int fd )
+sio_status_e __sio_switch( __sio_id_t *idp, int fd )
 {
    mapd_s *mdp = MDP( fd ) ;
    struct map_unit *mu_cur, *mu_next ;
@@ -312,7 +312,7 @@ static int initial_map( mapd_s *mdp, int fd )
  *      else
  *         unmap the unit
  */
-static status_e map_unit( mapd_s *mdp, int fd, struct map_unit *mup )
+static sio_status_e map_unit( mapd_s *mdp, int fd, struct map_unit *mup )
 {
    size_t bytes_left = mdp->file_size - mdp->file_offset ;
    size_t bytes_to_map = MIN( bytes_left, map_unit_size ) ;
@@ -343,7 +343,7 @@ static status_e map_unit( mapd_s *mdp, int fd, struct map_unit *mup )
 #endif /* HAVE_MMAP */
 
 
-static status_e setup_read_buffer( __sio_id_t *idp, unsigned buf_size )
+static sio_status_e setup_read_buffer( __sio_id_t *idp, unsigned buf_size )
 {
    char *buf ;
 
@@ -363,7 +363,7 @@ static status_e setup_read_buffer( __sio_id_t *idp, unsigned buf_size )
 }
 
 
-static status_e init_input_stream( __sio_id_t *idp, int fd, const struct stat *stp )
+static sio_status_e init_input_stream( __sio_id_t *idp, int fd, const struct stat *stp )
 {
    /*
     * First initialize the fields relevant to buffering: buf, buffer_size
@@ -391,7 +391,8 @@ static status_e init_input_stream( __sio_id_t *idp, int fd, const struct stat *s
 }
 
 
-static status_e init_output_stream( __sio_od_t *odp, int fd, struct stat *stp )
+static sio_status_e init_output_stream( __sio_od_t *odp, int fd, 
+	const struct stat *stp )
 {
    unsigned buf_size ;
    char *buf ;
@@ -484,7 +485,7 @@ int __sio_init( __sio_descriptor_t *dp, int fd, enum __sio_stream stream_type )
 
    if ( fstat( fd, &st ) == -1 )
       return( SIO_ERR ) ;
-
+   
    switch ( stream_type )
    {
       case __SIO_INPUT_STREAM:

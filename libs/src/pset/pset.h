@@ -33,7 +33,7 @@ typedef struct __pset *pset_h ;
 pset_h pset_create( unsigned alloc_start, unsigned alloc_step );
 void pset_destroy( pset_h pset );
 
-void pset_delete( pset_h pset, __pset_pointer ptr );
+void pset_delete( pset_h pset, const __pset_pointer ptr );
 __pset_pointer pset_add( pset_h pset, const __pset_pointer ptr );
 
 /* These 2 are in ops.c   */

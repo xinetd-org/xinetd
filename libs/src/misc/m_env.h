@@ -36,7 +36,7 @@ typedef struct __env *env_h ;
 #define ENV_EBADSTRING            3
 
 
-env_h env_create ( env_h ) ;
+env_h env_create ( const env_h ) ;
 void env_destroy ( env_h ) ;
 env_h env_make ( char **env_strings ) ;
 int env_addvar ( env_h, env_h from_env, char *var ) ;
