@@ -821,4 +821,6 @@ devel
 	Added better error handling to filelog.c. -Steve Grubb
 	Error messages now go to syslog instead of stderr in 
 		strparse.c. -Steve Grubb
-	Fixed memory leaks found with valgrind. -Steve Grubb	
+	Fixed memory leaks found with valgrind. -Steve Grubb
+	Correct problems with bind specified in the default 
+		section. -Steve Grubb
