@@ -230,18 +230,24 @@ void tabprint( int fd, int tab_level, const char *fmt, ...)
  */
 void drain( int sd )
 {
-   char buf[ 128 ] ; /* This size is arbitrarily chosen */
+   char buf[ 256 ] ; /* This size is arbitrarily chosen */
    char cc ;
+   int old_val ;
 
-   /* Put in non-blocking mode. We don't care if we leave socket in
-      non-blocking mode since it will always be closed immediately. */
+   /* Put in non-blocking mode so we don't hang. */
+   old_val = fcntl( sd, F_GETFL, FNDELAY );
    fcntl( sd, F_SETFL, FNDELAY );
+
    do {
-     cc = recv( sd, buf, sizeof( buf ), 0 ) ;
+      cc = recv( sd, buf, sizeof( buf ), 0 ) ;
    } while (cc > 0);
 
+   /* Restore the value since the connection will be freed, not closed. */
+   if (old_val >= 0)
+      fcntl( sd, F_SETFL, old_val );
+
    if ( debug.on )
-      msg( LOG_DEBUG, "drain", "Socket is empty" ) ;
+      msg( LOG_DEBUG, "drain", "Socket should be empty" ) ;
 }
 
 /*
