@@ -852,3 +852,5 @@ devel
 		list used hostnames with no dots in the name. -Steve Grubb
 	Numerous memory leaks when parsing errors occurred. -Steve Grubb
 	Remove the servers and xadmin internal services.
+	Update addrlist_match to use the address part of the IPv6 address
+		structure. -Christof Meerwald 

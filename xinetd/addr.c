@@ -95,7 +95,7 @@ static void xsetmask(char *mask, unsigned int bits, unsigned int len)
 
 
 /* This is a helper function to make address matching with mask
- * work ok w/ipv6 
+ * work ok w/ipv6. The len parameter is in bytes, not bits. 
  * Returns TRUE if addr1&mask1 == addr2
  */
 static bool_int xmatch(const char *addr1, const char *mask1, 
@@ -184,15 +184,17 @@ int addrlist_match( const pset_h addr_list,
                return (u+1) ;
          } 
 	 else if( (addr->sa_family == AF_INET6) && (cap->version == 6)) 
-	 {  
-	    if (IN6_ARE_ADDR_EQUAL(&SAIN6(addr)->sin6_addr, &cap->a.addr6))
-               return( u+1 );
-	    
-	    /* Next try the old way...FIXME: I don't think this works. SG */
-            if ( xmatch( addr->sa_data, 
+	 {
+            if (cap->addr_type == NUMERIC_ADDR) {
+	       if (IN6_ARE_ADDR_EQUAL(&SAIN6(addr)->sin6_addr, &cap->a.addr6))
+                  return( u+1 );
+            }
+            else {  /* NET_ADDR */ 
+               if ( xmatch( SAIN6(addr)->sin6_addr.s6_addr, 
 	                (char *)&(cap->m.mask6), 
 			(char *)&(cap->a.addr6), 16) == TRUE )
-               return( u+1 );
+                  return( u+1 );
+            }
          } 
 	 else if (((addr->sa_family) == AF_INET6) && (cap->version == 4))
 	 {  /* 
@@ -201,7 +203,7 @@ int addrlist_match( const pset_h addr_list,
              */
             if( IN6_IS_ADDR_V4MAPPED( &SAIN6(addr)->sin6_addr ) ) 
 	    {
-               uint32_t *tmp_addr = (unsigned *)&addr->sa_data[3];
+               uint32_t *tmp_addr = &SAIN6(addr)->sin6_addr.s6_addr32[3];
                if( (ntohl(*tmp_addr) & cap->m.mask)
 			       == ( cap->a.addr & cap->m.mask ) )
                   return (u+1);
