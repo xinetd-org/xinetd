@@ -42,6 +42,9 @@ static int RedirServerFd = -1;
  * longer available for reading or writing.
  * So, we send a HUP to the child process, wait(), then exit.
  */
+#ifdef __GNUC__
+__attribute__ ((noreturn))
+#endif
 static void redir_sigpipe( int signum ) 
 {
    Sclose(RedirServerFd);

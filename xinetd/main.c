@@ -26,6 +26,9 @@
 #include "sio.h"
 #include "sensor.h"
 
+#ifdef __GNUC__
+__attribute__ ((noreturn))
+#endif
 static void main_loop(void);
 static void find_bad_fd(void) ;
 
@@ -174,7 +177,6 @@ static void main_loop(void)
          msg( LOG_ERR, func, "%d descriptors still set", n_active ) ;
    }
 }
-
 
 
 /*

@@ -33,6 +33,9 @@ char *program_name ;
 int inetd_compat = 0 ;
 int dont_fork = 0;
 
+#ifdef __GNUC__
+__attribute__ ((noreturn))
+#endif
 static void usage(void);
 
 int opt_recognize( int argc, char *argv[] )

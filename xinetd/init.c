@@ -59,6 +59,9 @@ static void set_fd_limit(void);
  * This function is invoked when a system call fails during initialization.
  * A message is printed to stderr, and the program is terminated
  */
+#ifdef __GNUC__
+__attribute__ ((noreturn))
+#endif
 static void syscall_failed( const char *call )
 {
    char *err ;

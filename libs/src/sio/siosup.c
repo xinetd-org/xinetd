@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <syslog.h>
 
 #ifdef _APPLE_
 #undef HAVE_MMAP
@@ -23,7 +24,6 @@ static __sio_descriptor_t static_descriptor_array[ N_SIO_DESCRIPTORS ] ;
 int __sio_n_descriptors = N_SIO_DESCRIPTORS ;
 __sio_descriptor_t *__sio_descriptors = static_descriptor_array ;
 
-static void terminate(const char *s);
 static sio_status_e setup_read_buffer( __sio_id_t *idp, unsigned buf_size );
 
 #ifndef MAP_FAILED
@@ -891,23 +891,18 @@ int Smorefds(int fd)
    return( 0 ) ;
 }
 
-
-/*
- * Simple function that prints the string s at stderr and then calls
- * exit
- */
-static void terminate( const char *s )
-{
-   (void) write( 2, s, strlen( s ) ) ;
-   (void) abort() ;
-   exit( 1 ) ;            /* in case abort fails */
-}
-
 void sio_init( void )
 {
    memset( __sio_descriptors, 0, sizeof(__sio_descriptor_t) * N_SIO_DESCRIPTORS );
 #ifdef HAVE_MMAP
    memset( mmap_descriptors, 0, sizeof(mapd_s) * N_SIO_DESCRIPTORS );
 #endif
+}
+
+void terminate(const char *msg)
+{
+      syslog(LOG_CRIT, "%s", msg);
+      (void) abort() ;
+      _exit( 1 ) ;      /* NOT REACHED */
 }
 

@@ -669,6 +669,9 @@ static void tcpmux_handler( const struct server *serp )
 
 /* Do the redirection of a service */
 /* This function gets called from child.c after we have been forked */
+#ifdef __GNUC__
+__attribute__ ((noreturn))
+#endif
 static void xadmin_handler( const struct server *serp )
 {
    int  descriptor = SERVER_FD( serp );

@@ -46,7 +46,9 @@ static char *verify_line( char *line, unsigned local_port, unsigned remote_port 
 
 static sigjmp_buf env ;
 
-
+#ifdef __GNUC__
+__attribute__ ((noreturn))
+#endif
 static void sigalrm_handler(int signum)
 {
    siglongjmp( env, 1 ) ;

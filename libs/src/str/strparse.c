@@ -8,11 +8,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <syslog.h>
 
 #include "str.h"
 #include "strparse.h"
-
+#include "sio.h"
 
 static int str_errno ;
 
@@ -33,15 +32,6 @@ char *new_string( const char *s )
    else
       return 0;
 }
-
-
-static void terminate(const char *msg)
-{
-      syslog(LOG_CRIT, "%s", msg);
-      (void) abort() ;
-      _exit( 1 ) ;	/* NOT REACHED */
-}
-
 
 str_h str_parse( register char *str, const char *separ, int flags, int *errnop )
 {
