@@ -491,7 +491,8 @@ Takes a floating point value as the load at which the service will
 stop accepting connections.  For example: 2 or 2.5.  The service
 will stop accepting connections at this load.  This is the one minute
 load average.  This is an OS dependent feature, and currently only
-Linux and Solaris are supported for this.
+Linux, Solaris, and FreeBSD are supported for this.  This feature is
+only avaliable if xinetd was configured with the -with-loadavg option.
 .TP
 .B groups
 Takes either "yes" or "no".  If the groups attribute is set to
