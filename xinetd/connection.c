@@ -182,10 +182,10 @@ void conn_free( connection_s *cp, int release_mem )
 /* This returns a pointer to a local static stack variable.
  * The behavior is a remnant of inet_ntoa() behavior.
  */ 
-char *conn_addrstr( const connection_s *cp )
+const char *conn_addrstr( const connection_s *cp )
 {
    static char name[NI_MAXHOST];
-   int len = 0;
+   unsigned int len = 0;
 
    if( !M_IS_SET( (cp)->co_flags, COF_HAVE_ADDRESS ) )
       return "<no address>";

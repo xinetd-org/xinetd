@@ -950,7 +950,7 @@ static status_e parse_log_flags( pset_h values,
                                   enum assign_op op, 
                                   mask_t *maskp, 
                                   const struct name_value options[], 
-                                  char *name )
+                                  const char *name )
 {
    if ( op == SET_EQ )
    {

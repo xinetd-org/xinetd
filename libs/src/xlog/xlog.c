@@ -24,11 +24,11 @@ struct lookup_table
 
 static struct lookup_table ops_lookup_table[] =
 {
-	{ &__xlog_filelog_ops,				XLOG_FILELOG	},
+	{ &__xlog_filelog_ops,	XLOG_FILELOG },
 #ifndef NO_SYSLOG
-	{ &__xlog_syslog_ops,				XLOG_SYSLOG	},
+	{ &__xlog_syslog_ops,	XLOG_SYSLOG },
 #endif
-	{ NULL }
+	{ NULL,                 0           }
 } ;
 
 

@@ -471,7 +471,7 @@ static status_e service_attr_check( const struct service_config *scp )
    mask_t         necessary_and_specified ;
    mask_t         necessary_and_missing ;
    mask_t         must_specify = NECESSARY_ATTRS ; /* socket_type & wait */
-   int            attr_id ;
+   unsigned int   attr_id ;
    const char    *attr_name ;
    const char    *func = "service_attr_check" ;
 

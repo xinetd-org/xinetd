@@ -23,7 +23,7 @@ struct syslog_parms
    int 		slp_n_xlogs ;           /* # of xlogs using syslog */
    int 		slp_logopts ;           /* used at openlog */
    int 		slp_facility ;
-   char		*slp_ident ;		/* used at openlog */
+   const char  *slp_ident ;		/* used at openlog */
    /* bool_int slp_ident_is_malloced ; */
 } ;
 
