@@ -53,8 +53,10 @@ static char rcsid[] = "$OpenBSD: inet_ntop.c,v 1.1 1997/03/13 19:07:32 downsj Ex
  * sizeof(int) < 4.  sizeof(int) > 4 is fine; all the world's not a VAX.
  */
 
-static const char *inet_ntop4 __P((const u_char *src, char *dst, size_t size));
-static const char *inet_ntop6 __P((const u_char *src, char *dst, size_t size));
+static const char *inet_ntop4 (const u_char *src, char *dst, size_t size);
+#ifdef AF_INET6
+static const char *inet_ntop6 (const u_char *src, char *dst, size_t size);
+#endif /* AF_INET6 */
 
 /* char *
  * inet_ntop(af, src, dst, size)
@@ -74,8 +76,10 @@ inet_ntop(af, src, dst, size)
 	switch (af) {
 	case AF_INET:
 		return (inet_ntop4(src, dst, size));
+#ifdef AF_INET6
 	case AF_INET6:
 		return (inet_ntop6(src, dst, size));
+#endif /* AF_INET6 */
 	default:
 		errno = EAFNOSUPPORT;
 		return (NULL);
@@ -117,6 +121,7 @@ inet_ntop4(src, dst, size)
  * author:
  *	Paul Vixie, 1996.
  */
+#ifdef AF_INET6
 static const char *
 inet_ntop6(src, dst, size)
 	const u_char *src;
@@ -206,5 +211,6 @@ inet_ntop6(src, dst, size)
 	strcpy(dst, tmp);
 	return (dst);
 }
+#endif /* AF_INET6 */
 
 #endif /* !HAVE_INET_NTOP */
