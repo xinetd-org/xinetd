@@ -64,9 +64,10 @@ void redir_handler( struct server *serp )
    const char *func = "redir_handler";
    union xsockaddr serveraddr ;
 
-   if( signal(SIGPIPE, redir_sigpipe) == SIG_ERR ) {
+   if( signal(SIGPIPE, redir_sigpipe) == SIG_ERR ) 
       msg(LOG_ERR, func, "unable to setup signal handler");
-   }
+
+   close_all_svc_descriptors();
 
    /* If it's a tcp service we are redirecting */
    if( scp->sc_protocol.value == IPPROTO_TCP )
