@@ -240,8 +240,8 @@ access_e access_control( struct service *sp,
       fromhost(&req);
       if (!hosts_access(&req)) {
          msg(deny_severity, func, 
-            "libwrap refused connection to %s from %s", 
-            SC_ID(scp), conn_addrstr(cp));
+            "libwrap refused connection to %s (libwrap=%s) from %s",
+            SC_ID(scp), server, conn_addrstr(cp));
          return(AC_LIBWRAP);
       }
 #endif
