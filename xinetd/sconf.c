@@ -37,7 +37,7 @@
  * with 'name'; the rest of the fields are set to 0 which gives them
  * their default values.
  */
-struct service_config *sc_alloc( char *name )
+struct service_config *sc_alloc( const char *name )
 {
    struct service_config *scp ;
    const char *func = "sc_alloc" ;
@@ -125,27 +125,15 @@ struct service_config *sc_make_special( const char *service_name,
                                         const builtin_s *bp, 
                                         int instances )
 {
-   char *name ;
    struct service_config *scp ;
    const char *func = "sc_make" ;
 
-   name = new_string( service_name ) ;
-   if ( name == NULL )
-   {
-      out_of_memory( func ) ;
+   if ( ( scp = sc_alloc( service_name ) ) == NULL )
       return( NULL ) ;
-   }
-
-   if ( ( scp = sc_alloc( name ) ) == NULL )
-   {
-      free( name ) ;
-      return( NULL ) ;
-   }
 
    scp->sc_id = new_string( scp->sc_name ) ;
    if ( scp->sc_id == NULL )
    {
-      free( name ) ;
       out_of_memory( func ) ;
       return( NULL ) ;
    }

@@ -265,7 +265,7 @@ struct service_config
 #define SC_INTERNAL( scp, serp )  BUILTIN_INVOKE( (scp)->sc_builtin, serp )
 #define SC_MAKE_EXTERNAL( scp )   M_CLEAR( (scp)->sc_type, ST_INTERNAL )
 
-struct service_config *sc_alloc(char *name);
+struct service_config *sc_alloc(const char *name);
 void sc_free(struct service_config *scp);
 struct service_config *sc_make_special(const char *service_name,const builtin_s *bp,int instances);
 void sc_dump(struct service_config *scp,int fd,int tab_level,bool_int is_defaults);
