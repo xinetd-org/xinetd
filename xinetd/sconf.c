@@ -72,6 +72,7 @@ void sc_free( struct service_config *scp )
    COND_FREE( scp->sc_server ) ;
    COND_FREE( (char *)scp->sc_bind_addr ) ;
    COND_FREE( (char *)scp->sc_orig_bind_addr ) ;
+   COND_FREE( (char *)scp->sc_banner ) ;
    if ( scp->sc_server_argv )
    {
       char **pp ;

@@ -558,12 +558,14 @@ void svc_request( struct service *sp )
 
    if ( ret_code != OK ) 
    {
-      if ( SVC_LOGS_USERID_ON_FAILURE( sp ) )
+      if ( SVC_LOGS_USERID_ON_FAILURE( sp ) ) {
          if( spec_service_handler( LOG_SERVICE( ps ), cp ) == FAILED ) {
             conn_free( cp, 1 );
             return;
          }
+      }
       CONN_CLOSE(cp);
+      free(cp);
    }
 }
 
