@@ -1,0 +1,67 @@
+# This is the configuration for the udp/dgram time service. 
+
+service time
+{
+# This is for quick on or off of the service
+	disable		= yes
+
+# The next attributes are mandatory for all services
+	id		= time-dgram
+	type		= INTERNAL
+	wait		= yes
+	socket_type	= dgram
+#	protocol	=  socket type is usually enough
+
+# External services must fill out the following
+#	user		=
+#	group		=
+#	server		=
+#	server_args	=
+
+# External services not listed in /etc/services must fill out the next one
+#	port		=
+
+# RPC based services must fill out these
+#	rpc_version	=
+#	rpc_number	=
+
+# Logging options
+#	log_type	=
+#	log_on_success	=
+#	log_on_failure	=
+
+# Networking options
+#	flags		=
+#	bind		=
+#	redirect	=
+#	v6only		= 
+
+# Access restrictions
+#	only_from	=
+#	no_access	=
+#	access_times	=
+#	cps		= 50 10
+#	instances	= UNLIMITED
+#	per_source	= UNLIMITED
+#	max_load	= 0
+#	deny_time	= 120
+#	mdns		= yes 
+
+# Environmental options
+#	env		=
+#	passenv		=
+#	nice		= 0
+#	umask		= 022
+#	groups		= yes
+#	rlimit_as	=
+#	rlimit_cpu	=
+#	rlimit_data	=
+#	rlimit_rss	=
+#	rlimit_stack	=
+
+# Banner options. (Banners aren't normally used)
+#	banner		=
+#	banner_success	=
+#	banner_fail	=
+}
+
