@@ -70,9 +70,8 @@
 #define LO_DURATION  3
 #define LO_ATTEMPT   4
 #define LO_EXIT      5
-#define LO_RECORD    6
-#define LO_PID       7
-#define LO_USERID    8
+#define LO_PID       6
+#define LO_USERID    7
 
 struct rpc_data
 {
@@ -237,7 +236,6 @@ struct service_config
 #define SC_LOGS_ON_EXIT( scp )  \
    ( M_IS_SET( (scp)->sc_log_on_success, LO_DURATION ) || \
       M_IS_SET( (scp)->sc_log_on_success, LO_EXIT ) )
-#define SC_RECORDS( scp )    M_IS_SET( (scp)->sc_log_on_failure, LO_RECORD ) 
 #define SC_LOGS_PID( scp )   M_IS_SET( (scp)->sc_log_on_success, LO_PID )
 #define SC_LOGS_EXITS( scp ) M_IS_SET( (scp)->sc_log_on_success, LO_EXIT )
 #define SC_LOGS_DURATION( scp ) \
