@@ -60,10 +60,10 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
 {
    static char         buf[ IBUFSIZE ] ;
    int                 cc ;
-   union xsockaddr     sin_local, sin_remote, sin_contact;
+   union xsockaddr     sin_local, sin_remote, sin_contact, sin_bind;
    volatile unsigned   local_port;
    volatile unsigned   remote_port;
-   int                 sd ;
+   int                 sd, ret_val ;
    int                 sin_len ;
    char               *p ;
    const char         *func = "log_remote_user" ;
@@ -97,28 +97,38 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    CLEAR( sin_contact );
    sin_remote = *CONN_XADDRESS( SERVER_CONNECTION( serp ) ) ;
    sin_contact = sin_remote;
+   memcpy( &sin_bind, &sin_local, sizeof(sin_bind) ) ;
    local_port = 0;
    remote_port = 0;
    if( sin_remote.sa.sa_family == AF_INET ) {
       local_port = ntohs( sin_local.sa_in6.sin6_port ) ;
       remote_port = ntohs( sin_remote.sa_in6.sin6_port ) ;
-
       sin_contact.sa_in6.sin6_port = htons( IDENTITY_SERVICE_PORT ) ;
+      sin_bind.sa_in.sin_port = 0 ;
    } else if( sin_remote.sa.sa_family == AF_INET6 ) {
       local_port = ntohs( sin_local.sa_in.sin_port ) ;
       remote_port = ntohs( sin_remote.sa_in.sin_port ) ;
       sin_contact.sa_in.sin_port = htons( IDENTITY_SERVICE_PORT ) ;
+      sin_bind.sa_in6.sin6_port = 0 ;
    }
 
    /*
-    * Create a socket and set the close-on-exec flag on the descriptor.
-    * We set the flag in case we are called as part of a successful
-    * attempt to start a server (i.e. execve will follow).
+    * Create a socket, bind it, and set the close-on-exec flag on the
+    * descriptor. We set the flag in case we are called as part of a 
+    * successful attempt to start a server (i.e. execve will follow). 
+    * The socket must be bound to the receiving address or ident might 
+    * fail for multi-homed hosts.
     */
    sd = socket( sin_remote.sa.sa_family, SOCK_STREAM, 0 ) ;
    if ( sd == -1 )
    {
       msg( LOG_ERR, func, "socket creation: %m" ) ;
+      return( IDR_ERROR ) ;
+   }
+   if ( bind(sid, &sin_bind.sa, sizeof(sin_bind.sa)) == -1 )
+   { 
+      msg( LOG_ERR, func, "socket bind: %m" ) ;
+      (void) close( sd ) ;
       return( IDR_ERROR ) ;
    }
    if ( fcntl( sd, F_SETFD, FD_CLOEXEC ) == -1 )
