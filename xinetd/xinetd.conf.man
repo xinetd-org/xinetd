@@ -494,11 +494,13 @@ OR'd with 022.  This is the umask that will be inherited by all
 child processes if the umask option is not used.
 .TP
 .B enabled
-Takes a list of service names to enable.  This will enable only the
+Takes a list of service ID's to enable.  This will enable only the
 services listed as arguments to this attribute; the rest will be
-disabled.  Note that the service "disable" attribute and "DISABLE"
-flag can prevent a service from being enabled despite being listed
-in this attribute.
+disabled.  If you have 2 ftp services, you will need to list both of
+their ID's and not just ftp. (ftp is the service name, not the ID. It
+might accidentally be the ID, but you better check.) Note that the 
+service "disable" attribute and "DISABLE" flag can prevent a service 
+from being enabled despite being listed in this attribute. 
 .TP
 .B include
 Takes a filename in the form of "include /etc/xinetd/service".
