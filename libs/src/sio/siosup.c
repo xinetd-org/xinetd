@@ -760,13 +760,23 @@ int __sio_more( __sio_id_t *idp, int fd )
 
 
 /*
- * Finalize a buffer by unmapping the file or freeing the malloc'ed memory
+ * Finalize a buffer by unmapping the file or freeing the malloc'ed memory.
+ * This function is only called by Sclose. We always free memory even if
+ * SIO_ERR is returned as long as the descriptor was initialized.
  */
 int Sdone( int fd )
 {
-   __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+   __sio_descriptor_t *dp ;
+   int ret_val = 0;
 
-   if ( fd >= __sio_n_descriptors || fd < __sio_n_descriptors || ! DESCRIPTOR_INITIALIZED( dp ) )
+   if ( fd < 0 || fd >= __sio_n_descriptors )
+   {
+      errno = EBADF ;
+      return( SIO_ERR ) ;
+   }
+
+   dp = &__sio_descriptors[ fd ] ;
+   if ( ! DESCRIPTOR_INITIALIZED( dp ) )
    {
       errno = EBADF ;
       return( SIO_ERR ) ;
@@ -803,7 +813,7 @@ int Sdone( int fd )
             __sio_od_t *odp = ODP( dp ) ;
 
             if ( Sflush( fd ) == SIO_ERR )
-               return( SIO_ERR ) ;
+               ret_val = SIO_ERR;
             free( odp->buf ) ;
             odp->nextb = odp->buf_end = NULL ;
          }
@@ -815,7 +825,7 @@ int Sdone( int fd )
 
    memset( dp, 0, sizeof(__sio_descriptor_t) );
    dp->initialized = FALSE ;
-   return( 0 ) ;
+   return ret_val;
 }
 
 
