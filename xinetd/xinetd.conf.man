@@ -176,11 +176,16 @@ will be used.
 .TP
 .B wait
 This attribute determines if the service is single-threaded or
-multi-threaded. If its value is \fIyes\fP the service is single-threaded;
-this means that \fBxinetd\fP will start the server and then it will stop 
-handling requests for the service until the server dies.
-If the attribute value is \fIno\fP, the service is multi-threaded and
-\fBxinetd\fP will keep handling new service requests.
+multi-threaded and whether or not xinetd accepts the connection or the server
+program accepts the connection. If its value is \fIyes\fP, the service is 
+single-threaded; this means that \fBxinetd\fP will start the server and then 
+it will stop handling requests for the service until the server dies and that
+the server software will accept the connection. If the attribute value is 
+\fIno\fP, the service is multi-threaded and \fBxinetd\fP will keep handling 
+new service requests and xinetd will accept the connection. It should be noted 
+that udp/dgram services normally expect the value to be yes since udp is not
+connection oriented, while tcp/stream servers normally expect the value to be
+no.
 .TP
 .B user
 determines the uid for the server process. The user name must exist in
