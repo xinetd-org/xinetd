@@ -242,7 +242,7 @@ void addrlist_dump( const pset_h addr_list, int fd )
          inet_ntop(AF_INET, &addr, addrstring, sizeof(addrstring));
          inet_ntop(AF_INET, &mask, maskstring, sizeof(maskstring));
       }
-      if( cap->version == 6 ) {
+      else if( cap->version == 6 ) {
          inet_ntop(AF_INET6, &cap->a.addr6, addrstring, sizeof(addrstring));
          inet_ntop(AF_INET6, &cap->m.mask6, maskstring, sizeof(maskstring));
       }
@@ -604,6 +604,7 @@ static result_e host_addr( const char *str_addr, status_e (*op)(), pset_h addr_l
    strncpy(ca.name, str_addr, sizeof(ca.name)-1) ;
    ca.name[sizeof(ca.name)-1] = '\0';
    ca.addr_type = HOST_ADDR ;
+   ca.version = 0xFF;
    freeaddrinfo(res);
 
    if ( (*op)( addr_list, &ca ) == FAILED ) 
