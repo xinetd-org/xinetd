@@ -187,10 +187,12 @@ static status_e service_fill( struct service_config *scp,
       scp->sc_time_reenable = 0;
    }
 
+#ifdef HAVE_LOADAVG
    if ( ! SC_SPECIFIED( scp, A_MAX_LOAD ) ) {
       scp->sc_max_load = SC_SPECIFIED( def, A_MAX_LOAD ) ? def->sc_max_load : 0;
       SC_SPECIFY( scp, A_MAX_LOAD ) ;
    }
+#endif
 
    /* 
     * we need to check a few things. A_BIND can be specified & sc_bind_addr
