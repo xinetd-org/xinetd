@@ -831,5 +831,7 @@ devel
 	Make ident protocol work properly for multi-homed hosts. -Alan Sundell
 	Code cleanup for const warnings. -Steve Grubb
 	Make redirect protocol independent. -Cougar
-	make reconfig iterate over all services. Some may be in not started
+	Make reconfig iterate over all services. Some may be in not started
 		state and were being missed. -Steve Grubb
+	Make redirected, forking builtins, & tcpmux close all listening
+		descriptors so reconfig works. -Jay Fenlason

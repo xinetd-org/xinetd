@@ -880,3 +880,26 @@ void svc_postmortem( struct service *sp, struct server *serp )
    }
 }
 
+/*
+ * This function closes all service descriptors. This should be called 
+ * for all child processes that fork, but do not exec. This includes
+ * redirect, builtins, and tcpmux. The close on exec flag takes care of
+ * child processes that call exec. Without calling this, the listening 
+ * fd's are not closed and reconfig will fail.
+ */
+void close_all_svc_descriptors(void)
+{
+   psi_h                     iter ;
+   struct service            *osp ;
+
+   /* Have to close all other descriptors here */
+   iter = psi_create( SERVICES( ps ) ) ;
+   if ( iter == NULL )
+        out_of_memory( "close_all_svc_descriptors" ) ;
+
+   for ( osp = SP( psi_start( iter ) ) ; osp ; osp = SP( psi_next( iter ) ) )
+        (void) Sclose( SVC_FD( osp ) ) ;
+  
+   psi_destroy( iter ) ;
+}
+

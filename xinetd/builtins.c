@@ -64,8 +64,8 @@ static int bad_port_check(const union xsockaddr *, const char *);
  *     svc_handle -- aka svc_handler_func -- aka svc_generic_handler   service.c
  *      server_run                      server.c
  *       server_internal               server.c
- *      sc_internal               service.c
- *       builtin_invoke               sc_conf.c
+ *      SC_INTERNAL               service.h
+ *       BUILTIN_INVOKE               sc_conf.h
  *        sc_builtin -- index into builtin_services   builtins.c
  */
 
@@ -144,6 +144,8 @@ static void stream_echo( const struct server *serp )
       if ( descriptor == -1 ) return;
    }
 
+   close_all_svc_descriptors();
+
    for ( ;; )
    {
       cc = read( descriptor, buf, sizeof( buf ) ) ;
@@ -214,6 +216,9 @@ static void stream_discard( const struct server *serp )
       descriptor = accept(descriptor, NULL, NULL);
       if ( descriptor == -1 ) return;
    }
+
+   close_all_svc_descriptors();
+
    for ( ;; )
    {
       cc = read( descriptor, buf, sizeof( buf ) ) ;
@@ -443,6 +448,8 @@ static void stream_chargen( const struct server *serp )
    }
 
    (void) shutdown( descriptor, 0 ) ;
+   close_all_svc_descriptors();
+
    for ( ;; )
    {
       if ( generate_line( line_buf, sizeof( line_buf ) ) == NULL )
@@ -495,6 +502,8 @@ static void stream_servers( const struct server *this_serp )
    unsigned  u ;
    int       descriptor = SERVER_FD( this_serp ) ;
 
+   close_all_svc_descriptors();
+
    for ( u = 0 ; u < pset_count( SERVERS( ps ) ) ; u++ )
    {
       const struct server *serp = SERP( pset_pointer( SERVERS( ps ), u ) ) ;
@@ -515,6 +524,8 @@ static void stream_services( const struct server *serp )
 {
    unsigned u ;
    int      fd = SERVER_FD( serp ) ;
+
+   close_all_svc_descriptors();
 
    for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )
    {
@@ -550,6 +561,8 @@ static void tcpmux_handler( const struct server *serp )
    struct    service *sp = NULL;
    struct    server server, *nserp;
    struct    service_config *scp = NULL;
+
+   close_all_svc_descriptors();
 
    /*  Read in the name of the service in the format "svc_name\r\n".
     *
@@ -662,6 +675,8 @@ static void xadmin_handler( const struct server *serp )
    unsigned  u = 0;
    const char *func = "xadmin_handler";
    
+   close_all_svc_descriptors();
+
    while(1)
    {
       Sprint(descriptor, "> ");
@@ -697,8 +712,10 @@ static void xadmin_handler( const struct server *serp )
       if( strncmp(cmd, "help", (red<4)?red:4) == 0 ) 
       {
          Sprint(descriptor, "xinetd admin help:\n");
-         Sprint(descriptor, "show run  :   shows information about running services\n");
-         Sprint(descriptor, "show avail:   shows what services are currently available\n");
+         Sprint(descriptor, 
+                 "show run  :   shows information about running services\n");
+         Sprint(descriptor, 
+                 "show avail:   shows what services are currently available\n");
          Sprint(descriptor, "bye, exit :   exits the admin shell\n");
       }
 
@@ -721,7 +738,7 @@ static void xadmin_handler( const struct server *serp )
             Sprint(descriptor, "service  run retry attempts descriptor\n");
             for( u = 0 ; u < pset_count( SERVERS( ps ) ) ; u++ )
             {
-               server_dump( SERP( pset_pointer( SERVERS(ps), u ) ), descriptor );
+               server_dump( SERP( pset_pointer( SERVERS(ps), u )), descriptor );
   
 #ifdef FOO
                Sprint(descriptor, "%-10s %-3d %-5d %-7d %-5d\n", 
@@ -734,7 +751,8 @@ static void xadmin_handler( const struct server *serp )
          {
       
             Sprint(descriptor, "Available services:\n");
-            Sprint(descriptor, "service    port   bound address    uid redir addr redir port\n");
+            Sprint(descriptor, 
+              "service    port   bound address    uid redir addr redir port\n");
 
             for( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )
             {
@@ -772,7 +790,8 @@ static void xadmin_handler( const struct server *serp )
                   Sprint(descriptor, "%-16s ", bname );
                   Sprint(descriptor, "%-6d ", SVC_CONF(sp)->sc_uid );
                   Sprint(descriptor, "%-16s ", rname );
-                  Sprint(descriptor, "%-6d\n", xaddrport(SVC_CONF(sp)->sc_redir_addr) );
+                  Sprint(descriptor, "%-6d\n", 
+                                      xaddrport(SVC_CONF(sp)->sc_redir_addr) );
                }
                else
                {

@@ -44,8 +44,8 @@ struct service
 {
    state_e                svc_state ;
    int                    svc_ref_count ;   /* # of pters to this struct */
-   struct service_config *svc_conf ;   /* service configuration */
-   int                    svc_fd ;
+   struct service_config *svc_conf ;    /* service configuration */
+   int                    svc_fd ;	/* The Listening FD for the service */
    unsigned               svc_running_servers ;
    unsigned               svc_retry_servers ;
    unsigned               svc_attempts ; /* # of attempts to start server */
@@ -148,6 +148,6 @@ status_e svc_generic_handler( struct service *sp, connection_s *cp );
 status_e svc_parent_access_control(struct service *sp,connection_s *cp);
 status_e svc_child_access_control(struct service *sp,connection_s *cp);
 void svc_postmortem(struct service *sp,struct server *serp);
-
+void close_all_svc_descriptors(void);
 
 #endif   /* SERVICE_H */
