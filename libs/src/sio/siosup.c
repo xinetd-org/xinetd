@@ -889,11 +889,6 @@ int Smorefds(int fd)
    return( 0 ) ;
 }
 
-void sio_init( void )
-{
-   return;
-}
-
 void terminate(const char *msg)
 {
       syslog(LOG_CRIT, "%s", msg);

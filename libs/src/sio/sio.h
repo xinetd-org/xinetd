@@ -188,7 +188,6 @@ int Sbuftype ( int fd, int type ) ;
 int Smorefds ( int ) ;
 int __sio_converter( __sio_od_t *, int , const char *, va_list );
 int sio_setup(int fd, __sio_descriptor_t **dp, unsigned int type );
-void sio_init( void );
 
 #ifdef __GNUC__
 __attribute__ ((noreturn))

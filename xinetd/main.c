@@ -23,7 +23,6 @@
 #include "service.h"
 #include "sconf.h"
 #include "xtimer.h"
-#include "sio.h"
 #include "sensor.h"
 
 #ifdef __GNUC__
@@ -47,7 +46,6 @@ int main( int argc, char *argv[] )
 {
    const char            *func = "main" ;
 
-   sio_init();
    init_daemon( argc, argv ) ;
    init_services() ;
 
