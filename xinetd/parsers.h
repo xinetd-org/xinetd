@@ -66,5 +66,6 @@ status_e rlim_stack_parser(pset_h, struct service_config *, enum assign_op) ;
 status_e v6only_parser(pset_h, struct service_config *, enum assign_op);
 status_e deny_time_parser(pset_h, struct service_config *, enum assign_op) ;
 status_e umask_parser(pset_h, struct service_config *, enum assign_op) ;
+status_e mdns_parser(pset_h, struct service_config *, enum assign_op) ;
 
 #endif

@@ -166,6 +166,12 @@ static status_e service_fill( struct service_config *scp,
       SC_SPECIFY( scp, A_PER_SOURCE ) ;
    }
 
+   if ( ! SC_SPECIFIED( scp, A_MDNS ) )
+   {
+      scp->sc_mdns = SC_SPECIFIED( def, A_MDNS ) ? def->sc_mdns : YES;
+      SC_SPECIFY( scp, A_MDNS );
+   }
+
    if ( ! SC_SPECIFIED( scp, A_GROUPS ) )
    {
       scp->sc_groups = SC_SPECIFIED( def, A_GROUPS ) ? def->sc_groups : NO;

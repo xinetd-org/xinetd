@@ -155,6 +155,7 @@ struct service_config
 #ifdef HAVE_DNSREGISTRATION
    dns_service_discovery_ref sc_mdnscon;
 #endif
+   boolean_e            sc_mdns;
 } ;
 
 #define SCP( p ) ((struct service_config *)(p))

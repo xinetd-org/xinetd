@@ -59,12 +59,13 @@
 #define A_UMASK            41
 #define A_ENABLED          42
 #define A_DISABLED         43
+#define A_MDNS             44
 
 /*
  * SERVICE_ATTRIBUTES is the number of service attributes and also
  * the number from which defaults-only attributes start.
  */
-#define SERVICE_ATTRIBUTES      ( A_ENABLED + 1 )
+#define SERVICE_ATTRIBUTES      ( A_MDNS + 1 )
 
 /*
  * Mask of attributes that must be specified.

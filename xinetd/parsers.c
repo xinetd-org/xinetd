@@ -250,6 +250,24 @@ status_e wait_parser( pset_h values,
    return( OK ) ;
 }
 
+status_e mdns_parser( pset_h values, 
+                      struct service_config *scp, 
+                      enum assign_op op )
+{
+   char *val = (char *) pset_pointer( values, 0 ) ;
+   const char *func = "mdns_parser" ;
+
+   if ( EQ( val, "yes" ) )
+      scp->sc_wait = YES ;
+   else if ( EQ( val, "no" ) )
+      scp->sc_wait = NO ;
+   else
+   {
+      parsemsg( LOG_ERR, func, "Bad value for wait: %s", val ) ;
+      return( FAILED );
+   }
+   return( OK ) ;
+}
 
 status_e user_parser( pset_h values, 
                       struct service_config *scp, 
