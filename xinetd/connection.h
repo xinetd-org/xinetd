@@ -39,10 +39,9 @@
 
 #define MAX_ALTERNATIVES            3
 
-typedef enum { CONN_CLOSED = 0, CONN_OPEN } conn_state_e ;
-
+/* Connection flags */
 #define COF_HAVE_ADDRESS            1
-#define COF_NEW_DESCRIPTOR          3
+#define COF_NEW_DESCRIPTOR          2
 
 struct connection
 {
@@ -55,7 +54,6 @@ struct connection
 #define CONN_CLOSE( cp ) { Sclose( (cp)->co_descriptor ); (cp)->co_descriptor = -1; }
 
 #define COP( p )       ((connection_s *)(p))
-
 #define CONN_NULL      COP( NULL )
 
 /*
@@ -63,18 +61,14 @@ struct connection
  */
 #define CONN_DESCRIPTOR( cp )       (cp)->co_descriptor
 #define CONN_SERVICE( cp )          (cp)->co_sp
-
 #define CONN_SET_FLAG( cp, flag )   M_SET( (cp)->co_flags, flag )
+#define CONN_SET_DESCRIPTOR( cp, fd )   (cp)->co_descriptor = (fd)
 
 #define CONN_SETADDR( cp, sinp )               \
    {                        \
       CONN_SET_FLAG( cp, COF_HAVE_ADDRESS ) ;         \
       memcpy(((cp)->co_remote_address.pad), sinp, sizeof(*sinp) ); \
    }
-/*
-         (cp)->co_remote_address = *(sinp) ;         
-*/
-#define CONN_SET_DESCRIPTOR( cp, fd )   (cp)->co_descriptor = (fd)
 
 #define CONN_ADDRESS( cp )                     \
    (                           \
