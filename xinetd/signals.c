@@ -354,23 +354,29 @@ static void mem_fault_handler( int sig, siginfo_t * siginfo, void *context )
       switch (sig) {
          case SIGSEGV:
             switch (siginfo->si_code) {
+#ifdef SEGV_MAPERR
                case SEGV_MAPERR:
                   msg(LOG_CRIT, func, "address is not mapped for object");
                   break;
+#endif
+#ifdef SEGV_ACCERR
                case SEGV_ACCERR:
                   msg(LOG_CRIT, func, 
 			     "invalid permissions for mapped object");
                   break;
+#endif
                default:
-                  msg(LOG_CRIT, func, "unknown fault code");
+                  msg(LOG_CRIT, func, "unknown fault code %d",siginfo->si_code);
             }
             break;
 
          case SIGBUS:
             switch(siginfo->si_code) {
+#ifdef BUS_ADRALN
                case BUS_ADRALN:
                   msg(LOG_CRIT, func, "invalid address alignment");
                   break;
+#endif
 #ifdef BUS_ADRERR
                case BUS_ADRERR:
                   msg(LOG_CRIT, func, "nonexistent physical address");
@@ -382,11 +388,10 @@ static void mem_fault_handler( int sig, siginfo_t * siginfo, void *context )
                   break;
 #endif
                default:
-                  msg(LOG_CRIT, func, "unknown fault code");
+                  msg(LOG_CRIT, func, "unknown fault code %d",siginfo->si_code);
             }
             break;
       }
-           	   
    }
 
    /* Now call old function for handling */
