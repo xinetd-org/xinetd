@@ -139,7 +139,7 @@ void handle_includedir(const char *service_name, struct configuration *confp)
          continue;
       }
       parsemsg( LOG_DEBUG,func,"Reading included configuration file: %s",filename);
-      parse_conf_file(incfd, confp);
+      parse_conf_file(incfd, confp, filename);
 
       /* 
        * parse_conf_file eventually calls Srdline, try Sclosing to 

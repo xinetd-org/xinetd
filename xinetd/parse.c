@@ -131,7 +131,9 @@ static const struct attribute default_attributes[] =
 #endif
    { "v6only",          A_V6ONLY,         1,    v6only_parser         },
    { "umask",           A_UMASK,          1,    umask_parser          },
+#ifdef HAVE_DNSREGISTRATION
    { "mdns",            A_MDNS,           1,    mdns_parser           },
+#endif
    { NULL,              A_NONE,           0,    NULL                  }
 } ;
 
@@ -140,6 +142,7 @@ static const struct attribute default_attributes[] =
 #define FIXED_VALUES( ap )         ( (ap)->a_nvalues > 0 )
 
 int line_count ;
+const char *current_file = NULL;
 
 static void get_service_entry( int fd, pset_h, const char *, 
 	struct service_config * );
@@ -193,7 +196,7 @@ void parse_end(void)
  * Read the configuration file (descriptor fd) and place all
  * services found there in the configuration.
  */
-void parse_conf_file( int fd, struct configuration *confp )
+void parse_conf_file( int fd, struct configuration *confp, const char *filename)
 {
    pset_h                   sconfs       = CNF_SERVICE_CONFS( confp ) ;
    struct service_config   *default_config   = CNF_DEFAULTS( confp ) ;
@@ -203,6 +206,7 @@ void parse_conf_file( int fd, struct configuration *confp )
    int                      incfd;
 
    line_count = 0 ;
+   current_file = filename;
    CLEAR( default_default_config ) ;
 
    for ( ;; )
@@ -218,29 +222,39 @@ void parse_conf_file( int fd, struct configuration *confp )
       switch ( entry_type )
       {
       case INCLUDE_ENTRY:
-         incfd = open(service_name, O_RDONLY);
-         if( incfd < 0 ) {
-            parsemsg( LOG_ERR, func, 
-               "Unable to open included configuration file: %s", 
-               service_name);
-            break;
+         {
+            int saved_line_count = line_count;
+            incfd = open(service_name, O_RDONLY);
+            if( incfd < 0 ) {
+               parsemsg( LOG_ERR, func, 
+                  "Unable to open included configuration file: %s", 
+                  service_name);
+               break;
+            }
+            parsemsg( LOG_DEBUG,func,
+               "Reading included configuration file: %s",service_name);
+            parse_conf_file(incfd, confp, service_name);
+	    /*
+	     * parse_conf_file eventually calls Srdline, try Sclosing it
+	     * to unmmap memory.
+	     */
+            Sclose(incfd);
+            /* Restore since we've returned from included file */
+            current_file = filename;
+            line_count = saved_line_count;
          }
-         parsemsg( LOG_DEBUG,func,
-            "Reading included configuration file: %s",service_name);
-         parse_conf_file(incfd, confp);
-	 /*
-	  * parse_conf_file eventually calls Srdline, try Sclosing it
-	  * to unmmap memory.
-	  */
-         Sclose(incfd);
          break;
       case INCLUDEDIR_ENTRY:
-         handle_includedir(service_name, confp);
+         {
+            int saved_line_count = line_count;
+            handle_includedir(service_name, confp);
+            current_file = filename;
+            line_count = saved_line_count;
+         }
          break;
       case SERVICE_ENTRY:
          get_service_entry( fd, sconfs, service_name, default_config ) ; 
          break ;
-
       case DEFAULTS_ENTRY:
          if ( found_defaults == YES )
          {

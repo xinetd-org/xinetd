@@ -216,7 +216,8 @@ void parsemsg( int msg_level, const char *func, const char *fmt, ...)
    len = prepare_buffer( msg_level, func, buf, sizeof( buf ), fmt, ap ) ;
    va_end( ap ) ;
 
-   cc = strx_nprint( &buf[ len ], sizeof(buf)-len, " [line=%d]", line_count ) ;
+   cc = strx_nprint( &buf[ len ], sizeof(buf)-len, 
+                     " [file=%s] [line=%d]", current_file, line_count ) ;
    len += cc ;
 
    xlog_write( ps.rws.program_log, buf, len, 

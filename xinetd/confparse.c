@@ -38,6 +38,7 @@
 #include "sconf.h"
 #include "sensor.h"
 #include "inet.h"
+#include "main.h"
 
 extern int inetd_compat;
 
@@ -344,7 +345,8 @@ static status_e service_fill( struct service_config *scp,
     * protocol is specied, the other gets set appropriately. We will only
     * use protocol for this code.
     */
-   if (! SC_SPECIFIED( scp, A_PORT ) && ! SC_IS_MUXCLIENT( scp )) {
+   if (! SC_SPECIFIED( scp, A_PORT ) && ! SC_IS_MUXCLIENT( scp ) && 
+                                        ! SC_IS_RPC( scp )) {
        if ( SC_IS_UNLISTED( scp ) ) {
           msg(LOG_ERR, func, "Unlisted service:%s most have a port entry",
               scp->sc_name);
@@ -828,7 +830,7 @@ static status_e check_entry( struct service_config *scp,
  */
 static status_e get_conf( int fd, struct configuration *confp )
 {
-   parse_conf_file( fd, confp ) ;
+   parse_conf_file( fd, confp, ps.ros.config_file ) ;
    parse_end() ;
    return( OK ) ;
 }

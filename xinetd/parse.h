@@ -44,9 +44,10 @@ struct attribute
 #define KW_INCLUDEDIR		"includedir"
 
 extern int line_count;
+extern const char *current_file;
 
 const char *attr_name_lookup(unsigned int id);
 void parse_end(void);
-void parse_conf_file(int fd,struct configuration *confp);
+void parse_conf_file(int fd,struct configuration *confp, const char *filename);
 
 #endif	/* PARSE_H */
