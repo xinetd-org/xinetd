@@ -116,7 +116,7 @@ INSTALL		= @INSTALL@
 all: xinetd itox
 
 itox: itox.c
-	$(CC) $(CFLAGS) $(DEBUG) $(INCLUDEDIR) $(SRCDIR)/itox.c -o $@ $(LDFLAGS) -lmisc -lsio -lstr -lportable $(LIBS)
+	$(CC) $(CFLAGS) $(DEBUG) $(SRCDIR)/itox.c -o $@ $(LDFLAGS) $(LIBS)
 
 xinetd: $(OBJS)
 	$(CC) $(CFLAGS) $(DEBUG) -o $@ $(OBJS) $(LDFLAGS) $(LIBS) || rm -f $@
