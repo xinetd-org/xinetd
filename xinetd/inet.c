@@ -40,7 +40,7 @@ void parse_inet_conf_file( int fd, struct configuration *confp )
    }
 }
 
-int get_next_inet_entry( int fd, pset_h sconfs, 
+static int get_next_inet_entry( int fd, pset_h sconfs, 
                           struct service_config *defaults)
 {
    char *p;
