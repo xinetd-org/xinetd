@@ -218,11 +218,12 @@ static status_e handle_signal( int sig )
 #ifdef NO_POSIX_SIGS
          sig_handler = general_handler ;
 #else
-         sig_handler = (sigfunc *)mem_fault_handler ;
+         sa.sa_sigaction= mem_fault_handler ;
+         sig_handler = NULL ;
          sa.sa_flags = SA_SIGINFO ;
 #endif
+         break;
 #endif
-
       case SIGTRAP:
          if ( debug.on )
             return( OK ) ;
@@ -232,7 +233,8 @@ static status_e handle_signal( int sig )
    }
 
    sigemptyset( &sa.sa_mask ) ;
-   sa.sa_handler = sig_handler ;
+   if ( sig_handler )
+      sa.sa_handler = sig_handler ;
    return( ( sigaction( sig, &sa, SIGACTION_NULL ) == -1 ) ? FAILED : OK ) ;
 }
 
