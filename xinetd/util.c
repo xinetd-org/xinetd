@@ -28,6 +28,9 @@
 #include <sys/ioctl.h>
 #endif
 #include <fcntl.h>
+#ifdef HAVE_SYS_FILE_H
+#include <sys/file.h>
+#endif
 
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
@@ -247,7 +250,7 @@ void drain( int sd )
       fcntl( sd, F_SETFL, old_val );
 
    if ( debug.on )
-      msg( LOG_DEBUG, "drain", "Socket should be empty" ) ;
+      msg( LOG_DEBUG, "drain", "UDP socket should be empty" ) ;
 }
 
 /*
