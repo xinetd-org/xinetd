@@ -654,6 +654,7 @@ static int banner_always( const struct service *sp, const connection_s *cp )
       }
 
       Sclose(bannerfd);
+      Sflush ( cp->co_descriptor );
    }
 
    return(0);
@@ -694,6 +695,7 @@ static int banner_fail( const struct service *sp, const connection_s *cp )
       }
 
       Sclose(bannerfd);
+      Sflush ( cp->co_descriptor );
    }
 
    return(0);
@@ -732,6 +734,7 @@ static int banner_success( const struct service *sp, const connection_s *cp )
       }
 
       Sclose(bannerfd);
+      Sflush ( cp->co_descriptor );
    }
    return(0);
 }

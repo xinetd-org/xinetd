@@ -889,3 +889,4 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 
 cvs-devel
 	Applied patch from Art Haas for gcc 3.5 compat.
+	Flush the descriptor after writing a banner. -Jay Fenlason
