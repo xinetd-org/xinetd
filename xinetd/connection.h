@@ -92,7 +92,7 @@ struct connection
 connection_s *conn_new(struct service *sp);
 void conn_free(connection_s *cp, int);
 void conn_dump(const connection_s *cp,int fd);
-char *conn_addrstr( const connection_s *cp );
+const char *conn_addrstr( const connection_s *cp );
 
 #endif   /* CONNECTION_H */
 
