@@ -166,11 +166,13 @@ static status_e service_fill( struct service_config *scp,
       SC_SPECIFY( scp, A_PER_SOURCE ) ;
    }
 
+#ifdef HAVE_DNSREGISTRATION
    if ( ! SC_SPECIFIED( scp, A_MDNS ) )
    {
       scp->sc_mdns = SC_SPECIFIED( def, A_MDNS ) ? def->sc_mdns : YES;
       SC_SPECIFY( scp, A_MDNS );
    }
+#endif
 
    if ( ! SC_SPECIFIED( scp, A_GROUPS ) )
    {
