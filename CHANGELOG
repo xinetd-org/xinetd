@@ -883,3 +883,5 @@ devel
 		such that accept fails, deactivate the service like the 
 		cps access control does. This problem was reported 
 		by David Cook. -Steve Grubb
+	Updated rpm.spec file and added default config files to contrib 
+		directory. -Steve Grubb
