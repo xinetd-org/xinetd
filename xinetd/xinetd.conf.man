@@ -446,19 +446,28 @@ Synonym for bind.
 Takes the name of a file to be splatted at the remote host when a 
 connection to that service is established.  This banner is printed
 regardless of access control.  It should *always* be printed when
-a connection has been made.
+a connection has been made.  \fBxinetd\fP outputs the file as-is,
+so you must ensure the file is correctly formatted for the service's
+protocol.  In paticular, if the protocol requires CR-LF pairs for line
+termination, you must supply them.
 .TP
 .B banner_success
 Takes the name of a file to be splatted at the remote host when a
 connection to that service is granted.  This banner is printed
-as soon as access is granted for the service.  
+as soon as access is granted for the service.  \fBxinetd\fP outputs the
+file as-is, so you must ensure the file is correctly formatted for
+the service's protocol.  In paticular, if the protocol requires CR-LF
+pairs for line termination, you must supply them.
 .TP
 .B banner_fail
 Takes the name of a file to be splatted at the remote host when a
 connection to that service is denied.  This banner is printed 
 immediately upon denial of access.  This is useful for informing
 your users that they are doing something bad and they shouldn't be
-doing it anymore.
+doing it anymore.  \fBxinetd\fP outputs the file as-is,
+so you must ensure the file is correctly formatted for the service's
+protocol.  In paticular, if the protocol requires CR-LF pairs for line
+termination, you must supply them.
 .TP
 .B per_source
 Takes an integer or "UNLIMITED" as an argument.  This specifies the
