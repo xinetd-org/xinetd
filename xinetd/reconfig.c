@@ -284,6 +284,19 @@ static void stop_interception( struct service *sp )
    deliver_signal( sp, INTERCEPT_SIG ) ;
 }
 
+/*
+ * Stop logging. svc_activate starts logging and will leak a file
+ * descriptor and memory if this is not called prior.
+ */
+static void stop_log( struct service *sp, 
+                              struct service_config *old_conf )
+{
+   struct log *lp = SC_LOG( old_conf ) ;
+
+   if ( LOG_GET_TYPE( lp ) != L_NONE && SVC_IS_LOGGING( sp ) )
+      log_end( lp, SVC_LOG( sp ) ) ;
+   SVC_LOG( sp ) = NULL ;
+}
 
 /*
  * Stop any logging and restart if necessary.
@@ -293,12 +306,7 @@ static void stop_interception( struct service *sp )
 static status_e restart_log( struct service *sp, 
                               struct service_config *old_conf )
 {
-   struct log *lp = SC_LOG( old_conf ) ;
-
-   if ( LOG_GET_TYPE( lp ) != L_NONE && SVC_IS_LOGGING( sp ) )
-      log_end( lp, SVC_LOG( sp ) ) ;
-   SVC_LOG( sp ) = NULL ;
-   
+   stop_log( sp, old_conf ); 
    return( log_start( sp, &SVC_LOG( sp ) ) ) ;
 }
 
@@ -439,8 +447,9 @@ static status_e readjust( struct service *sp,
       if ( !same ) {
          terminate_servers( sp );
          svc_deactivate( sp );
+         stop_log( sp, old_conf ); /* svc_activate re-starts logging */
          svc_activate( sp );
-         return( restart_log( sp, old_conf ) ) ;
+         return OK;
       }
    }
 
@@ -450,16 +459,18 @@ static status_e readjust( struct service *sp,
    if( (old_conf->sc_bind_addr == NULL) && (new_conf->sc_bind_addr != NULL) ) {
       terminate_servers( sp );
       svc_deactivate(sp);
+      stop_log( sp, old_conf ); /* svc_activate re-starts logging */
       svc_activate(sp);
-      return( restart_log( sp, old_conf ) ) ;
+      return OK;
    }
 
    if( (SC_IPV4(old_conf) && SC_IPV6(new_conf)) || 
          (SC_IPV6(old_conf) && SC_IPV4(new_conf)) ) {
       terminate_servers( sp );
       svc_deactivate(sp);
+      stop_log( sp, old_conf ); /* svc_activate re-starts logging */
       svc_activate(sp);
-      return( restart_log( sp, old_conf ) ) ;
+      return OK;
    }
 
    return( restart_log( sp, old_conf ) ) ;
