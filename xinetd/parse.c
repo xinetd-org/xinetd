@@ -224,7 +224,12 @@ void parse_conf_file( int fd, struct configuration *confp )
          parsemsg( LOG_DEBUG,func,
             "Reading included configuration file: %s",service_name);
          parse_conf_file(incfd, confp);
-         close(incfd);
+	 /*
+	  * parse_conf_file eventually calls Srdline, try Sclosing it
+	  * to unmmap memory.
+	  */
+         if( Sclose(incfd) == SIO_ERR )
+            close(incfd);
          break;
       case INCLUDEDIR_ENTRY:
          handle_includedir(service_name, confp);

@@ -140,7 +140,13 @@ void handle_includedir(const char *service_name, struct configuration *confp)
       }
       parsemsg( LOG_DEBUG,func,"Reading included configuration file: %s",filename);
       parse_conf_file(incfd, confp);
-      close(incfd);
+
+      /* 
+       * parse_conf_file eventually calls Srdline, try Sclosing to 
+       * unmmap memory. 
+       */
+      if( Sclose(incfd) == SIO_ERR )
+         close(incfd);
       pset_remove(dir_list, storename);
       free(storename);
       u--;

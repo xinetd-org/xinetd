@@ -806,13 +806,20 @@ status_e cnf_get( struct configuration *confp )
       return( FAILED ) ;
    }
 
-   close( config_fd ) ;
+   /* get_conf eventually calls Srdline, try Sclosing to unmmap memory. */
+   if ( Sclose( config_fd ) == SIO_ERR )
+      close( config_fd ) ;
    if( inetd_compat ) {
       config_fd = open("/etc/inetd.conf", O_RDONLY);
       if( config_fd >= 0 ) {
          parse_inet_conf_file( config_fd, confp );
          parse_end() ;
-         close(config_fd);
+         /*
+	  * parse_inet_conf eventually calls Srdline, try Sclosing to 
+	  * unmmap memory. 
+	  */
+         if( Sclose(config_fd) == SIO_ERR )
+            close(config_fd);
       }
    }
 
