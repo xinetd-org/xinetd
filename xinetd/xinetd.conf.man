@@ -207,7 +207,8 @@ If a group is not specified, the group
 of \fIuser\fP will be used (from 
 .I /etc/passwd).
 This attribute is ineffective if the effective user ID 
-of \fBxinetd\fP is not super-user.
+of \fBxinetd\fP is not super-user and if the \fBgroups\fP attribute
+is not set to 'yes'.
 .TP
 .B instances
 determines the number of servers that can be simultaneously active
@@ -501,7 +502,9 @@ only avaliable if xinetd was configured with the -with-loadavg option.
 .B groups
 Takes either "yes" or "no".  If the groups attribute is set to
 "yes", then the server is executed with access to the groups that the
-server's effective UID has access to.  If the groups attribute is set 
+server's effective UID has access to.  Alternatively, if the \fBgroup\fP
+attribute is set, the server is executed with access to the groups
+specified.  If the groups attribute is set 
 to "no", then the server runs with no supplementary groups.  This
 attribute must be set to "yes" for many BSD systems.  This attribute
 can be set in the defaults section as well.
