@@ -856,3 +856,5 @@ devel
 		structure. -Christof Meerwald 
 	Correct looping problems for udp connections rejected by the child
 		access controls. -Steve Grubb
+	Added TRAFFIC logging option to report total bytes in and out for a 
+		redirected service. -Christof Meerwald 

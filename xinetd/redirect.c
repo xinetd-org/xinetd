@@ -60,6 +60,7 @@ void redir_handler( struct server *serp )
    int RedirDescrip = SERVER_FD( serp );
    int maxfd, num_read, num_wrote=0, ret=0;
    unsigned int sin_len = 0;
+   unsigned long bytes_in = 0, bytes_out = 0;
    int no_to_nagle = 1;
    int on = 1, v6on;
    char buff[NET_BUFFER];
@@ -159,6 +160,7 @@ void redir_handler( struct server *serp )
                   continue;
                if (num_read <= 0)
                   goto REDIROUT;
+               bytes_in += num_read;
             } while (num_read < 0);
 
             /* Loop until we have written everything
@@ -184,6 +186,7 @@ void redir_handler( struct server *serp )
                   continue;
                if (num_read <= 0)
                   goto REDIROUT;
+               bytes_out += num_read;
             } while (num_read < 0);
 
             /* Loop until we have written everything
@@ -202,6 +205,11 @@ void redir_handler( struct server *serp )
          }
       }
 REDIROUT:
+      if( M_IS_SET( (scp)->sc_log_on_success, LO_TRAFFIC ) ) {
+         svc_logprint( SERVER_CONNSERVICE( serp ), "TRAFFIC",
+                       "in=%lu(bytes) out=%lu(bytes)", bytes_in, bytes_out );
+      }
+
       exit(0);
    }
 

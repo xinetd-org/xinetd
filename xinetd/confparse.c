@@ -747,7 +747,7 @@ static status_e check_entry( struct service_config *scp,
                   scp->sc_name, service_port, scp->sc_port ) ;
              return( FAILED ) ;
           }
-       } /* if not unlisted */
+      } /* if not unlisted */
     }
     if ( SC_SPECIFIED( scp, A_REDIR ))
     {
@@ -769,6 +769,16 @@ static status_e check_entry( struct service_config *scp,
           msg( LOG_ERR, func, 
  	      "Redirected service %s should not have NAMEINARGS flag set", 
 	      scp->sc_name);
+          return FAILED;
+       }
+    }
+    else /* Not a redirected service */
+    {
+       if( M_IS_SET( (scp)->sc_log_on_success, LO_TRAFFIC ) )
+       {
+          msg( LOG_ERR, func,
+             "Service %s should not have TRAFFIC flag set since its"
+             " not redirected", scp->sc_name);
           return FAILED;
        }
     }

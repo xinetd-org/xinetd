@@ -69,7 +69,7 @@ const struct name_value success_log_options[] =
       { "EXIT",        LO_EXIT     },
       { "PID",         LO_PID      },
       { "USERID",      LO_USERID   },
-
+      { "TRAFFIC",     LO_TRAFFIC  },
    } ;
 
 

@@ -72,6 +72,7 @@
 #define LO_EXIT      5
 #define LO_PID       6
 #define LO_USERID    7
+#define LO_TRAFFIC   8
 
 struct rpc_data
 {

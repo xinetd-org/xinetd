@@ -365,6 +365,9 @@ option is used)
 .TP
 .B DURATION 
 logs the duration of a service session
+.TP
+.B TRAFFIC
+logs the total bytes in and out for a redirected service.
 .RE
 .TP
 .B log_on_failure
