@@ -134,10 +134,11 @@ void hard_reconfig( void )
          /*
           * Procedure for disabling a service:
           *
-          *      a. Terminate running servers and cancel retry attempts, in case
+          *      a. Deactivate the service to prevent new connections
+          *      b. Terminate running servers and cancel retry attempts, in case
           *         of reconfiguration
-          *      b. Deactivate the service
           */
+         svc_deactivate( osp ) ;
          terminate_servers( osp ) ;
          cancel_service_retries( osp ) ;
 
@@ -145,10 +146,12 @@ void hard_reconfig( void )
           * Deactivate the service; the service will be deleted only
           * if its reference count drops to 0.
           */
-         svc_deactivate( osp ) ;
+         /* Always remove the service, even if not all the children
+          * have been killed, or there are other references.
+          */
+         psi_remove( iter ) ;
          msg( LOG_NOTICE, func, "service %s deactivated", sid ) ;
          if ( SVC_RELE( osp ) == 0 ) {
-            psi_remove( iter ) ;
             svc_release( osp );
          } else
             msg( LOG_ERR, func, "Errors deactivating service %s", sid ) ;
