@@ -809,3 +809,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 		- Andrey Alekseyev
 	Fix a reconfig timing issue.
 		- Andrey Alekseyev
+devel
+	Fix some compile time errors on Solaris
+	Fixed a bounds check in Sdone().  Patch from Dmitry V. Levin
+	Added FreeBSD loadavg support.  Patch from Vanilla I. Shu

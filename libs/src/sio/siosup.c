@@ -764,9 +764,16 @@ int __sio_more( __sio_id_t *idp, int fd )
  */
 int Sdone( int fd )
 {
-   __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+   __sio_descriptor_t *dp ;
 
-   if ( fd >= __sio_n_descriptors || fd < __sio_n_descriptors || ! DESCRIPTOR_INITIALIZED( dp ) )
+   if ( fd < 0 || fd >= __sio_n_descriptors )
+   {
+      errno = EBADF ;
+      return( SIO_ERR ) ;
+   }
+
+   dp = &__sio_descriptors[ fd ] ;
+   if ( ! DESCRIPTOR_INITIALIZED( dp ) )
    {
       errno = EBADF ;
       return( SIO_ERR ) ;

@@ -174,7 +174,7 @@ osf*)
 			;;
 	esac ], AC_MSG_RESULT(no))
 	;;
-linux*)
+linux*|freebsd*)
 	AC_CHECK_LIB(crypt, main)
 
 	AC_MSG_CHECKING(whether to compile in loadavg)
