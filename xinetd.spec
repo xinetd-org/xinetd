@@ -56,7 +56,6 @@ install -m 0755 contrib/xinetd $RPM_BUILD_ROOT/etc/rc.d/init.d/xinetd
   rm -rf $RPM_BUILD_ROOT
 
 %post
-chkconfig --del xinetd
 chkconfig --add xinetd
 /etc/rc.d/init.d/xinetd restart
 
