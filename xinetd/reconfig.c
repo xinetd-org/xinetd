@@ -143,6 +143,8 @@ void hard_reconfig( void )
          msg( LOG_NOTICE, func, "service %s deactivated", sid ) ;
          if ( SVC_RELE( osp ) == 0 )
             psi_remove( iter ) ;
+         else
+            msg( LOG_ERR, func, "Errors deactivating service %s", sid ) ;
          dropped_services++ ;
       }
    }
@@ -241,7 +243,7 @@ static void sendsig( struct server *serp, int sig )
 	  * a hard_reconfig is in process.
 	  */
          if (!killed)
-            msg( LOG_WARNING, func, "Server %d did not exit after SIGKILL", 
+            msg( LOG_ERR, func, "Server %d did not exit after SIGKILL", 
 	          pid ) ;
          else {
             struct server *serp;
