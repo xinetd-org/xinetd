@@ -86,8 +86,8 @@ static const struct builtin_service builtin_services[] =
       { "xadmin",    SOCK_STREAM,   { xadmin_handler,  FORK    } },
       { "sensor",    SOCK_STREAM,   { stream_discard,  NO_FORK } },
       { "sensor",    SOCK_DGRAM,    { dgram_discard,   NO_FORK } },
-      { "tcpmux",    SOCK_STREAM,   { tcpmux_handler,  FORK } },
-      { NULL }
+      { "tcpmux",    SOCK_STREAM,   { tcpmux_handler,  FORK    } },
+      { NULL,        0,             { NULL,            0       } }
    } ;
 
 
@@ -161,7 +161,7 @@ static void stream_echo( const struct server *serp )
       if ( write_buf( descriptor, buf, cc ) == FAILED )
          break ;
    }
-   if( SVC_WAITS( svc ) )
+   if( SVC_WAITS( svc ) ) /* Service forks, so close it */
       Sclose(descriptor);
 }
 
@@ -189,13 +189,13 @@ static void dgram_echo( const struct server *serp )
    char            buf[ DATAGRAM_SIZE ] ;
    union xsockaddr lsin;
    int             cc ;
-   int             sin_len = 0;
+   unsigned int    sin_len = 0;
    int             descriptor = SERVER_FD( serp ) ;
    const char     *func = "dgram_echo";
 
    if( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) )
       sin_len = sizeof( struct sockaddr_in );
-   if( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) )
+   else if( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) )
       sin_len = sizeof( struct sockaddr_in6 );
 
    cc = recvfrom( descriptor, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) ;
@@ -225,7 +225,7 @@ static void stream_discard( const struct server *serp )
       if ( (cc == 0) || ((cc == -1) && (errno != EINTR)) )
          break ;
    }
-   if( SVC_WAITS( svc ) )
+   if( SVC_WAITS( svc ) ) /* Service forks, so close it */
       Sclose(descriptor);
 }
 
@@ -246,7 +246,7 @@ static void dgram_discard( const struct server *serp )
  * buflen is a value-result parameter. It indicates the size of
  * buf and on exit it has the length of the string placed in buf.
  */
-static void daytime_protocol( char *buf, int *buflen )
+static void daytime_protocol( char *buf, unsigned int *buflen )
 {
    static const char *month_name[] =
       {
@@ -255,7 +255,7 @@ static void daytime_protocol( char *buf, int *buflen )
       } ;
    time_t      now ;
    struct tm   *tmp ;
-   int      size = *buflen ;
+   int         size = *buflen ;
 #ifdef HAVE_STRFTIME
    int      cc ;
 #endif
@@ -272,10 +272,12 @@ static void daytime_protocol( char *buf, int *buflen )
       "%02d %s %d %02d:%02d:%02d",
          tmp->tm_mday, month_name[ tmp->tm_mon ], 1900 + tmp->tm_year,
             tmp->tm_hour, tmp->tm_min, tmp->tm_sec ) ;
-   *buflen = cc ;
-   size -= cc ;
-   cc = strftime( &buf[ *buflen ], size, " %Z\r\n", tmp ) ;
-   *buflen += cc ;
+   if ( cc >= 0 ) { 
+      *buflen = cc ;
+      size -= cc ;
+      cc = strftime( &buf[ *buflen ], size, " %Z\r\n", tmp ) ;
+      *buflen += cc ;
+   }
 #endif
 }
 
@@ -283,7 +285,7 @@ static void daytime_protocol( char *buf, int *buflen )
 static void stream_daytime( const struct server *serp )
 {
    char  time_buf[ BUFFER_SIZE ] ;
-   int   buflen = sizeof( time_buf ) ;
+   unsigned int buflen = sizeof( time_buf ) ;
    int    descriptor = SERVER_FD( serp ) ;
    const struct service *svc = SERVER_SERVICE( serp ) ;;
 
@@ -301,14 +303,14 @@ static void dgram_daytime( const struct server *serp )
 {
    char            time_buf[ BUFFER_SIZE ] ;
    union xsockaddr lsin ;
-   int             sin_len     = 0 ;
-   int             buflen      = sizeof( time_buf ) ;
+   unsigned int    sin_len     = 0 ;
+   unsigned int    buflen      = sizeof( time_buf ) ;
    int             descriptor  = SERVER_FD( serp ) ;
    const char     *func       = "dgram_daytime";
 
    if ( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in );
-   if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
+   else if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in6 );
 
    if ( recvfrom( descriptor, time_buf, sizeof( time_buf ), 0,
@@ -366,13 +368,13 @@ static void dgram_time( const struct server *serp )
    char     buf[ 1 ] ;
    unsigned char time_buf[4];
    union xsockaddr lsin ;
-   int             sin_len = sizeof( lsin ) ;
+   unsigned int    sin_len = 0 ;
    int             fd      = SERVER_FD( serp ) ;
    const char     *func    = "dgram_daytime";
 
    if ( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in );
-   if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
+   else if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in6 );
 
    if ( recvfrom( fd, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) == -1 )
@@ -398,11 +400,11 @@ static char *ring ;
 
 #define min( a, b )          ((a)<(b) ? (a) : (b))
 
-static char *generate_line( char *buf, int len )
+static char *generate_line( char *buf, unsigned int len )
 {
-   int line_len = min( LINE_LENGTH, len-2 ) ;
+   unsigned int line_len = min( LINE_LENGTH, len-2 ) ;
 
-   if ( line_len < 0 )
+   if ( len < 2 )       /* If len < 2, min will be wrong */
       return( NULL ) ;
 
    /* This never gets freed.  That's ok, because the reference to it is
@@ -457,7 +459,7 @@ static void stream_chargen( const struct server *serp )
       if ( write_buf( descriptor, line_buf, sizeof( line_buf ) ) == FAILED )
          break ;
    }
-   if( SVC_WAITS( svc ) )
+   if( SVC_WAITS( svc ) ) /* Service forks, so close it */
       Sclose(descriptor);
 }
 
@@ -466,16 +468,16 @@ static void dgram_chargen( const struct server *serp )
 {
    char            buf[ BUFFER_SIZE ] ;
    char            *p ;
-   int             len ;
+   unsigned int    len ;
    union xsockaddr lsin ;
-   int             sin_len = sizeof( lsin ) ;
+   unsigned int    sin_len = 0 ;
    int             fd      = SERVER_FD( serp ) ;
-   int             left    = sizeof( buf ) ;
+   unsigned int    left    = sizeof( buf ) ;
    const char     *func    = "dgram_chargen";
 
    if ( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in );
-   if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
+   else if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in6 );
 
    if ( recvfrom( fd, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) == -1 )
@@ -537,9 +539,10 @@ static void stream_services( const struct server *serp )
 
       strx_print( &cc, buf, sizeof( buf ), "%s %s %d\n",
          SC_NAME( scp ), SC_PROTONAME( scp ), SC_PORT( scp ) ) ;
-         
-      if ( write_buf( fd, buf, cc ) == FAILED )
-         break ;
+      if ( cc >= 0) {         
+         if ( write_buf( fd, buf, cc ) == FAILED )
+            break ;
+      }
    }
 }
 
@@ -649,7 +652,7 @@ static void tcpmux_handler( const struct server *serp )
       exit(0);
    }
 
-   if( SVC_WAITS( svc ) )
+   if( SVC_WAITS( svc ) ) /* Service forks, so close it */
       Sclose(descriptor);
 
    server.svr_sp = sp;
@@ -660,7 +663,6 @@ static void tcpmux_handler( const struct server *serp )
    } else {
       exec_server(nserp);
    }
-   
 }
 
 #define MAX_CMD 100
@@ -759,7 +761,7 @@ static void xadmin_handler( const struct server *serp )
                struct service *sp=NULL;
                char bname[NI_MAXHOST];
                char rname[NI_MAXHOST];
-               int length = 0;
+               unsigned int length = 0;
 
                memset(bname, 0, sizeof(bname));
                memset(rname, 0, sizeof(rname));
