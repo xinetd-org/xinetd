@@ -75,7 +75,7 @@ char *str_component ( str_h handle ) ;
 /*
  * strutil(3) functions
  */
-char *str_casefind ( const char *s1, const char *s2 ) ;
+char *str_casefind ( char *s1, const char *s2 ) ;
 void str_fill ( char *s, char c ) ;
 
 

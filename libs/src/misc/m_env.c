@@ -228,7 +228,7 @@ int env_addstr( env_h env, char *var_string )
       return( ENV_ERR ) ;
    }
 
-   return( addstring( env, var_string, p-var_string ) ) ;
+   return( addstring( env, var_string, (unsigned int)(p-var_string) ) ) ;
 }
 
 
