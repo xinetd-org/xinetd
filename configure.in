@@ -36,7 +36,7 @@ AC_CHECK_FUNC(gai_strerror,[AC_DEFINE(HAVE_GAI_STRERROR)])
 AC_CHECK_FUNC(freeaddrinfo,[AC_DEFINE(HAVE_FREEADDRINFO)])
 AC_CHECK_FUNC(getaddrinfo,[AC_DEFINE(HAVE_GETADDRINFO)])
 
-AC_CHECK_HEADERS(sys/types.h sys/termios.h termios.h sys/ioctl.h sys/select.h rpc/rpc.h rpc/rpcent.h sys/file.h ftw.h machine/reg.h linux/time.h netdb.h)
+AC_CHECK_HEADERS(sys/types.h sys/termios.h termios.h sys/ioctl.h sys/select.h rpc/rpc.h rpc/rpcent.h sys/file.h ftw.h machine/reg.h netdb.h)
 AC_CHECK_HEADER(sys/resource.h, [AC_DEFINE(HAVE_SYS_RESOURCE_H)])
 AC_CHECK_HEADER(arpa/inet.h, [AC_DEFINE(HAVE_ARPA_INET_H)])
 AC_CHECK_HEADER(grp.h, [AC_DEFINE(HAVE_GRP_H)])

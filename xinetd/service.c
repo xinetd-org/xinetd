@@ -36,13 +36,6 @@
  #include <rpc/rpc.h>
 #endif
 
-/* This is because of differences between glibc2 and libc5 in linux... */
-#ifndef FD_SET
-#ifdef HAVE_LINUX_TIME_H
-#include <linux/time.h>
-#endif
-#endif
-
 #ifdef HAVE_SYS_FILE_H
 #include <sys/file.h>
 #endif

@@ -42,8 +42,6 @@
 
 #undef HAVE_FTW_H
 
-#undef HAVE_LINUX_TIME_H
-
 #undef HAVE_NETDB_H
 
 #undef HAVE_LIBCRYPT
