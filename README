@@ -40,6 +40,11 @@ Now that IPv6 support is fully integrated into xinetd, this option
 is almost meaningless.  IPv6 sockets are available with the "IPv6"
 service flag, even without this option.
 
+--with-howl=PATH: Adds howl mdns advertising support to xinetd.
+PATH is the prefix where howl is installed, such as /usr/local,
+/usr, etc.  PATH is not optional.  configure will not automatically
+detect howl's installed location.
+
 Access Control:
 --------------------------------------------------------------------------
 As of xinetd 2.1.8.8pre3 there is a change in the handling of 

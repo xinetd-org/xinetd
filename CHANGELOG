@@ -899,3 +899,4 @@ cvs-devel
 	Updated BACKLOG to 64 from 7
 	Updated xconv.pl to understand ":" in inetd.conf files from
 		FreeBSD ports patch.
+	Added howl support for mdns advertising.
