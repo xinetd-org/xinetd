@@ -37,6 +37,8 @@ int Swrite( int fd, const char *addr, unsigned int nbytes )
 	int b_written ;
 	int b_in_buffer ;
 
+	if ( nbytes > INT_MAX )
+		return( SIO_ERR );
 	if( sio_setup( fd, &dp, __SIO_OUTPUT_STREAM ) == SIO_ERR )
 		return( SIO_ERR );
 	odp = ODP( dp ) ;
