@@ -52,7 +52,7 @@ struct connection
    union xsockaddr       co_remote_address ;
 } ;
 
-#define CONN_CLOSE( cp ) { if(Sclose( (cp)->co_descriptor ) == SIO_ERR) (void)close((cp)->co_descriptor); (cp)->co_descriptor = -1; }
+#define CONN_CLOSE( cp ) { Sclose( (cp)->co_descriptor ); (cp)->co_descriptor = -1; }
 
 #define COP( p )       ((connection_s *)(p))
 

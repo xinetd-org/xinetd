@@ -145,8 +145,7 @@ void dump_internal_state(void)
    Sputchar( dump_fd, '\n' ) ;
 
    Sprint( dump_fd, "END OF DUMP\n\n" ) ;
-   if ( Sclose( dump_fd ) == SIO_ERR )
-      close(dump_fd);
+   Sclose( dump_fd );
 
    msg( LOG_INFO, func, "generated state dump in file %s", dump_file ) ;
 }

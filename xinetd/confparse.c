@@ -816,8 +816,7 @@ status_e cnf_get( struct configuration *confp )
    }
 
    /* get_conf eventually calls Srdline, try Sclosing to unmmap memory. */
-   if ( Sclose( config_fd ) == SIO_ERR )
-      close( config_fd ) ;
+   Sclose( config_fd );
    if( inetd_compat ) {
       config_fd = open("/etc/inetd.conf", O_RDONLY);
       if( config_fd >= 0 ) {
@@ -827,8 +826,7 @@ status_e cnf_get( struct configuration *confp )
 	  * parse_inet_conf eventually calls Srdline, try Sclosing to 
 	  * unmmap memory. 
 	  */
-         if( Sclose(config_fd) == SIO_ERR )
-            close(config_fd);
+         Sclose(config_fd);
       }
    }
 

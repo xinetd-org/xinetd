@@ -322,9 +322,12 @@ int Sflush( int fd )
  */
 int Sclose( int fd )
 {
-	if ( __SIO_FD_INITIALIZED( fd ) )
-		if ( Sdone( fd ) == SIO_ERR )
+	if ( __SIO_FD_INITIALIZED( fd ) ) {
+		if ( Sdone( fd ) == SIO_ERR ) {
+			close( fd ); 
 			return( SIO_ERR ) ;
+		}
+	}
 	return( close( fd ) ) ;
 }
 

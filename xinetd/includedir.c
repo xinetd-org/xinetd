@@ -145,8 +145,7 @@ void handle_includedir(const char *service_name, struct configuration *confp)
        * parse_conf_file eventually calls Srdline, try Sclosing to 
        * unmmap memory. 
        */
-      if( Sclose(incfd) == SIO_ERR )
-         close(incfd);
+      Sclose(incfd);
       pset_remove(dir_list, storename);
       free(storename);
       u--;
