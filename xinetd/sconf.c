@@ -65,6 +65,7 @@ static void release_string_pset( pset_h pset )
  */
 void sc_free( struct service_config *scp )
 {
+   COND_FREE( scp->sc_mdns_name );
    COND_FREE( scp->sc_name ) ;
    COND_FREE( scp->sc_id ) ;
    COND_FREE( scp->sc_protocol.name ) ;

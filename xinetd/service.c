@@ -369,15 +369,15 @@ status_e svc_activate( struct service *sp )
 #ifdef HAVE_DNSREGISTRATION
    if ( scp->sc_mdns == YES )
    {
-      char *srvname;
-
-      if( asprintf(&srvname, "_%s._%s", scp->sc_name, scp->sc_protocol.name) < 0 ) 
+      if( scp->sc_mdns_name )
+         free(scp->sc_mdns_name);
+      if( asprintf(&scp->sc_mdns_name, "_%s._%s", scp->sc_name, scp->sc_protocol.name) < 0 ) 
       {
           deactivate( sp );
           return( FAILED );
       }
 
-      scp->sc_mdnscon = DNSServiceRegistrationCreate("", srvname, "", 
+      scp->sc_mdnscon = DNSServiceRegistrationCreate("", scp->sc_mdns_name, "", 
 		   htons(scp->sc_port), "", mdns_callback, NULL);
    }
 #endif
