@@ -288,7 +288,7 @@ static status_e service_fill( struct service_config *scp,
          }
          memset(SC_BIND_ADDR(scp), 0, sizeof(union xsockaddr));
          memcpy(SC_BIND_ADDR(scp), res->ai_addr, res->ai_addrlen);
-         free(SC_BIND_ADDR(scp));
+         free(SC_ORIG_BIND_ADDR(scp));
          SC_ORIG_BIND_ADDR(scp) = 0;
  	 SC_SPECIFY( scp, A_BIND );
       }
