@@ -77,10 +77,19 @@ void exec_server( const struct server *serp )
    if ( debug.on )
       msg( LOG_DEBUG, func, "duping %d", descriptor ) ;
 
+   /*
+    * If server_loguser flag is on, then syslog may have opened fd 0, 1, or
+    * 2. We call msg_suspend() now so that the logging system doesn't use 
+    * the dup'ed descriptor.
+    */
+
+   msg_suspend() ;
+
    for ( fd = 0 ; fd <= MAX_PASS_FD ; fd++ )
    {
       if ( dup2( descriptor, fd ) == -1 )
       {
+   	 msg_resume();
          msg( LOG_ERR, func,
                "dup2( %d, %d ) failed: %m", descriptor, fd ) ;
          _exit( 1 ) ;
@@ -137,10 +146,14 @@ void exec_server( const struct server *serp )
    (void) Sclose( descriptor ) ;
 
 #ifndef solaris
-   no_control_tty() ;
+#if !defined(HAVE_SETSID)
+   msg_resume();
 #endif
-
-   msg_suspend() ;
+   no_control_tty() ;
+#if !defined(HAVE_SETSID)
+   msg_suspend();
+#endif
+#endif
 
    (void) execve( server, SC_SERVER_ARGV( scp ),
              env_getvars( SC_ENV( scp )->env_handle ) ) ;

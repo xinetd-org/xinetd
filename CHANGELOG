@@ -891,3 +891,6 @@ cvs-devel
 	Applied patch from Art Haas for gcc 3.5 compat.
 	Flush the descriptor after writing a banner. -Jay Fenlason
 	Don't assume char is signed in the udp drain() function -Don Provan
+	If log remote user is on, a descriptor between 0-2 is likely to
+		be opened. Call msg_suspend before dup'ing socket to
+		avoid this bug. -Glen Johnson
