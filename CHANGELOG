@@ -886,3 +886,6 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 	Updated rpm.spec file and added default config files to contrib 
 		directory. -Steve Grubb
 	Allow group & user to be specified by numeric value. -Steve Grubb
+
+cvs-devel
+	Applied patch from Art Haas for gcc 3.5 compat.

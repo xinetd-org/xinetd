@@ -764,8 +764,8 @@ static status_e failed_service(struct service *sp,
                return FAILED;
 
             if ( last == NULL ) {
-               last = SAIN( SVC_LAST_DGRAM_ADDR(sp) ) = 
-		  SAIN( calloc( 1, sizeof(union xsockaddr) ) );
+               last = SAIN( calloc( 1, sizeof(union xsockaddr) ) );
+	       SVC_LAST_DGRAM_ADDR(sp) = (union xsockaddr *)last;
             }
 
             (void) time( &current_time ) ;
@@ -791,8 +791,8 @@ static status_e failed_service(struct service *sp,
                return FAILED;
 
 	    if( last == NULL ) {
-               last = SAIN6(SVC_LAST_DGRAM_ADDR(sp)) = 
-		  SAIN6(calloc( 1, sizeof(union xsockaddr) ) );
+               last = SAIN6(calloc( 1, sizeof(union xsockaddr) ) );
+	       SVC_LAST_DGRAM_ADDR( sp ) = (union xsockaddr *)last;
             }
 
             (void) time( &current_time ) ;
