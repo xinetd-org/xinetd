@@ -826,7 +826,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 		section. -Steve Grubb
 	Use Sclose to close banner commands. -Jay Fenlason
 	Correct banner to match man pages. -Jay Fenlason
-devel
+2.3.12
 	Cleanup some signal handling if not defined. -MARUYAMA Shinichi
 	Make ident protocol work properly for multi-homed hosts. -Alan Sundell
 	Code cleanup for const warnings. -Steve Grubb
