@@ -203,7 +203,7 @@ int addrlist_match( const pset_h addr_list,
              */
             if( IN6_IS_ADDR_V4MAPPED( &SAIN6(addr)->sin6_addr ) ) 
 	    {
-               uint32_t *tmp_addr = &SAIN6(addr)->sin6_addr.s6_addr32[3];
+               uint32_t *tmp_addr = (uint32_t *)&addr->sa_data[3];
                if( (ntohl(*tmp_addr) & cap->m.mask)
 			       == ( cap->a.addr & cap->m.mask ) )
                   return (u+1);
