@@ -40,7 +40,7 @@ PREFIX      = @prefix@
 
 INSTALL_CMD = @INSTALL@
 
-LIBS        = -lsio -lmisc -lxlog -lstr -lpset -lportable @LIBS@
+LIBS        = -lsio -lmisc -lxlog -lportable -lstr -lpset @LIBS@
 
 INCLUDEDIR  = -I../libs/include
 LIBDIR      = -L../libs/lib
