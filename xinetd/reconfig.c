@@ -412,16 +412,34 @@ static status_e readjust( struct service *sp,
       }
    }
 
-   /* See if the bind address was specified in both the old and new config,
-    * then if it changed, readjust the service.
+   /* 
+    * See if the bind address was specified in both the old and new config,
+    * then if it changed, readjust the service. The algorithm is check to 
+    * see if they are in the same address family, if so start a simple 
+    * comparison based on the address family. If IPv4, the addresses can be 
+    * compared directly, otherwise use the IPv6 macro. If they are not the 
+    * same, terminate & restart the service. 
     */
    if( (old_conf->sc_bind_addr != NULL) && (new_conf->sc_bind_addr != NULL) ) {
-      if( memcmp( old_conf->sc_bind_addr, new_conf->sc_bind_addr, 
-            sizeof(union xsockaddr)) != 0) {
+      int same = 0;
 
+      if ( SA(old_conf->sc_bind_addr)->sa_family == 
+           SA(new_conf->sc_bind_addr)->sa_family ) {
+         if ( SA(old_conf->sc_bind_addr)->sa_family == AF_INET ) {
+            if ( SAIN(old_conf->sc_bind_addr)->sin_addr.s_addr == 
+                 SAIN(new_conf->sc_bind_addr)->sin_addr.s_addr)
+               same = 1;
+         }
+         else if ( IN6_ARE_ADDR_EQUAL(
+                  &SAIN6(old_conf->sc_bind_addr)->sin6_addr, 
+                  &SAIN6(new_conf->sc_bind_addr)->sin6_addr) )
+            same = 1;
+      }
+      
+      if ( !same ) {
          terminate_servers( sp );
-         svc_deactivate(sp);
-         svc_activate(sp);
+         svc_deactivate( sp );
+         svc_activate( sp );
          return( restart_log( sp, old_conf ) ) ;
       }
    }

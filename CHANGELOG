@@ -831,9 +831,11 @@ devel
 	Make ident protocol work properly for multi-homed hosts. -Alan Sundell
 	Code cleanup for const warnings. -Steve Grubb
 	Make redirect protocol independent. -Cougar
-	Make reconfig iterate over all services. Some may be in not started
+	Make reconfig iterate over all services. Some may be in "not started"
 		state and were being missed. -Steve Grubb
 	Make redirected, forking builtins, & tcpmux close all listening
 		descriptors so reconfig works. -Jay Fenlason
 	Add support for the IPV6_V6ONLY socket option.  Don't assume
 		a default setting, as the default seems to be in flux.
+	Address compare in reconfig was wrong. Its now corrected to handle
+		each address family separately. -Steve Grubb
