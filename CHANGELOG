@@ -874,3 +874,5 @@ devel
 		an error. Updated test to allow factorized address. -Steve Grubb
 	When parsing inet.conf, the filename wasn't being set for subsequent 
 		messages. -Steve Grubb
+	Fix addrlist_match to correctly handle IPv4 mapped IPv6 addresses.
+		-Christof Meerwald
