@@ -20,9 +20,8 @@
 #include "impl.h"
 #include "sio.h"
 
-static __sio_descriptor_t static_descriptor_array[ N_SIO_DESCRIPTORS ] ;
-int __sio_n_descriptors = N_SIO_DESCRIPTORS ;
-__sio_descriptor_t *__sio_descriptors = static_descriptor_array ;
+int __sio_n_descriptors = 0 ;
+__sio_descriptor_t *__sio_descriptors = NULL ;
 
 static sio_status_e setup_read_buffer( __sio_id_t *idp, unsigned buf_size );
 
@@ -56,8 +55,7 @@ SIO_DEFINE_FIN( sio_cleanup )
 static size_t map_unit_size = 0 ;         /* bytes */
 static size_t page_size = 0 ;               /* bytes */
 
-static mapd_s static_mapd_array[ N_SIO_DESCRIPTORS ] ;
-static mapd_s *mmap_descriptors = static_mapd_array ;
+static mapd_s *mmap_descriptors = NULL ;
 
 #define MDP( fd )            ( mmap_descriptors + (fd) )
 
@@ -869,7 +867,7 @@ int Smorefds(int fd)
    old_size = __sio_n_descriptors * sizeof( mapd_s ) ;
    new_size = n_fds * sizeof( mapd_s ) ;
    new_size += old_size;
-   is_static = ( mmap_descriptors == static_mapd_array ) ;
+   is_static = ( mmap_descriptors == NULL ) ;
    p = sioexpand( (char *)mmap_descriptors, old_size, new_size, is_static ) ;
    if ( p == NULL )
       return( SIO_ERR ) ;
@@ -880,7 +878,7 @@ int Smorefds(int fd)
    old_size = __sio_n_descriptors * sizeof( __sio_descriptor_t ) ;
    new_size = n_fds * sizeof( __sio_descriptor_t ) ;
    new_size += old_size;
-   is_static =  ( __sio_descriptors == static_descriptor_array ) ;
+   is_static =  ( __sio_descriptors == NULL ) ;
    p = sioexpand( (char *)__sio_descriptors, old_size, new_size, is_static ) ;
    if ( p == NULL )
       return( SIO_ERR ) ;
@@ -893,10 +891,7 @@ int Smorefds(int fd)
 
 void sio_init( void )
 {
-   memset( __sio_descriptors, 0, sizeof(__sio_descriptor_t) * N_SIO_DESCRIPTORS );
-#ifdef HAVE_MMAP
-   memset( mmap_descriptors, 0, sizeof(mapd_s) * N_SIO_DESCRIPTORS );
-#endif
+   return;
 }
 
 void terminate(const char *msg)
