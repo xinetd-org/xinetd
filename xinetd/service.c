@@ -215,9 +215,10 @@ static status_e activate_rpc( struct service *sp )
    for ( vers = RD_MINVERS( rdp ) ; vers <= RD_MAXVERS( rdp ) ; vers++ ) {
 /*      Is this right?  For instance, if we have both tcp and udp services,
  *      this will unregister the previously registered protocol.
-      pmap_unset(RD_PROGNUM(rdp), vers);
-*/
-      if ( pmap_set( RD_PROGNUM( rdp ), vers, SC_PROTOVAL( scp ), SC_PORT( scp ) ) )
+ *      pmap_unset(RD_PROGNUM(rdp), vers);
+ */
+      if ( pmap_set( RD_PROGNUM( rdp ), vers, SC_PROTOVAL( scp ), 
+			      SC_PORT( scp ) ) )
          registered_versions++ ;
       else
          msg( LOG_ERR, func,
@@ -353,12 +354,14 @@ status_e svc_activate( struct service *sp )
 #ifdef HAVE_DNSREGISTRATION
    char *srvname;
 
-   if( asprintf(&srvname, "_%s._%s", scp->sc_name, scp->sc_protocol.name) < 0 ) {
+   if( asprintf(&srvname, "_%s._%s", scp->sc_name, scp->sc_protocol.name) < 0 ) 
+   {
        deactivate( sp );
        return( FAILED );
    }
 
-   scp->sc_mdnscon = DNSServiceRegistrationCreate("", srvname, "", htons(scp->sc_port), "", mdns_callback, NULL);
+   scp->sc_mdnscon = DNSServiceRegistrationCreate("", srvname, "", 
+		   htons(scp->sc_port), "", mdns_callback, NULL);
 #endif
 
    if ( log_start( sp, &sp->svc_log ) == FAILED )
@@ -551,22 +554,33 @@ void svc_request( struct service *sp )
    cp = conn_new( sp ) ;
    if ( cp == CONN_NULL )
       return ;
-   if (sp->svc_not_generic)
-	   ret_code = spec_service_handler(sp, cp);
-   else
-	   ret_code = svc_generic_handler(sp, cp);
 
+   if (sp->svc_not_generic)
+      ret_code = spec_service_handler(sp, cp);
+   else 
+      ret_code = svc_generic_handler(sp, cp);
+   
    if ( ret_code != OK ) 
    {
       if ( SVC_LOGS_USERID_ON_FAILURE( sp ) ) {
-         if( spec_service_handler( LOG_SERVICE( ps ), cp ) == FAILED ) {
-            conn_free( cp, 1 );
-            return;
-         }
+         if( spec_service_handler( LOG_SERVICE( ps ), cp ) == FAILED ) 
+	    conn_free( cp, 1 ) ;
+         else if (!SC_WAITS( SVC_CONF( sp ) ) ) {
+	 /* The logging service will gen SIGCHLD thus freeing connection */
+	    CONN_CLOSE(cp) ; 
+	 }
+	 return;
       }
-      CONN_CLOSE(cp);
-      free(cp);
+      if (!SC_WAITS( SVC_CONF( sp ) )) 
+	 conn_free( cp, 1 );
+      else { 
+         if( (SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM) && (SVC_IS_ACTIVE( sp )) ) 
+            drain( cp->co_descriptor ) ; /* Prevents looping next time */
+	 free( cp );
+      }
    }
+   else if ((sp->svc_not_generic) || (SC_WAITS( SVC_CONF( sp ) ) ) )
+     free( cp );
 }
 
 
@@ -593,7 +607,8 @@ static int banner_always( const struct service *sp, const connection_s *cp )
       int bannerfd = open(scp->sc_banner, O_RDONLY);
 
       if( bannerfd < 0 ) {
-         msg( LOG_ERR, func, "service = %s, open of banner %s failed", SVC_ID( sp ), scp->sc_banner);
+         msg( LOG_ERR, func, "service = %s, open of banner %s failed", 
+			 SVC_ID( sp ), scp->sc_banner);
          return(-1);
       }
 
@@ -604,7 +619,8 @@ static int banner_always( const struct service *sp, const connection_s *cp )
                continue;
             else
             {
-               msg(LOG_ERR, func, "service %s, Error %m reading banner %s", SVC_ID( sp ), scp->sc_banner);
+               msg(LOG_ERR, func, "service %s, Error %m reading banner %s", 
+			       SVC_ID( sp ), scp->sc_banner);
                break;
             }
          }
@@ -644,7 +660,8 @@ static int banner_fail( const struct service *sp, const connection_s *cp )
                continue;
             else
             {
-               msg(LOG_ERR, func, "service %s, Error %m reading banner %s", SVC_ID( sp ), scp->sc_banner);
+               msg(LOG_ERR, func, "service %s, Error %m reading banner %s", 
+			       SVC_ID( sp ), scp->sc_banner);
                break;
             }
          }
@@ -670,7 +687,8 @@ static int banner_success( const struct service *sp, const connection_s *cp )
       int bannerfd = open(scp->sc_banner_success, O_RDONLY);
 
       if( bannerfd < 0 ) {
-         msg( LOG_ERR, func, "service = %s, open of banner %s failed", SVC_ID( sp ), scp->sc_banner_success);
+         msg( LOG_ERR, func, "service = %s, open of banner %s failed", 
+			 SVC_ID( sp ), scp->sc_banner_success);
          return(-1);
       }
 
@@ -681,7 +699,8 @@ static int banner_success( const struct service *sp, const connection_s *cp )
                continue;
             else
             {
-               msg(LOG_ERR, func, "service %s, Error %m reading banner %s", SVC_ID( sp ), scp->sc_banner);
+               msg(LOG_ERR, func, "service %s, Error %m reading banner %s", 
+			       SVC_ID( sp ), scp->sc_banner);
                break;
             }
          }
@@ -737,7 +756,7 @@ static status_e failed_service(struct service *sp,
             }
             else
             {
-               memcpy(sp->svc_last_dgram_addr, sinp, sizeof(struct sockaddr_in));
+               memcpy(sp->svc_last_dgram_addr, sinp,sizeof(struct sockaddr_in));
                sp->svc_last_dgram_time = current_time ;
             }
          } else if( SC_IPV6( scp ) ) {
@@ -764,7 +783,7 @@ static status_e failed_service(struct service *sp,
             }
             else
             {
-               memcpy(sp->svc_last_dgram_addr, sinp, sizeof(struct sockaddr_in6));
+               memcpy(sp->svc_last_dgram_addr,sinp,sizeof(struct sockaddr_in6));
                sp->svc_last_dgram_time = current_time ;
             }
          }
