@@ -185,11 +185,16 @@ static status_e service_fill( struct service_config *scp,
 
    if ( (! SC_SPECIFIED( scp, A_BIND )) && (scp->sc_orig_bind_addr == 0) ) {
       if ( SC_SPECIFIED( def, A_BIND ) ) {
-         scp->sc_bind_addr = def->sc_bind_addr ;
+         scp->sc_bind_addr = (union xsockaddr *)malloc(sizeof(union xsockaddr));
+         if( scp->sc_bind_addr == NULL ) {
+            msg(LOG_ERR, func, "can't allocate space for bind addr");
+            return( FAILED );
+         }
+         memcpy(scp->sc_bind_addr, def->sc_bind_addr, sizeof(union xsockaddr));
          SC_SPECIFY( scp, A_BIND ) ;
       }
       else if ( def->sc_orig_bind_addr )
-	    scp->sc_orig_bind_addr = new_string( def->sc_orig_bind_addr );
+         scp->sc_orig_bind_addr = new_string( def->sc_orig_bind_addr );
    }
    
    if ( ! SC_SPECIFIED( scp, A_V6ONLY ) ) {
@@ -212,7 +217,7 @@ static status_e service_fill( struct service_config *scp,
        */
       if ( SC_SPECIFIED( scp, A_BIND ) && !scp->sc_orig_bind_addr ) 
       {
-	  if ( SAIN6(scp->sc_bind_addr)->sin6_family == AF_INET )
+	  if ( SAIN(scp->sc_bind_addr)->sin_family == AF_INET )
              M_SET(scp->sc_xflags, SF_IPV4);
 	  else
              M_SET(scp->sc_xflags, SF_IPV6);

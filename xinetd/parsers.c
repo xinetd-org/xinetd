@@ -1226,8 +1226,17 @@ status_e bind_parser( pset_h values,
       } 
       memcpy(scp->sc_bind_addr, res->ai_addr, res->ai_addrlen);
    }	   
-   else
+   else {
       scp->sc_orig_bind_addr = new_string(adr);
+      freeaddrinfo(res);
+
+      /*
+       * We return failed so that SC_SPECIFY doesn't set the A_BIND flag.
+       * We will reconsider sc_orig_addr in confparse.c after we find out
+       * what the default family is to narrow choices. 
+       */
+      return( FAILED );
+   }
 
    freeaddrinfo(res);
    return( OK );
