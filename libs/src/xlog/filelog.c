@@ -83,13 +83,12 @@ static void filelog_fini( xlog_s *xp )
 
 	if ( flp->fl_state != FL_CLOSED )
 	{
-		(void) close( flp->fl_fd ) ;
+		(void) Sclose( flp->fl_fd ) ;
 		flp->fl_state = FL_CLOSED ;
 	}
 	free( flp ) ;
 	xp->xl_data = NULL ;
 }
-
 
 
 static int filelog_control( xlog_s *xp, xlog_cmd_e cmd, va_list ap )
