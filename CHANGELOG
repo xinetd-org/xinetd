@@ -816,3 +816,5 @@ devel
 	TCPMUX parser updates. -Steve Grubb
 	TCPMUX was causing core dumps due to changes made in 2.3.10's 
 		child_process(), reverted changes. -Philip Armstrong
+	Remove RECORD logging option. -Steve Grubb
+	Change Sclose to make sure it always closes the fd. -Steve Grubb
