@@ -47,7 +47,23 @@ AC_CHECK_HEADER(crypt.h, [AC_DEFINE(HAVE_CRYPT_H)])
 AC_CHECK_HEADER(stdint.h, [AC_DEFINE(HAVE_STDINT_H)])
 AC_CHECK_HEADER(stdbool.h, [AC_DEFINE(HAVE_STDBOOL_H)])
 AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H)])
-AC_CHECK_HEADER(DNSServiceDiscovery/DNSServiceDiscovery.h, [AC_DEFINE(HAVE_DNSREGISTRATION)])
+AC_CHECK_HEADER(DNSServiceDiscovery/DNSServiceDiscovery.h, [AC_DEFINE(HAVE_DNSREGISTRATION) AC_DEFINE(HAVE_MDNS)])
+
+AC_ARG_WITH(howl, [  --with-howl=PATH        Compile in howl support.  
+                          PATH is the prefix where howl is installed,
+                          and is not optional.],
+   [ OLDCFLAGS=$CFLAGS; CFLAGS="-I$withval/include/howl/ $CFLAGS"; 
+     OLDLDFLAGS=$LDFLAGS; LDFLAGS="-L$withval/lib/ $LDFLAGS"; 
+     OLDCPPFLAGS=$CPPFLAGS; CPPFLAGS="-I$withval/include/howl/ $CPPFLAGS";
+     AC_CHECK_HEADER($withval/include/howl/howl.h, 
+        [AC_DEFINE(HAVE_HOWL) AC_DEFINE(HAVE_MDNS)], 
+        [CFLAGS=$OLDCFLAGS; LDFLAGS=$OLDLDFLAGS; CPPFLAGS=$OLDCPPFLAGS;]) 
+     AC_CHECK_LIB(howl, sw_discovery_publish, [LIBS="-lhowl $LIBS"], [
+        OLDLIBS=$LIBS; LIBS="-lpthread $LIBS"; 
+        AC_CHECK_LIB(howl, main, [LIBS="-lhowl $LIBS"],
+           [LIBS=$OLDLIBS]) 
+     ])
+   ])
 
 XINETD_CHECK_TYPE(uint16_t, unsigned short)
 XINETD_CHECK_TYPE(uint32_t, unsigned int)

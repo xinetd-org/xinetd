@@ -25,10 +25,6 @@
 #endif
 #include "libportable.h"
 
-#ifdef HAVE_DNSREGISTRATION
-#include <DNSServiceDiscovery/DNSServiceDiscovery.h>
-#endif
-
 #include "pset.h"
 #include "m_env.h"
 #include "mask.h"
@@ -153,10 +149,10 @@ struct service_config
                                                  -1: forever
                                                   0: never
                                                   X: X minutes          */
-#ifdef HAVE_DNSREGISTRATION
-   dns_service_discovery_ref sc_mdnscon;
+#ifdef HAVE_MDNS
    char                *sc_mdns_name;
    boolean_e            sc_mdns;
+   void                *mdns_state;
 #endif
 } ;
 
@@ -215,7 +211,6 @@ struct service_config
 #define SC_TIME_REENABLE( scp )  (scp)->sc_time_reenable
 #define SC_UMASK( scp )          (scp)->sc_umask
 #define SC_DENY_TIME( scp )      (scp)->sc_deny_time
-#define SC_MDNSCON( scp )        (scp)->sc_mdnscon
 #define SC_MDNS_NAME( scp )      (scp)->sc_mdns_name
 #define SC_MDNS( scp )           (scp)->sc_mdns
 #define SC_PER_SOURCE( scp )     (scp)->sc_per_source

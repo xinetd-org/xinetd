@@ -85,7 +85,7 @@ SRCS     = \
 		signals.c special.c \
 		tcpint.c time.c \
 		udpint.c util.c redirect.c \
-		xgetloadavg.c includedir.c xtimer.c inet.c
+		xgetloadavg.c includedir.c xtimer.c inet.c xmdns.c
 
 OBJS     = \
 		access.o addr.o \
@@ -102,7 +102,7 @@ OBJS     = \
 		signals.o special.o \
 		tcpint.o time.o \
 		udpint.o util.o redirect.o \
-		xgetloadavg.o options.o includedir.o xtimer.o inet.o
+		xgetloadavg.o options.o includedir.o xtimer.o inet.o xmdns.o
 
 XMODE		= -m 700	# mode for executables
 FMODE		= -m 640	# mode for anything but executables

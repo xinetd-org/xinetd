@@ -250,7 +250,7 @@ status_e wait_parser( pset_h values,
    return( OK ) ;
 }
 
-#ifdef HAVE_DNSREGISTRATION
+#ifdef HAVE_MDNS
 status_e mdns_parser( pset_h values, 
                       struct service_config *scp, 
                       enum assign_op op )

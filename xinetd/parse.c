@@ -101,7 +101,7 @@ static const struct attribute service_attributes[] =
    { "v6only",         A_V6ONLY,         1,  v6only_parser          },
    { "deny_time",      A_DENY_TIME,      1,  deny_time_parser       },
    { "umask",          A_UMASK,          1,  umask_parser           },
-#ifdef HAVE_DNSREGISTRATION
+#ifdef HAVE_MDNS
    { "mdns",           A_MDNS,           1,  mdns_parser            },
 #endif
    { NULL,             A_NONE,          -1,  NULL                   }
@@ -131,7 +131,7 @@ static const struct attribute default_attributes[] =
 #endif
    { "v6only",          A_V6ONLY,         1,    v6only_parser         },
    { "umask",           A_UMASK,          1,    umask_parser          },
-#ifdef HAVE_DNSREGISTRATION
+#ifdef HAVE_MDNS
    { "mdns",            A_MDNS,           1,    mdns_parser           },
 #endif
    { NULL,              A_NONE,           0,    NULL                  }

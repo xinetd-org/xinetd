@@ -49,6 +49,9 @@ struct service_config *sc_alloc( const char *name )
    }
    CLEAR( *scp ) ;
    SC_NAME(scp) = new_string( name ) ;
+#ifdef HAVE_MDNS
+   xinetd_mdns_svc_init(scp);
+#endif
    return( scp ) ;
 }
 
@@ -65,8 +68,9 @@ static void release_string_pset( pset_h pset )
  */
 void sc_free( struct service_config *scp )
 {
-#ifdef HAVE_DNSREGISTRATION
+#ifdef HAVE_MDNS
    COND_FREE( SC_MDNS_NAME(scp) );
+   xinetd_mdns_svc_free(scp);
 #endif
    COND_FREE( SC_NAME(scp) ) ;
    COND_FREE( SC_ID(scp) ) ;

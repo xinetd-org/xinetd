@@ -100,7 +100,11 @@
 
 #undef HAVE_STRCASECMP
 
+#undef HAVE_MDNS
+
 #undef HAVE_DNSREGISTRATION
+
+#undef HAVE_HOWL
 
 /* OS specific */
 #undef solaris

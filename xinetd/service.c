@@ -20,8 +20,8 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>
-#ifdef HAVE_DNSREGISTRATION
-#include <DNSServiceDiscovery/DNSServiceDiscovery.h>
+#ifdef HAVE_MDNS
+#include "xmdns.h"
 #endif
 #ifndef NO_RPC
  #ifdef HAVE_RPC_PMAP_CLNT_H
@@ -232,13 +232,6 @@ static status_e activate_rpc( struct service *sp )
 
 #endif   /* ! NO_RPC */
 
-#ifdef HAVE_DNSREGISTRATION 
-static void mdns_callback(DNSServiceRegistrationReplyErrorType err, void *d)
-{
-	return;
-}
-#endif
-
 static status_e activate_normal( struct service *sp )
 {
    union xsockaddr         tsin;
@@ -363,22 +356,8 @@ status_e svc_activate( struct service *sp )
       return( FAILED ) ;
    }
 
-#ifdef HAVE_DNSREGISTRATION
-   if ( SC_MDNS(scp) == YES )
-   {
-      if( SC_MDNSCON( SVC_CONF(sp) ) )
-         DNSServiceDiscoveryDeallocate( SC_MDNSCON(SVC_CONF(sp)) );
-      if( SC_MDNS_NAME(scp) )
-         free(SC_MDNS_NAME(scp));
-      if( asprintf(&SC_MDNS_NAME(scp), "_%s._%s", SC_NAME(scp), SC_PROTONAME(scp)) < 0 ) 
-      {
-          deactivate( sp );
-          return( FAILED );
-      }
-
-      SC_MDNSCON(scp) = DNSServiceRegistrationCreate("", SC_MDNS_NAME(scp), "", 
-		   htons(SC_PORT(scp)), "", mdns_callback, NULL);
-   }
+#ifdef HAVE_MDNS
+   xinetd_mdns_register(scp);
 #endif
 
    if ( log_start( sp, &SVC_LOG(sp) ) == FAILED )
@@ -414,9 +393,8 @@ static void deactivate( const struct service *sp )
 {
    (void) Sclose( SVC_FD( sp ) ) ;
 
-#ifdef HAVE_DNSREGISTRATION
-   if( SC_MDNSCON( SVC_CONF(sp) ) )
-      DNSServiceDiscoveryDeallocate( SC_MDNSCON(SVC_CONF(sp)) );
+#ifdef HAVE_MDNS
+   xinetd_mdns_deregister(SVC_CONF(sp));
 #endif
 
    if (debug.on)

@@ -68,6 +68,9 @@ struct read_write_state
    xlog_h           program_log ;
    sigjmp_buf       env ;
    bool_int         env_is_valid ;
+#ifdef HAVE_MDNS
+   void            *mdns_state ;
+#endif
 } ;
 
 struct program_state
