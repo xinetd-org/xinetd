@@ -19,7 +19,7 @@ extern struct xlog_ops __xlog_syslog_ops ;
 struct lookup_table
 {
 	struct xlog_ops	*ops ;
-	xlog_e				type ;
+	xlog_e		type ;
 } ;
 
 static struct lookup_table ops_lookup_table[] =
