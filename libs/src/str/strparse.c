@@ -7,7 +7,7 @@
 #include "config.h"
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <syslog.h>
 
 #include "str.h"
 #include "strparse.h"
@@ -36,26 +36,26 @@ char *new_string( const char *s )
 
 static void terminate(const char *msg)
 {
-      (void) write( 2, msg, strlen( msg ) ) ;
+      syslog(LOG_CRIT, "%s", msg);
       (void) abort() ;
       _exit( 1 ) ;	/* NOT REACHED */
 }
 
 
-str_h str_parse( register char *str, char *separ, int flags, int *errnop )
+str_h str_parse( register char *str, const char *separ, int flags, int *errnop )
 {
 	register struct str_handle *hp ;
 	int *errp = ( errnop == NULL ) ? &str_errno : errnop ;
 
 	if ( separ == NULL ) {
 		HANDLE_ERROR( flags, NULL, errp, STR_ENULLSEPAR,
-			"STR str_parse: NULL separator\n" ) ;
+			"STR str_parse: NULL separator" ) ;
 	}
 
 	hp = (struct str_handle *) malloc( sizeof( struct str_handle ) ) ;
 	if ( hp == NULL ) {
 		HANDLE_ERROR( flags, NULL, errp, STR_ENOMEM,
-			"STR str_parse: malloc failed\n" ) ;
+			"STR str_parse: malloc failed" ) ;
 	}
 
 	hp->string = str ;
@@ -68,7 +68,7 @@ str_h str_parse( register char *str, char *separ, int flags, int *errnop )
 			*errp = STR_ENOMEM ;
 			return( NULL ) ;
 		} else {
-			terminate( "STR str_parse: malloc failed\n" ) ;
+			terminate( "STR str_parse: malloc failed" ) ;
 		}
 	}
 	
@@ -98,7 +98,7 @@ int str_setstr( str_h handle, char *newstr )
 		
         if ( newstr == NULL ) {
                 HANDLE_ERROR( hp->flags, STR_ERR, hp->errnop, STR_ENULLSTRING,
-                        "STR str_setstr: NULL string\n" ) ;
+                        "STR str_setstr: NULL string" ) ;
         }
 			        
         hp->string = newstr ;
@@ -112,11 +112,11 @@ char *str_component( str_h handle )
 {
 	register char			*start ;
 	register char			*last ;
-	register int			sep_count ;
+	register unsigned int		sep_count ;
 	char				*retval ;
 	int				last_char ;
 	register struct str_handle	*hp	= (struct str_handle *) handle ;
-	register int			first_call	= ( hp->pos == hp->string ) ;
+	register int			first_call = ( hp->pos == hp->string ) ;
 
 	if ( hp->no_more )
 		return( NULL ) ;
@@ -132,7 +132,7 @@ char *str_component( str_h handle )
 	 * at the beginning of the string and the STR_NULL_START flag is set
 	 * we return a 0-length string.
 	 */
-	if ( first_call && sep_count > 0 && ( hp->flags & STR_NULL_START ) )
+	if ( first_call && ( sep_count > 0 ) && ( hp->flags & STR_NULL_START ))
 	{
 		start = hp->pos ;
 		last = hp->pos ;
@@ -173,7 +173,7 @@ char *str_component( str_h handle )
 		retval = malloc( (unsigned)len + 1 ) ;
 		if ( retval == NULL ) {
 			HANDLE_ERROR( hp->flags, NULL, hp->errnop, STR_ENOMEM,
-				"STR str_component: malloc failed\n" ) ;
+				"STR str_component: malloc failed" ) ;
 		}
 		strncpy( retval, start, len )[ len ] = '\0' ;
 	}
