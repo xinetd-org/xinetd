@@ -203,6 +203,33 @@ static void init_common( int argc, char *argv[] )
    (void) umask( umask( 077 ) | 022 ) ;
 }
 
+/* Create the pidfile. 
+ * This is called after msg_init(), and potentially after 
+ * we've become_daemon() (depending on if we're in debug or not-forking)
+ */
+static void create_pidfile(void)
+{
+   int    pidfd;
+   FILE  *pidfile;
+
+   if ( ps.ros.pid_file ) {
+      unlink(ps.ros.pid_file);
+      pidfd = open(ps.ros.pid_file, O_EXCL|O_CREAT|O_WRONLY,
+         S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+      if (pidfd >= 0) { /* successfully created file */
+         pidfile = fdopen(pidfd, "w");
+         if (pidfile) {
+            fchmod(pidfd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+            fprintf(pidfile, "%d\n", getpid());
+            fclose(pidfile);
+         } else {
+            msg(LOG_DEBUG, "create_pidfile", "fdopen failed: %m");
+            Sclose(pidfd);
+         }
+      } else
+         msg(LOG_DEBUG, "create_pidfile", "open failed: %m");
+   }
+}
 
 /*
  * Become a daemon by forking a new process. The parent process exits.
@@ -212,8 +239,6 @@ static void become_daemon(void)
    int   tries ;
    int   pid ;
    const char  *func = "become_daemon" ;
-   int   pidfd;
-   FILE  *pidfile;
 
    /*
     * First fork so that the parent will think we have exited
@@ -236,30 +261,7 @@ static void become_daemon(void)
       else if ( pid == 0 )
          break ;
       else
-      {
-         if ( ps.ros.pid_file ) {
-            unlink(ps.ros.pid_file);
-            pidfd = open(ps.ros.pid_file, O_EXCL|O_CREAT|O_WRONLY,
-               S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-            if (pidfd >= 0) { /* successfully created file */
-               pidfile = fdopen(pidfd, "w");
-               if (pidfile) {
-                  fchmod(pidfd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-                  fprintf(pidfile, "%d\n", pid);
-                  fclose(pidfile);
-               } else {
-                  perror("fdopen");
-                  Sclose(pidfd);
-               }
-            } else
-               perror("open");
-         }
-
-#ifndef DEBUG_DAEMON
-         sleep( 3 ) ;   /* give some time to the daemon to initialize */
-#endif
          exit( 0 ) ;
-      }
    }
 
    (void) dup2( 0, STDERR_FD ) ;
@@ -339,6 +341,7 @@ void init_daemon( int argc, char *argv[] )
 
    if ( ! debug.on && !dont_fork )
       become_daemon() ;
+   create_pidfile();
    
    init_rw_state() ;
 }
