@@ -23,6 +23,8 @@
 #include "parsesup.h"
 #include "nvlists.h"
 
+static int get_next_inet_entry( int fd, pset_h sconfs, 
+                          struct service_config *defaults);
 
 void parse_inet_conf_file( int fd, struct configuration *confp )
 {
@@ -393,7 +395,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
       return -1;
    }
 
-   parsemsg( LOG_ERR, __FUNCTION__, "added service %s", scp->sc_name);
+   parsemsg( LOG_DEBUG, func, "added service %s", scp->sc_name);
    return 0;
 }
 
