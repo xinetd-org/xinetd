@@ -72,7 +72,9 @@ void dump_internal_state(void)
 	* If the above function failed, Sprint will most likely
 	* fail, too. Output a message for troubleshooting and quit.
 	*/
-       msg( LOG_ERR, func, "failed setting up sio buffering: %m" ) ;
+       msg( LOG_ERR, func, 
+            "failed setting up sio buffering: %m fd:%d", dump_fd ) ;
+       Sclose(dump_fd);
        return;
    }
 
