@@ -91,7 +91,7 @@ void handle_includedir(const char *service_name, struct configuration *confp)
    /* Now, traverse the list in alphabetic order 
     * (as determined by strcmp).
     */
-   for( u = 0; u < pset_count(dir_list); u++ ) {
+   for( u = 0; (unsigned)u < pset_count(dir_list); u++ ) {
       storename = pset_pointer(dir_list, u);
 
       /* Don't try to parse any files containing a dot ('.')

@@ -786,7 +786,7 @@ static int get_limit( char *limit_str, rlim_t *res )
    }
 
    *res = (rlim_t)limit_int * multiplier;
-   if (*res / multiplier != limit_int) {
+   if (*res / multiplier != (rlim_t)limit_int) {
       *res = 0;
       return -1;
    }

@@ -214,7 +214,8 @@ static char *verify_line( char *line,
    if ( p == NULL )
       return( NULL ) ;
    *p = NUL ;
-   if ( parse_base10( start, &port ) || port != remote_port ) {
+   if ( parse_base10( start, &port ) ||
+        port < 0 || (unsigned)port != remote_port ) {
       *p = ',';
       return( NULL ) ;
    }
@@ -225,7 +226,8 @@ static char *verify_line( char *line,
    if ( p == NULL )
       return( NULL ) ;
    *p = NUL ;
-   if ( parse_base10( start, &port ) || port != local_port ) {
+   if ( parse_base10( start, &port ) ||
+        port < 0 || (unsigned)port != local_port ) {
       *p = ':';
       return( NULL ) ;
    }

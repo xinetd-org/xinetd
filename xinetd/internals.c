@@ -108,7 +108,7 @@ void dump_internal_state(void)
     * Dump the socket mask
     */
    Sprint( dump_fd, "Socket mask:" ) ;
-   for ( fd = 0 ; fd < ps.ros.max_descriptors ; fd++ )
+   for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
       if ( FD_ISSET( fd, &ps.rws.socket_mask ) )
          Sprint( dump_fd, " %d", fd ) ;
    Sputchar( dump_fd, '\n' ) ;
@@ -118,7 +118,7 @@ void dump_internal_state(void)
     * Dump the descriptors that are open and are *not* in the socket mask
     */
    Sprint( dump_fd, "Open descriptors (not in socket mask):" ) ;
-   for ( fd = 0 ; fd < ps.ros.max_descriptors ; fd++ )
+   for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
    {
       struct stat st ;
 
@@ -248,7 +248,7 @@ static void consistency_check( enum check_type type )
    /*
     * Check if there are any descriptors set in socket_mask_copy
     */
-   for ( fd = 0 ; fd < ps.ros.max_descriptors ; fd++ )
+   for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
       if ( FD_ISSET( fd, &socket_mask_copy ) && ((fd != signals_pending[0]) && fd != signals_pending[1]))
       {
          msg( LOG_ERR, func,

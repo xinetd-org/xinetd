@@ -616,7 +616,8 @@ static status_e identify_attribute( entry_e entry_type,
          op = PLUS_EQ ;
    }
 
-   if ( FIXED_VALUES( ap ) && ap->a_nvalues != pset_count( attr_values ) )
+   if ( FIXED_VALUES( ap ) &&
+        (unsigned)ap->a_nvalues != pset_count( attr_values ) )
    {
       parsemsg( LOG_WARNING, func,
          "attribute %s expects %d values and %d values were specified",

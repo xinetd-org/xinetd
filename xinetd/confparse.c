@@ -266,7 +266,7 @@ static status_e service_fill( struct service_config *scp,
 
       if( getaddrinfo(SC_ORIG_BIND_ADDR(scp), NULL, &hints, &res) < 0 ) 
       {
-         msg(LOG_ERR, func, "bad address given for:%s", SC_NAME(scp));
+         msg(LOG_ERR, func, "bad address given for: %s", SC_NAME(scp));
          return( FAILED );
       }
 
@@ -282,7 +282,7 @@ static status_e service_fill( struct service_config *scp,
             malloc(sizeof(union xsockaddr));
          if( SC_BIND_ADDR(scp) == NULL )
          {
-            msg(LOG_ERR, func, "can't allocate space for bind addr of:%s",
+            msg(LOG_ERR, func, "can't allocate space for bind addr of: %s",
                 SC_NAME(scp));
             return( FAILED );
          }
@@ -348,7 +348,7 @@ static status_e service_fill( struct service_config *scp,
    if (! SC_SPECIFIED( scp, A_PORT ) && ! SC_IS_MUXCLIENT( scp ) && 
                                         ! SC_IS_RPC( scp )) {
        if ( SC_IS_UNLISTED( scp ) ) {
-          msg(LOG_ERR, func, "Unlisted service:%s must have a port entry",
+          msg(LOG_ERR, func, "Unlisted service: %s must have a port entry",
               SC_NAME(scp));
           return(FAILED);
        }
@@ -367,14 +367,14 @@ static status_e service_fill( struct service_config *scp,
          }
          else {
             msg(LOG_ERR, func, 
-              "Port not specified and can't find service:%s with getservbyname",
+             "Port not specified and can't find service: %s with getservbyname",
                SC_NAME(scp));
             return(FAILED);
          }
       }
       else {
          msg(LOG_ERR, func, 
-             "Port not specified for service:%s and no protocol given", 
+             "Port not specified for service: %s and no protocol given", 
              SC_NAME(scp));
          return(FAILED);
       }
@@ -634,12 +634,12 @@ static status_e check_entry( struct service_config *scp,
       }
       if (diff) 
          msg( LOG_ERR, func, 
-           "service:%s id:%s is unique but its identical to service:%s id:%s "
-	   "- DISABLING",
+         "service: %s id: %s is unique but its identical to "
+		"service: %s id: %s - DISABLING",
            SC_NAME(scp), SC_ID(scp), SC_NAME(tmp_scp), SC_ID(tmp_scp) ) ;
       else
          msg( LOG_ERR, func, 
-           "service:%s id:%s not unique or is a duplicate - DISABLING",
+           "service: %s id: %s not unique or is a duplicate - DISABLING",
            SC_NAME(scp), SC_ID(scp) ) ;
       return FAILED ;
    } /* for */
@@ -747,7 +747,7 @@ static status_e check_entry( struct service_config *scp,
           else
           {
              msg( LOG_ERR, func,
-                "A protocol or a socket_type must be specified for service:%s.",
+               "A protocol or a socket_type must be specified for service: %s.",
                 SC_NAME(scp) ) ;
              return( FAILED ) ;
           }

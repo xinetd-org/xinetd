@@ -303,7 +303,8 @@ access_e parent_access_control( struct service *sp, const connection_s *cp )
          ! ti_current_time_check( SC_ACCESS_TIMES( scp ) ) )
       return( AC_TIME ) ;
 
-   if ( SVC_RUNNING_SERVERS( sp ) >= SC_INSTANCES( scp ) )
+   if ( SC_INSTANCES( scp ) != UNLIMITED &&
+        SVC_RUNNING_SERVERS( sp ) >= (unsigned)SC_INSTANCES( scp ) )
       return( AC_SERVICE_LIMIT ) ;
 
    if( SC_PER_SOURCE(scp) != UNLIMITED ) {

@@ -261,7 +261,7 @@ static int initial_map( mapd_s *mdp, int fd )
 {
    caddr_t addr ;
    size_t requested_length = 2 * map_unit_size ;
-   size_t mapped_length = MIN( mdp->file_size, requested_length ) ;
+   size_t mapped_length = MIN( (size_t)mdp->file_size, requested_length ) ;
    size_t bytes_left ;
    size_t bytes_in_unit ;
 

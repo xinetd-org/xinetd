@@ -102,7 +102,7 @@ static void setup_file_descriptors(void)
    /*
     * Close all unneeded descriptors
     */
-   for ( fd = STDERR_FD + 1 ; fd < ps.ros.max_descriptors ; fd++ )
+   for ( fd = STDERR_FD + 1 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
       if ( Sclose( fd ) && errno != EBADF )
       {
          syscall_failed("Sclose");

@@ -190,7 +190,7 @@ static void find_bad_fd(void)
    unsigned bad_fd_count = 0 ;
    const char *func = "find_bad_fd" ;
 
-   for ( fd = 0 ; fd < ps.ros.max_descriptors ; fd++ )
+   for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
       if ( FD_ISSET( fd, &ps.rws.socket_mask ) && fstat( fd, &st ) == -1 )
       {
          int found = FALSE ;
