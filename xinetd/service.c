@@ -551,18 +551,24 @@ void svc_request( struct service *sp )
    connection_s *cp ;
    status_e ret_code;
 
+msg(LOG_DEBUG, "svc_req", "Handling request");
    cp = conn_new( sp ) ;
    if ( cp == CONN_NULL )
       return ;
 
+msg(LOG_DEBUG, "svc_req", "Calling handler");
    if (sp->svc_not_generic)
       ret_code = spec_service_handler(sp, cp);
    else 
       ret_code = svc_generic_handler(sp, cp);
+if( (SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM) && (SVC_IS_ACTIVE( sp )) ) 
+    drain( cp->co_descriptor ) ; /* Prevents looping next time */
    
    if ( ret_code != OK ) 
    {
+msg(LOG_DEBUG, "svc_req", "ret_code != OK");
       if ( SVC_LOGS_USERID_ON_FAILURE( sp ) ) {
+msg(LOG_DEBUG, "svc_req", "Service logs failures");
          if( spec_service_handler( LOG_SERVICE( ps ), cp ) == FAILED ) 
 	    conn_free( cp, 1 ) ;
          else if (!SC_WAITS( SVC_CONF( sp ) ) ) {
@@ -574,6 +580,7 @@ void svc_request( struct service *sp )
       if (!SC_WAITS( SVC_CONF( sp ) )) 
 	 conn_free( cp, 1 );
       else { 
+msg(LOG_DEBUG, "svc_req", "Drain the lizard");
          if( (SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM) && (SVC_IS_ACTIVE( sp )) ) 
             drain( cp->co_descriptor ) ; /* Prevents looping next time */
 	 free( cp );
@@ -581,6 +588,7 @@ void svc_request( struct service *sp )
    }
    else if ((sp->svc_not_generic) || (!SC_FORKS( SVC_CONF( sp ) ) ) )
      free( cp );
+msg(LOG_DEBUG, "svc_req", "ret_code == OK");
 }
 
 
@@ -628,7 +636,7 @@ static int banner_always( const struct service *sp, const connection_s *cp )
          Sflush(cp->co_descriptor);
       }
 
-      close(bannerfd);
+      Sclose(bannerfd);
    }
 
    return(0);
@@ -669,7 +677,7 @@ static int banner_fail( const struct service *sp, const connection_s *cp )
          Sflush(cp->co_descriptor);
       }
 
-      close(bannerfd);
+      Sclose(bannerfd);
    }
 
    return(0);
@@ -708,7 +716,7 @@ static int banner_success( const struct service *sp, const connection_s *cp )
          Sflush(cp->co_descriptor);
       }
 
-      close(bannerfd);
+      Sclose(bannerfd);
    }
    return(0);
 }
