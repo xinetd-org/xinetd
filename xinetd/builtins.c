@@ -51,7 +51,6 @@ static void stream_daytime(const struct server *) ;
 static void dgram_daytime(const struct server *) ;
 static void stream_chargen(const struct server *) ;
 static void dgram_chargen(const struct server *) ;
-static void stream_services(const struct server *) ;
 static void tcpmux_handler(const struct server *) ;
 static int bad_port_check(const union xsockaddr *, const char *);
 
@@ -80,7 +79,6 @@ static const struct builtin_service builtin_services[] =
       { "daytime",   SOCK_DGRAM,    { dgram_daytime,   NO_FORK } },
       { "chargen",   SOCK_STREAM,   { stream_chargen,  FORK    } },
       { "chargen",   SOCK_DGRAM,    { dgram_chargen,   NO_FORK } },
-      { "services",  SOCK_STREAM,   { stream_services, FORK    } },
       { "sensor",    SOCK_STREAM,   { stream_discard,  NO_FORK } },
       { "sensor",    SOCK_DGRAM,    { dgram_discard,   NO_FORK } },
       { "tcpmux",    SOCK_STREAM,   { tcpmux_handler,  FORK    } },
@@ -515,30 +513,6 @@ static void dgram_chargen( const struct server *serp )
    (void) sendto( fd, buf, p-buf, 0, SA( &lsin ), sin_len ) ;
 }
 
-
-static void stream_services( const struct server *serp )
-{
-   unsigned u ;
-   int      fd = SERVER_FD( serp ) ;
-
-   close_all_svc_descriptors();
-
-   for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )
-   {
-      int cc ;
-      char buf[ BUFFER_SIZE ] ;
-      const struct service_config *scp ;
-      
-      scp = SVC_CONF( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
-
-      strx_print( &cc, buf, sizeof( buf ), "%s %s %d\n",
-         SC_NAME( scp ), SC_PROTONAME( scp ), SC_PORT( scp ) ) ;
-      if ( cc >= 0) {         
-         if ( write_buf( fd, buf, cc ) == FAILED )
-            break ;
-      }
-   }
-}
 
 /*  Handle a request for a tcpmux service. 
  *  It's helpful to remember here that we are now a child of the original
