@@ -254,7 +254,9 @@ static status_e activate_normal( struct service *sp )
    const char             *func           = "activate_normal" ;
    unsigned int            sin_len        = sizeof(tsin);
    int                     on             = 1;
+#ifdef IPV6_V6ONLY
    int                     v6on           = 0;
+#endif
 
    if( scp->sc_bind_addr != NULL )
       memcpy(&tsin, scp->sc_bind_addr, sin_len);
