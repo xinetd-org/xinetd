@@ -990,6 +990,14 @@ static status_e parse_inet_addresses( pset_h values,
    {
       register char *str_addr = (char *) pset_pointer( values, u ) ;
 
+      if (strchr(str_addr, ','))
+      {
+         parsemsg( LOG_ERR, func, 
+             "Address: %s has a comma in it - remove the comma", 
+             str_addr ) ;
+         return( FAILED );
+      }
+
       if ( (*addrlist_func)( addr_set, str_addr ) == FAILED )
       {
          parsemsg( LOG_ERR, func, "Failed adding: %s", str_addr ) ;
