@@ -21,5 +21,6 @@ void tabprint(int fd, int tab_level, const char *fmt, ...)
 void drain(int sd);
 int parse_int(const char *, int , int , int *);
 int parse_base10(const char *, int *);
+bool_int parse_all_digits(const char *ptr);
 
 #endif

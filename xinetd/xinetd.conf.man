@@ -191,13 +191,17 @@ connection oriented, while tcp/stream servers normally expect the value to be
 no.
 .TP
 .B user
-determines the uid for the server process. The user name must exist in
+determines the uid for the server process. The user attribute can either 
+be numeric or a name. If a name is given (recommended),  the user name must 
+exist in
 .I /etc/passwd.
 This attribute is ineffective if the effective user ID 
 of \fBxinetd\fP is not super-user.
 .TP
 .B group
-determines the gid for the server process. The group name must exist in
+determines the gid for the server process. The group attribute can either
+be numeric or a name. If a name is given (recommended), the group name must 
+exist in
 .I /etc/group.
 If a group is not specified, the group
 of \fIuser\fP will be used (from 

@@ -290,3 +290,15 @@ int parse_base10(const char *str, int *res)
 {
 	return parse_int(str, 10, -1, res);
 }
+
+bool_int parse_all_digits(const char *ptr)
+{
+	size_t num=0, len = strlen(ptr);
+
+	while (isdigit(*ptr++))
+		num++;
+	if (num == len)
+		return TRUE;
+	else
+		return FALSE;
+}

@@ -276,18 +276,32 @@ status_e user_parser( pset_h values,
                       enum assign_op op )
 {
    char *user = (char *) pset_pointer( values, 0 ) ;
-   struct passwd *pw ;
    const char *func = "user_parser" ;
 
-   pw = getpwnam( user ) ;
-   if ( pw == NULL )
-   {
-      parsemsg( LOG_ERR, func, "Unknown user: %s", user ) ;
-      return( FAILED ) ;
+   if (parse_all_digits(user) == TRUE)
+   {   /* We will assume the number is a valid user. This is a workaround
+          for some Solaris systems that have problems doing getgr*. */
+      if (parse_base10(user, &SC_UID(scp)))
+      {
+         parsemsg( LOG_ERR, func, "Error parsing user as a number: %s", user ) ;
+         return( FAILED ) ;
+      }
+      SC_USER_GID(scp) = SC_UID(scp) ;
    }
-   str_fill( pw->pw_passwd, ' ' );
-   SC_UID(scp) = pw->pw_uid ;
-   SC_USER_GID(scp) = pw->pw_gid ;
+   else
+   {
+      struct passwd *pw ;
+
+      pw = getpwnam( user ) ;
+      if ( pw == NULL )
+      {
+         parsemsg( LOG_ERR, func, "Unknown user: %s", user ) ;
+         return( FAILED ) ;
+      }
+      str_fill( pw->pw_passwd, ' ' );
+      SC_UID(scp) = pw->pw_uid ;
+      SC_USER_GID(scp) = pw->pw_gid ;
+   }
    return( OK ) ;
 }
 
@@ -296,18 +310,29 @@ status_e group_parser( pset_h values,
                        struct service_config *scp, 
                        enum assign_op op )
 {
-   char *group_ptr = (char *) pset_pointer( values, 0 ) ;
-   struct group *grp ;
    const char *func = "group_parser" ;
+   char *group_ptr = (char *) pset_pointer( values, 0 ) ;
 
-   grp = getgrnam( group_ptr ) ;
-   if ( grp == NULL )
-   {
-      parsemsg( LOG_ERR, func, "Unknown group: %s", group_ptr ) ;
-      return( FAILED ) ;
+   if (parse_all_digits(group_ptr) == TRUE)
+   {   /* We will assume the number is a valid group. This is a workaround
+          for some Solaris systems that have problems doing getgr*. */
+      if (parse_base10(group_ptr, &SC_GID(scp)))
+      {
+         parsemsg( LOG_ERR, func, "Error parsing group as a number: %s", group_ptr ) ;
+         return( FAILED ) ;
+      }
    }
+   else
+   {
+      struct group *grp = getgrnam( group_ptr ) ;
+      if ( grp == NULL )
+      {
+         parsemsg( LOG_ERR, func, "Unknown group: %s", group_ptr ) ;
+         return( FAILED ) ;
+      }
    
-   SC_GID(scp) = grp->gr_gid ;
+      SC_GID(scp) = grp->gr_gid ;
+   }
    return( OK ) ;
 }
 

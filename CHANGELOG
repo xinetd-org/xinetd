@@ -885,3 +885,4 @@ devel
 		by David Cook. -Steve Grubb
 	Updated rpm.spec file and added default config files to contrib 
 		directory. -Steve Grubb
+	Allow group & user to be specified by numeric value. -Steve Grubb
