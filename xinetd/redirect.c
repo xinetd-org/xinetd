@@ -71,10 +71,11 @@ void redir_handler( struct server *serp )
    /* If it's a tcp service we are redirecting */
    if( scp->sc_protocol.value == IPPROTO_TCP )
    {
-      if( SC_IPV4(scp) ) {
+      memcpy(&serveraddr, scp->sc_redir_addr, sizeof(serveraddr));
+      if( serveraddr.sa_in.sin_family == AF_INET ) {
          sin_len = sizeof( struct sockaddr_in );
          RedirServerFd = socket(AF_INET, SOCK_STREAM, 0);
-      } else if( SC_IPV6(scp) ) {
+       } else if( serveraddr.sa_in.sin_family == AF_INET6 ) {
          sin_len = sizeof( struct sockaddr_in6 );
          RedirServerFd = socket(AF_INET6, SOCK_STREAM, 0);
       } else {
@@ -94,10 +95,9 @@ void redir_handler( struct server *serp )
             msg(LOG_ERR, func, 
                 "setsockopt SO_KEEPALIVE RedirServerFd failed: %m");
       
-      memcpy(&serveraddr, scp->sc_redir_addr, sizeof(serveraddr));
-      if( SC_IPV4(scp) )
+      if( serveraddr.sa_in.sin_family == AF_INET )
          serveraddr.sa_in.sin_port = htons(serveraddr.sa_in.sin_port);
-      if( SC_IPV6(scp) )
+      if( serveraddr.sa_in.sin_family == AF_INET6 )
          serveraddr.sa_in6.sin6_port = htons(serveraddr.sa_in6.sin6_port);
 
       if( connect(RedirServerFd, &serveraddr.sa, sin_len) < 0 )
