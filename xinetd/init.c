@@ -79,17 +79,18 @@ static void syscall_failed( char *call )
  * Open all descriptors in the range 0..MAX_PASS_FD (except STDERR_FD)
  * to /dev/null.
  * STDERR_FD should not be 0.
+ *
+ * msg() cannot be used from this function, as it has not been initialized yet.
  */
 static void setup_file_descriptors(void)
 {
    int   fd ;
    int   new_fd ;
    int   null_fd ;
-   const char *func = "setup_file_descriptors" ;
 
    if ( Smorefds(3) == SIO_ERR )
    {
-      msg( LOG_CRIT, func, "Smorefds: %m" ) ;
+      syscall_failed("Smorefds");
       exit( 1 ) ;
    }
 
@@ -101,7 +102,7 @@ static void setup_file_descriptors(void)
    for ( fd = STDERR_FD + 1 ; fd < ps.ros.max_descriptors ; fd++ )
       if ( close( fd ) && errno != EBADF )
       {
-         msg( LOG_CRIT, func, "close: %m" ) ;
+         syscall_failed("close");
          exit( 1 ) ;
       }
    
@@ -131,12 +132,11 @@ static void setup_file_descriptors(void)
 }
 
 
-
+/* msg() cannot be used in this function, as it has not been initialized yet. */
 static void set_fd_limit()
 {
 #ifdef RLIMIT_NOFILE
    struct rlimit rl ;
-   const char *func = "set_fd_limit" ;
    rlim_t maxfd ;
     
    /*
@@ -144,7 +144,7 @@ static void set_fd_limit()
     */
    if ( getrlimit( RLIMIT_NOFILE, &rl ) == -1 )
    {
-      msg( LOG_CRIT, func, "getrlimit: %m" ) ;
+      syscall_failed("getrlimit(RLIMIT_NOFILE)");
       exit( 1 ) ;
    }
 
@@ -160,7 +160,7 @@ static void set_fd_limit()
    rl.rlim_cur = rl.rlim_max ;
    if ( setrlimit( RLIMIT_NOFILE, &rl ) == -1 )
    {
-      msg(LOG_CRIT, func, "setrlimit failed");
+      syscall_failed("setrlimit(RLIMIT_NOFILE)");
       ps.ros.max_descriptors = FD_SETSIZE;
       ps.ros.orig_max_descriptors = FD_SETSIZE;
       return ;
