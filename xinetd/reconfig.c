@@ -246,9 +246,9 @@ static void sendsig( struct server *serp, int sig )
             msg( LOG_ERR, func, "Server %d did not exit after SIGKILL", 
 	          pid ) ;
          else {
-            struct server *serp;
-            if( (serp = server_lookup(pid)) != NULL ) {
-               server_end(serp);
+            struct server *tmp_serp;
+            if( (tmp_serp = server_lookup(pid)) != NULL ) {
+               server_end(tmp_serp);
             }
          }
       }
