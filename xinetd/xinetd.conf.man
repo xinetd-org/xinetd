@@ -1127,22 +1127,6 @@ service echo
 .RE
 }
 
-service servers
-{
-.RS
-.IP type 20
-= INTERNAL UNLISTED
-.IP protocol
-= tcp
-.IP port
-= 9099
-.IP socket_type
-= stream
-.IP wait
-= no
-.RE
-}
-
 #
 # Sample RPC service
 #

@@ -50,7 +50,6 @@ static void stream_daytime(const struct server *) ;
 static void dgram_daytime(const struct server *) ;
 static void stream_chargen(const struct server *) ;
 static void dgram_chargen(const struct server *) ;
-static void stream_servers(const struct server *) ;
 static void stream_services(const struct server *) ;
 static void xadmin_handler(const struct server *) ;
 static void tcpmux_handler(const struct server *) ;
@@ -81,7 +80,6 @@ static const struct builtin_service builtin_services[] =
       { "daytime",   SOCK_DGRAM,    { dgram_daytime,   NO_FORK } },
       { "chargen",   SOCK_STREAM,   { stream_chargen,  FORK    } },
       { "chargen",   SOCK_DGRAM,    { dgram_chargen,   NO_FORK } },
-      { "servers",   SOCK_STREAM,   { stream_servers,  FORK    } },
       { "services",  SOCK_STREAM,   { stream_services, FORK    } },
       { "xadmin",    SOCK_STREAM,   { xadmin_handler,  FORK    } },
       { "sensor",    SOCK_STREAM,   { stream_discard,  NO_FORK } },
@@ -496,29 +494,6 @@ static void dgram_chargen( const struct server *serp )
          break ;
    }
    (void) sendto( fd, buf, p-buf, 0, SA( &lsin ), sin_len ) ;
-}
-
-
-static void stream_servers( const struct server *this_serp )
-{
-   unsigned  u ;
-   int       descriptor = SERVER_FD( this_serp ) ;
-
-   close_all_svc_descriptors();
-
-   for ( u = 0 ; u < pset_count( SERVERS( ps ) ) ; u++ )
-   {
-      const struct server *serp = SERP( pset_pointer( SERVERS( ps ), u ) ) ;
-
-      /*
-       * We cannot report any useful information about this server because
-       * the data in the server struct are filled by the parent.
-       */
-      if ( serp == this_serp )
-         continue ;
-
-      server_dump( serp, descriptor ) ;
-   }
 }
 
 
