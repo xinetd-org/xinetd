@@ -364,6 +364,8 @@ status_e svc_activate( struct service *sp )
 #ifdef HAVE_DNSREGISTRATION
    if ( SC_MDNS(scp) == YES )
    {
+      if( SC_MDNSCON( SVC_CONF(sp) ) )
+         DNSServiceDiscoveryDeallocate( SC_MDNSCON(SVC_CONF(sp)) );
       if( SC_MDNS_NAME(scp) )
          free(SC_MDNS_NAME(scp));
       if( asprintf(&SC_MDNS_NAME(scp), "_%s._%s", SC_NAME(scp), SC_PROTONAME(scp)) < 0 ) 
