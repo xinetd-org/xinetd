@@ -293,7 +293,7 @@ void server_end( struct server *serp )
                   SVC_ID( sp ), serp->svr_pid, SVC_ID( conn_sp ), death_type ) ;
       }
       
-      /* Added this for when acceptint wait=yes services */
+      /* Added this for when accepting wait=yes services */
       if( SVC_WAITS( sp ) )
          FD_SET( SVC_FD( sp ), &ps.rws.socket_mask ) ;
 
