@@ -142,6 +142,9 @@ Sets the service to be an IPv4 service (AF_INET).
 .TP
 .B IPv6
 Sets the service to be an IPv6 service (AF_INET6), if IPv6 is available on the system.
+.TP
+.B REUSE
+The REUSE flag is deprecated.  All services now implicitly use the REUSE flag.
 .RE
 .TP
 .B disable
