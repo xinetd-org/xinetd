@@ -54,11 +54,7 @@ struct sigaction
 
 static void my_handler( int sig );
 static void general_handler( int sig );
-#ifndef NO_POSIX_SIGS
-/* We only include this function if the system really supports posix
- * signals so we can get some debug information */
-static void mem_fault_handler( int sig, siginfo_t * siginfo, void *context );
-#endif
+
 typedef void sigfunc( int );
 
 #define SIGSET_NULL            ((sigset_t *)0)
@@ -215,13 +211,7 @@ static status_e handle_signal( int sig )
 #if defined( DEBUG ) && !defined( DEBUG_SIGNALS )
          return( OK ) ;
 #else
-#ifdef NO_POSIX_SIGS
          sig_handler = general_handler ;
-#else
-         sa.sa_sigaction= mem_fault_handler ;
-         sig_handler = NULL ;
-         sa.sa_flags = SA_SIGINFO ;
-#endif
          break;
 #endif
       case SIGTRAP:
@@ -233,8 +223,7 @@ static status_e handle_signal( int sig )
    }
 
    sigemptyset( &sa.sa_mask ) ;
-   if ( sig_handler )
-      sa.sa_handler = sig_handler ;
+   sa.sa_handler = sig_handler ;
    return( ( sigaction( sig, &sa, SIGACTION_NULL ) == -1 ) ? FAILED : OK ) ;
 }
 
@@ -342,64 +331,6 @@ static void bad_signal(void)
       interval_signal_count = 1 ;
    }
 }
-#ifndef NO_POSIX_SIGS
-/* If a SEGV or BUS fault occur, output some basic debug information */
-static void mem_fault_handler( int sig, siginfo_t * siginfo, void *context )
-{
-   if (sig == SIGSEGV || sig == SIGBUS)
-   {
-      const char *func = "mem_fault_handler";
-      msg(LOG_CRIT, func, "Address of fault: %p", siginfo->si_addr);
-      if (siginfo->si_errno)
-         msg(LOG_CRIT, func, "si_errno: %s", strerror(siginfo->si_errno));
-
-      switch (sig) {
-         case SIGSEGV:
-            switch (siginfo->si_code) {
-#ifdef SEGV_MAPERR
-               case SEGV_MAPERR:
-                  msg(LOG_CRIT, func, "address is not mapped for object");
-                  break;
-#endif
-#ifdef SEGV_ACCERR
-               case SEGV_ACCERR:
-                  msg(LOG_CRIT, func, 
-			     "invalid permissions for mapped object");
-                  break;
-#endif
-               default:
-                  msg(LOG_CRIT, func, "unknown fault code %d",siginfo->si_code);
-            }
-            break;
-
-         case SIGBUS:
-            switch(siginfo->si_code) {
-#ifdef BUS_ADRALN
-               case BUS_ADRALN:
-                  msg(LOG_CRIT, func, "invalid address alignment");
-                  break;
-#endif
-#ifdef BUS_ADRERR
-               case BUS_ADRERR:
-                  msg(LOG_CRIT, func, "nonexistent physical address");
-                  break;
-#endif
-#ifdef BUS_OBJERR
-               case BUS_OBJERR:
-                  msg(LOG_CRIT, func, "object-specific hardware error");
-                  break;
-#endif
-               default:
-                  msg(LOG_CRIT, func, "unknown fault code %d",siginfo->si_code);
-            }
-            break;
-      }
-   }
-
-   /* Now call old function for handling */
-   general_handler( sig );
-}
-#endif /* NO_POSIX_SIGS */
 
 char *sig_name( int sig )
 {
