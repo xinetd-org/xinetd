@@ -21,6 +21,8 @@
 #define PRINTF_FORMAT(n, m)
 #endif
 
+typedef void *str_h ;
+
 /*
  * strprint(3) functions
  */
@@ -40,6 +42,7 @@ void strx_printv ( int *cnt, char *buf, int len, const char *fmt, va_list )
 /*
  * strparse(3) functions
  */
+int str_setstr( str_h handle, char *newstr );
    
 /*
  * Return values
@@ -63,8 +66,6 @@ void strx_printv ( int *cnt, char *buf, int len, const char *fmt, va_list )
 #define STR_ENULLSEPAR			1
 #define STR_ENULLSTRING			2
 #define STR_ENOMEM			3
-
-typedef void *str_h ;
 
 char *new_string(const char *) ;
 str_h str_parse ( char *str, const char *separ, int flags, int *errnop ) ;

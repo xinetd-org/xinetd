@@ -81,8 +81,8 @@ void str_endparse( str_h handle )
 
 
 /*
- *  * Change the string
- *   */
+ * Change the string
+ */
 int str_setstr( str_h handle, char *newstr )
 {
         register struct str_handle *hp = (struct str_handle *) handle ;
