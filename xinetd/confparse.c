@@ -637,6 +637,25 @@ static status_e check_entry( struct service_config *scp,
          return( FAILED ) ;
    }
 
+   if ( SC_IS_MUXCLIENT( scp ) ) 
+   {
+	   if ( !SC_IS_UNLISTED( scp ) )
+	   {
+               msg(LOG_ERR, func, 
+                   "Service: %s (tcpmux) should have UNLISTED in type.",
+		   scp->sc_name);
+	       return( FAILED );
+	   }
+	   
+	   if (!EQ("tcp", scp->sc_protocol.name))
+	   {
+               msg(LOG_ERR, func, 
+                   "Service: %s (tcpmux) should have tcp in protocol.",
+		   scp->sc_name);
+	       return( FAILED );
+	   }
+   }
+
 /* #ifndef NO_RPC */
 #if defined(HAVE_RPC_RPCENT_H) || defined(HAVE_NETDB_H)
    if ( SC_IS_RPC( scp ) && !SC_IS_UNLISTED( scp ) )
@@ -666,7 +685,7 @@ static status_e check_entry( struct service_config *scp,
 	   * proper protocol for the given service. 
            * We don't need to check MUXCLIENTs - they aren't in /etc/services.
            */
-          if ( SC_SPECIFIED( scp, A_PROTOCOL ) && ! SC_IS_MUXCLIENT( scp ) )
+          if ( SC_SPECIFIED( scp, A_PROTOCOL ) )
           {
              sep = getservbyname( scp->sc_name, scp->sc_protocol.name ) ;
              if ( (sep == NULL) )
