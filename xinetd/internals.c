@@ -219,7 +219,8 @@ static void consistency_check( enum check_type type )
             continue ;
          }
       }
-      else
+      /* TCPMUX client programs are always stopped until they run. */
+      else if ( ! SVC_IS_MUXCLIENT( sp ) )
       {
          msg( LOG_ERR, func, "service %s not started", SVC_ID( sp ) ) ;
          error_count++ ;
