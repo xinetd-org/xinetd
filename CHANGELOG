@@ -825,4 +825,4 @@ devel
 	Correct problems with bind specified in the default 
 		section. -Steve Grubb
 	Use Sclose to close banner commands. -Jay Fenlason
-
+	Correct banner to match man pages. -Jay Fenlason
