@@ -31,6 +31,7 @@ unsigned logprocs_option_arg ;
 int stayalive_option=0;
 char *program_name ;
 int inetd_compat = 0 ;
+int dont_fork = 0;
 
 static void usage(void);
 
@@ -83,6 +84,9 @@ int opt_recognize( int argc, char *argv[] )
                         }
          else if ( strcmp( &argv[ arg ][ 1 ], "stayalive" )==0) {
             stayalive_option = 1;
+                        }
+         else if ( strcmp( &argv[ arg ][ 1 ], "dontfork" )==0) {
+            dont_fork = 1;
                         }
          else if ( strcmp( &argv[ arg ][ 1 ], "logprocs" ) == 0 ) 
          {

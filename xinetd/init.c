@@ -334,7 +334,7 @@ void init_daemon( int argc, char *argv[] )
 
    init_common( argc, argv ) ;
 
-   if ( ! debug.on )
+   if ( ! debug.on && !dont_fork )
       become_daemon() ;
    
    init_rw_state() ;

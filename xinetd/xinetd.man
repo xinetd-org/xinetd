@@ -79,6 +79,13 @@ default is \fI/etc/xinetd.conf\fP.
 .br
 The process ID is written to the file. This option is ineffective in debug mode. 
 .TP
+.BI \-dontfork 
+Tells xinetd to stay in the foreground rather than detaching itself, to
+support being run from init or daemontools. It is recommended that you
+also use
+.B \-stayalive
+(see below).
+.TP
 .BI \-stayalive 
 Tells xinetd to stay running even if no services are specified.
 .TP
@@ -176,6 +183,8 @@ default dump file
 .I "xinetd.conf(5),"
 .LP
 .I "xinetd.log(5)"
+.LP
+.I "http://cr.yp.to/daemontools.html"
 .\" *********************** AUTHOR ****************************
 .SH AUTHOR
 Panos Tsirigotis, CS Dept, University of Colorado, Boulder
