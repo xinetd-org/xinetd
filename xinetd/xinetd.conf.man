@@ -754,17 +754,6 @@ and the datagram-based \fIecho\fP, \fIchargen\fP, and \fIdiscard\fP)
 have no limitation in the number of 
 .B instances.
 .LP
-.B xinetd
-also provides two
-.I UNLISTED
-internal stream-based services:
-.I servers
-and
-.I services.
-The former lists information about running servers while the latter
-provides a list of currently active services. 
-There is one service per line and each line contains the service name,
-protocol (e.g. "tcp") and port number.
 .\" *********************** TCPMUX Services ****************************
 .SH "TCPMUX Services"
 .LP
