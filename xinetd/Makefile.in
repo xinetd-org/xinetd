@@ -193,40 +193,44 @@ connection.h: mask.h service.h
 #
 # Object file dependencies
 #
-access.o:	access.h addr.h connection.h sensor.h service.h state.h
-addr.o: 	addr.h defs.h
-builtins.o: 	builtins.h xconfig.h defs.h sconf.h server.h
-child.o: 	attr.h xconfig.h sconst.h server.h state.h $(OPT_HEADER)
-conf.o: 	attr.h conf.h xconfig.h defs.h service.h state.h 
+access.o:	access.h addr.h connection.h sensor.h service.h state.h msg.h
+addr.o: 	addr.h defs.h msg.h
+builtins.o: 	builtins.h xconfig.h defs.h sconf.h server.h msg.h
+child.o: 	attr.h xconfig.h sconst.h server.h state.h msg.h $(OPT_HEADER)
+conf.o: 	attr.h conf.h xconfig.h defs.h service.h state.h msg.h
 confparse.o:	attr.h xconfig.h conf.h defs.h parse.h sconst.h \
-		sconf.h sensor.h state.h
-connection.o:	connection.h service.h state.h
+		sconf.h sensor.h state.h msg.h
+connection.o:	connection.h service.h state.h msg.h
 sconf.o:	addr.h attr.h defs.h sconf.h state.h
-env.o:		attr.h defs.h sconf.h 
-ident.o:	defs.h sconst.h server.h
-init.o:		defs.h conf.h xconfig.h state.h $(OPT_HEADER)
-int.o:		xconfig.h connection.h defs.h int.h server.h service.h
-intcommon.o:	xconfig.h defs.h int.h server.h service.h state.h 
-internals.o:	xconfig.h server.h service.h state.h
-log.o:		access.h defs.h connection.h sconst.h server.h service.h
-logctl.o:	xconfig.h defs.h log.h service.h state.h
-main.o:		service.h state.h $(OPT_HEADER)
+env.o:		attr.h defs.h sconf.h msg.h
+ident.o:	defs.h sconst.h server.h msg.h
+includedir.o:	parse.h msg.h
+inet.o:		parse.h parsesup.h msg.h
+init.o:		defs.h conf.h xconfig.h state.h msg.h $(OPT_HEADER)
+int.o:		xconfig.h connection.h defs.h int.h server.h service.h msg.h
+intcommon.o:	xconfig.h defs.h int.h server.h service.h state.h msg.h
+internals.o:	xconfig.h server.h service.h state.h msg.h
+log.o:		access.h defs.h connection.h sconst.h server.h service.h msg.h
+logctl.o:	xconfig.h defs.h log.h service.h state.h msg.h
+main.o:		service.h state.h msg.h $(OPT_HEADER)
 msg.o:		xconfig.h defs.h state.h $(OPT_HEADER)
 nvlists.o:	defs.h sconf.h
-parse.o:	addr.h attr.h conf.h defs.h parse.h service.h
-parsesup.o:	defs.h parse.h
-parsers.o:	addr.h xconfig.h defs.h parse.h sconf.h
-reconfig.o:	access.h conf.h xconfig.h defs.h server.h service.h state.h
-retry.o:	access.h xconfig.h connection.h server.h state.h
+parse.o:	addr.h attr.h conf.h defs.h parse.h service.h msg.h
+parsers.o:	addr.h xconfig.h defs.h parse.h sconf.h msg.h
+parsesup.o:	defs.h parse.h msg.h
+reconfig.o:	access.h conf.h xconfig.h defs.h server.h service.h state.h \
+		msg.h
+redirect.o:	service.h log.h sconf.h msg.h
+retry.o:	access.h xconfig.h connection.h server.h state.h msg.h
 sensor.o:	addr.h msg.h sconf.h server.h xconfig.h xtimer.h
-server.o:	access.h xconfig.h connection.h server.h state.h
+server.o:	access.h xconfig.h connection.h server.h state.h msg.h
 service.o:	access.h attr.h xconfig.h connection.h defs.h \
-			server.h service.h state.h $(OPT_HEADER)
-signals.o:	xconfig.h defs.h state.h
-special.o:	builtins.h conf.h xconfig.h connection.h \
-			server.h sconst.h state.h $(OPT_HEADER)
-tcpint.o:	access.h xconfig.h defs.h int.h 
-time.o:		defs.h
-udpint.o:	access.h defs.h int.h
-util.o:		xconfig.h defs.h
+			server.h service.h state.h msg.h $(OPT_HEADER)
+signals.o:	xconfig.h defs.h state.h msg.h
+special.o:	builtins.h conf.h xconfig.h connection.h server.h sconst.h \
+		state.h msg.h $(OPT_HEADER)
+tcpint.o:	access.h xconfig.h defs.h int.h msg.h
+time.o:		defs.h msg.h
+udpint.o:	access.h defs.h int.h msg.h
+util.o:		xconfig.h defs.h msg.h
 xtimer.o:	msg.h
