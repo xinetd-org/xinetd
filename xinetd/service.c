@@ -579,7 +579,7 @@ void svc_request( struct service *sp )
 	 free( cp );
       }
    }
-   else if ((sp->svc_not_generic) || (SC_WAITS( SVC_CONF( sp ) ) ) )
+   else if ((sp->svc_not_generic) || (!SC_FORKS( SVC_CONF( sp ) ) ) )
      free( cp );
 }
 
@@ -864,7 +864,12 @@ void svc_postmortem( struct service *sp, struct server *serp )
    if (!SVC_WAITS(sp)) {
       conn_free( cp, 1 ) ;
       cp = NULL;
-   } else
+   } else {
+      if (cp) {
+         free(cp);
+	 cp = NULL;
+      }
       svc_resume(sp);
+   }
 }
 
