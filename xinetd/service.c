@@ -151,7 +151,7 @@ static status_e set_fd_modes( struct service *sp )
    /*
     * Always set the close-on-exec flag
     */
-   if ( fcntl( sd, F_SETFD, 1 ) == -1 )
+   if ( fcntl( sd, F_SETFD, FD_CLOEXEC ) == -1 )
    {
       msg( LOG_ERR, func,
          "fcntl failed (%m) for close-on-exec. service = %s", SVC_ID( sp ) ) ;
@@ -353,7 +353,11 @@ status_e svc_activate( struct service *sp )
 #ifdef HAVE_DNSREGISTRATION
    char *srvname;
 
-   asprintf(&srvname, "_%s._%s", scp->sc_name, scp->sc_protocol.name);
+   if( asprintf(&srvname, "_%s._%s", scp->sc_name, scp->sc_protocol.name) < 0 ) {
+       deactivate( sp );
+       return( FAILED );
+   }
+
    scp->sc_mdnscon = DNSServiceRegistrationCreate("", srvname, "", htons(scp->sc_port), "", mdns_callback, NULL);
 #endif
 

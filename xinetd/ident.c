@@ -121,7 +121,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
       msg( LOG_ERR, func, "socket creation: %m" ) ;
       return( IDR_ERROR ) ;
    }
-   if ( fcntl( sd, F_SETFD, 1 ) == -1 )
+   if ( fcntl( sd, F_SETFD, FD_CLOEXEC ) == -1 )
    {
       msg( LOG_ERR, func, "fcntl F_SETFD: %m" ) ;
       (void) close( sd ) ;

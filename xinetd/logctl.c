@@ -35,7 +35,7 @@ static xlog_h start_filelog( char *id, struct filelog *flp )
    }
 
    if ( xlog_control( xh, XLOG_GETFD, &fd ) != XLOG_ENOERROR ||
-	fcntl( fd,  F_SETFD, 1 ) == -1 )
+	fcntl( fd,  F_SETFD, FD_CLOEXEC ) == -1 )
    {
       msg( LOG_ERR, func, "Failed to set close-on-exec flag for log file" ) ;
       xlog_destroy( xh ) ;
