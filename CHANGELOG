@@ -837,7 +837,7 @@ devel
 		descriptors so reconfig works. -Jay Fenlason
 	Add support for the IPV6_V6ONLY socket option.  Don't assume
 		a default setting, as the default seems to be in flux.
-	Address compare in reconfig was wrong. Its now corrected to handle
+	Address compare in readjust was wrong. Its now corrected to handle
 		each address family separately. -Steve Grubb
 	Add command line option to not fork. This will allow xinetd to be
 		started by init or daemontools. -Matthias Andree
