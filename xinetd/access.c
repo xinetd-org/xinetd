@@ -66,6 +66,7 @@ const struct name_value access_code_names[] =
    { "UNKNOWN",                  0                        }
 } ;
 
+
 /* This is called by the flags processor */
 static void cps_service_restart(void)
 {
@@ -96,6 +97,22 @@ static void cps_service_restart(void)
       }
    } /* for */
 }
+
+
+void cps_service_stop(struct service *sp, const char *reason)
+{
+   struct service_config   *scp = SVC_CONF( sp ) ; 
+   time_t nowtime;
+
+   svc_deactivate( sp );
+   msg(LOG_ERR, "service_stop", 
+	"Deactivating service %s due to %s.  Restarting in %d seconds.", 
+	SC_NAME(scp), reason, (int)SC_TIME_WAIT(scp));
+   nowtime = time(NULL);
+   SC_TIME_REENABLE(scp) = nowtime + SC_TIME_WAIT(scp);
+   xtimer_add(cps_service_restart, SC_TIME_WAIT(scp));
+}
+
 
 /*
  * Returns OK if the IP address in sinp is acceptable to the access control
@@ -275,11 +292,7 @@ access_e parent_access_control( struct service *sp, const connection_s *cp )
          SC_TIME_CONN(scp)++;
          if( time_diff == 0 ) time_diff = 1;
          if( SC_TIME_CONN(scp)/time_diff > SC_TIME_CONN_MAX(scp) ) {
-            svc_deactivate(sp);
-            msg(LOG_ERR, "xinetd", "Deactivating service %s due to excessive incoming connections.  Restarting in %d seconds.", SC_NAME(scp), (int)SC_TIME_WAIT(scp));
-            nowtime = time(NULL);
-            SC_TIME_REENABLE(scp) = nowtime + SC_TIME_WAIT(scp);
-            xtimer_add(cps_service_restart, SC_TIME_WAIT(scp));
+            cps_service_stop(sp, "excessive incoming connections");
             return(AC_CPS);
          }
       } else {

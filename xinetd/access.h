@@ -47,6 +47,7 @@ typedef enum
 
 
 extern const struct name_value access_code_names[];
+void cps_service_stop(struct service *sp, const char *reason);
 access_e access_control(struct service *sp,
 	const connection_s *cp,const mask_t *check_mask);
 access_e parent_access_control(struct service *sp,const connection_s *cp);

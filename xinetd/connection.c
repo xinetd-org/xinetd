@@ -24,6 +24,7 @@
 #include "main.h"
 #include "state.h"
 #include "special.h"
+#include "access.h"
 
 #define NEW_CONN()            NEW( connection_s )
 #define FREE_CONN( cop )      FREE( cop )
@@ -50,13 +51,18 @@ static status_e get_connection( struct service *sp, connection_s *cp )
       if( SC_WAITS( scp ) ) {
          cp->co_descriptor = SVC_FD( sp );
       } else {
-         cp->co_descriptor = accept( SVC_FD( sp ), &(cp->co_remote_address.sa), &sin_len ) ;
-         M_SET( cp->co_flags, COF_NEW_DESCRIPTOR ) ;
+         cp->co_descriptor = accept( SVC_FD( sp ), &(cp->co_remote_address.sa),
+                                     &sin_len ) ;
+	 if (cp->co_descriptor != -1)
+             M_SET( cp->co_flags, COF_NEW_DESCRIPTOR ) ;
       }
 
       if ( cp->co_descriptor == -1 )
       {
-         msg( LOG_ERR, func, "service %s, accept: %m", SVC_ID( sp ) ) ;
+	 if (errno == ENFILE)
+	     cps_service_stop(sp, "no available descriptors");
+	 else
+             msg( LOG_ERR, func, "service %s, accept: %m", SVC_ID( sp ) ) ;
          return( FAILED ) ;
       }
 

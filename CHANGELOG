@@ -879,3 +879,7 @@ devel
 	Fixed a bug where reloading configuration would core dump if file 
 		logging was enabled in defaults and a connection existed when
 		SIGHUP was received. -Steve Grubb
+	If too many connections hit and exhausts the file descriptors 
+		such that accept fails, deactivate the service like the 
+		cps access control does. This problem was reported 
+		by David Cook. -Steve Grubb
