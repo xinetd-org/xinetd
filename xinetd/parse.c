@@ -269,7 +269,7 @@ void parse_conf_file( int fd, struct configuration *confp, const char *filename)
 	     * We must check bind_address to see if it was deferred. 
 	     */
             if (SC_SPECIFIED( default_config, A_BIND) && 
-                  default_config->sc_bind_addr == NULL)
+                  SC_BIND_ADDR(default_config) == NULL)
                M_CLEAR( default_config->sc_specified_attributes, A_BIND ) ;
 	 }
          break ;
@@ -454,7 +454,7 @@ static void get_service_entry( int fd,
     * If no service id was specified, set it equal to the service name
     */
    if ( ! SC_SPECIFIED( scp, A_ID ) ) {
-      if ( (scp->sc_id = new_string( scp->sc_name )) )
+      if ( (SC_ID(scp) = new_string( SC_NAME(scp) )) )
          SC_PRESENT( scp, A_ID ) ;
       else
       {
@@ -489,50 +489,50 @@ static void fill_attribute( unsigned attr_id,
    switch ( attr_id )
    {
       case A_LOG_ON_SUCCESS:
-         M_ASSIGN( scp->sc_log_on_success, def->sc_log_on_success ) ;
+         M_ASSIGN( SC_LOG_ON_SUCCESS(scp), SC_LOG_ON_SUCCESS(def) ) ;
          SC_PRESENT( scp, A_LOG_ON_SUCCESS ) ;
          break ;
 
       case A_LOG_ON_FAILURE:
-         M_ASSIGN( scp->sc_log_on_failure, def->sc_log_on_failure ) ;
+         M_ASSIGN( SC_LOG_ON_FAILURE(scp), SC_LOG_ON_FAILURE(def) ) ;
          SC_PRESENT( scp, A_LOG_ON_FAILURE ) ;
          break ;
 
       case A_ONLY_FROM:
-         if ( addrlist_copy( def->sc_only_from, &scp->sc_only_from ) == OK )
+         if ( addrlist_copy( SC_ONLY_FROM(def), &SC_ONLY_FROM(scp) ) == OK )
             SC_PRESENT( scp, A_ONLY_FROM ) ;
          break ;
 
       case A_NO_ACCESS:
-         if ( addrlist_copy( def->sc_no_access, &scp->sc_no_access ) == OK )
+         if ( addrlist_copy( SC_NO_ACCESS(def), &SC_NO_ACCESS(scp) ) == OK )
             SC_PRESENT( scp, A_NO_ACCESS ) ;
          break ;
       
       case A_PASSENV:
-         if ( copy_pset( def->sc_pass_env_vars,
-                           &scp->sc_pass_env_vars, 0 ) == OK )
+         if ( copy_pset( SC_PASS_ENV_VARS(def),
+                           &SC_PASS_ENV_VARS(scp), 0 ) == OK )
             SC_PRESENT( scp, A_PASSENV ) ;
          break ;
       
       case A_ACCESS_TIMES:
-         if ( copy_pset( def->sc_access_times,
-                           &scp->sc_access_times, 0 ) == OK )
+         if ( copy_pset( SC_ACCESS_TIMES(def),
+                           &SC_ACCESS_TIMES(scp), 0 ) == OK )
             SC_PRESENT( scp, A_ACCESS_TIMES ) ;
          break ;
 
       case A_BANNER:
-	    if ((scp->sc_banner = new_string(def->sc_banner)) != NULL)
+	    if ((SC_BANNER(scp) = new_string(SC_BANNER(def))) != NULL)
                SC_PRESENT( scp, A_BANNER );
          break ;
 
       case A_BANNER_SUCCESS:
-	    if ((scp->sc_banner_success = new_string(def->sc_banner_success))
+	    if ((SC_BANNER_SUCCESS(scp) = new_string(SC_BANNER_SUCCESS(def)))
                   != NULL)
                SC_PRESENT( scp, A_BANNER_SUCCESS );
          break ;
 
       case A_BANNER_FAIL:
-	    if ((scp->sc_banner_fail = new_string(def->sc_banner_fail)) != NULL)
+	    if ((SC_BANNER_FAIL(scp) = new_string(SC_BANNER_FAIL(def))) != NULL)
                SC_PRESENT( scp, A_BANNER_FAIL );
          break ;
    }
@@ -595,7 +595,7 @@ static status_e identify_attribute( entry_e entry_type,
       if ( SC_SPECIFIED( scp, ap->a_id ) )
       {
          parsemsg( LOG_WARNING, func, "Service %s: attribute already set: %s",
-                  scp->sc_name, attr_name ) ;
+                  SC_NAME(scp), attr_name ) ;
          return OK;
       }
 
@@ -603,7 +603,7 @@ static status_e identify_attribute( entry_e entry_type,
       {
          parsemsg( LOG_WARNING, func,
             "Service %s: operator '%s' cannot be used for attribute '%s'",
-               scp->sc_name, ( op == PLUS_EQ ) ? "+=" : "-=", attr_name ) ;
+               SC_NAME(scp), ( op == PLUS_EQ ) ? "+=" : "-=", attr_name ) ;
          return OK;
       }
    }

@@ -45,7 +45,7 @@ status_e setup_environ( struct service_config *scp, struct service_config *def )
          }
          else
             return( 
-               make_env_with_strings( ep, std_env, scp->sc_env_var_defs ) ) ;
+               make_env_with_strings( ep, std_env, SC_ENV_VAR_DEFS(scp) ) ) ;
       }
       else   /* SC_SPECIFIED( def, A_PASSENV ) */
       {
@@ -53,7 +53,7 @@ status_e setup_environ( struct service_config *scp, struct service_config *def )
 
          if ( dep->env_type == NO_ENV &&
                   make_env_from_vars( dep, std_env,
-                                 def->sc_pass_env_vars ) == FAILED )
+                                 SC_ENV_VAR_DEFS(def) ) == FAILED )
             return( FAILED ) ;
 
          if ( ! SC_SPECIFIED( scp, A_ENV ) )
@@ -64,12 +64,12 @@ status_e setup_environ( struct service_config *scp, struct service_config *def )
          }
          else
             return( make_env_with_strings( ep, 
-                           dep->env_handle, scp->sc_env_var_defs ) ) ;
+                           dep->env_handle, SC_ENV_VAR_DEFS(scp) ) ) ;
       }
    }
    else   /* SC_SPECIFIED( scp, A_PASSENV ) */
    {
-      if ( make_env_from_vars( ep, std_env, scp->sc_pass_env_vars ) == FAILED )
+      if ( make_env_from_vars( ep, std_env, SC_PASS_ENV_VARS(scp) ) == FAILED )
          return( FAILED ) ;
 
       if ( ! SC_SPECIFIED( scp, A_ENV ) )
@@ -77,7 +77,7 @@ status_e setup_environ( struct service_config *scp, struct service_config *def )
       else
       {
          if ( update_env_with_strings( 
-                     ep->env_handle, scp->sc_env_var_defs ) == FAILED )
+                     ep->env_handle, SC_ENV_VAR_DEFS(scp) ) == FAILED )
          {
             env_destroy( ep->env_handle ) ;
             return( FAILED ) ;

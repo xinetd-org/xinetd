@@ -207,7 +207,7 @@ static void set_credentials( const struct service_config *scp )
           */
          /* Solar Designer's groups fix */
          if ( SC_SPECIFIED( scp, A_USER ) && SC_SPECIFIED( scp, A_GROUPS ) &&
-            scp->sc_groups == YES )
+            SC_GROUPS(scp) == YES )
          {
             struct passwd *pwd ;
 
@@ -237,7 +237,7 @@ static void set_credentials( const struct service_config *scp )
             if ( setgroups( 0, NULL ) )
             {
                msg( LOG_ERR, func, "setgroups( 0, NULL ) failed: %m" ) ;
-               msg( LOG_ERR, func, "Your system may require that 'groups = yes' be defined for this service: %s", scp->sc_name);
+               msg( LOG_ERR, func, "Your system may require that 'groups = yes' be defined for this service: %s", SC_NAME(scp));
                _exit( 1 ) ;
             }
          }
@@ -254,7 +254,7 @@ static void set_credentials( const struct service_config *scp )
       }
 
    if ( SC_SPECIFIED( scp, A_UMASK ) ) 
-      umask(scp->sc_umask);
+      umask(SC_UMASK(scp));
 }
 
 
@@ -331,7 +331,7 @@ void child_process( struct server *serp )
    /* this is where the server gets executed  -bbraun */
    if ( ! SC_IS_INTERNAL( scp ) )
    {
-      if( scp->sc_redir_addr != NULL )
+      if( SC_REDIR_ADDR(scp) != NULL )
       {
          redir_handler( serp );
       }
@@ -439,7 +439,7 @@ void child_exit(void)
       
       if ( ( serp = server_lookup( pid ) ) != NULL )
       {
-         serp->svr_exit_status = status ;
+         SERVER_EXITSTATUS(serp) = status ;
          server_end( serp ) ;
       }
       else

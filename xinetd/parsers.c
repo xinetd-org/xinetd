@@ -100,7 +100,7 @@ status_e type_parser( pset_h values,
    if ( pset_count( values ) >= 1 )
    {
       return( parse_value_list( values,
-                  &scp->sc_type, service_types, PLUS_EQ, "service type" ) ) ;
+                  &SC_TYPE(scp), service_types, PLUS_EQ, "service type" ) ) ;
     }
     else
     {
@@ -117,7 +117,7 @@ status_e flags_parser( pset_h values,
    if ( pset_count( values ) >= 1 )
    {
       return( parse_value_list( values,
-                  &scp->sc_xflags, service_flags, PLUS_EQ, "service flag" ) ) ;
+                  &SC_XFLAGS(scp), service_flags, PLUS_EQ, "service flag" ) ) ;
     }
     else
     {
@@ -138,7 +138,7 @@ status_e socket_type_parser( const pset_h values,
    nvp = nv_find_value( socket_types, type ) ;
    if ( nvp != NULL )
    {
-      scp->sc_socket_type = nvp->value ;
+      SC_SOCKET_TYPE(scp) = nvp->value ;
       return( OK ) ;
    }
    else
@@ -209,7 +209,7 @@ status_e protocol_parser( pset_h values,
    const char *func = "protocol_parser" ;
 
    if( proto_name == NULL ) {
-      parsemsg( LOG_ERR, func, "Protocol name is null in %s", scp->sc_name );
+      parsemsg( LOG_ERR, func, "Protocol name is null in %s", SC_NAME(scp) );
       return( FAILED );
    }
 
@@ -220,13 +220,13 @@ status_e protocol_parser( pset_h values,
       return( FAILED ) ;
    }
 
-   scp->sc_protocol.name = new_string( proto_name ) ;
-   if ( scp->sc_protocol.name == NULL )
+   SC_PROTONAME(scp) = new_string( proto_name ) ;
+   if ( SC_PROTONAME(scp) == NULL )
    {
       out_of_memory( func ) ;
       return( FAILED ) ;
    }
-   scp->sc_protocol.value = pep->p_proto ;
+   SC_PROTOVAL(scp) = pep->p_proto ;
    return( OK ) ;
 }
 
@@ -239,9 +239,9 @@ status_e wait_parser( pset_h values,
    const char *func = "wait_parser" ;
 
    if ( EQ( val, "yes" ) )
-      scp->sc_wait = YES ;
+      SC_WAIT(scp) = YES ;
    else if ( EQ( val, "no" ) )
-      scp->sc_wait = NO ;
+      SC_WAIT(scp) = NO ;
    else
    {
       parsemsg( LOG_ERR, func, "Bad value for wait: %s", val ) ;
@@ -259,9 +259,9 @@ status_e mdns_parser( pset_h values,
    const char *func = "mdns_parser" ;
 
    if ( EQ( val, "yes" ) )
-      scp->sc_mdns = YES ;
+      SC_MDNS(scp) = YES ;
    else if ( EQ( val, "no" ) )
-      scp->sc_mdns = NO ;
+      SC_MDNS(scp) = NO ;
    else
    {
       parsemsg( LOG_ERR, func, "Bad value for mdns: %s", val ) ;
@@ -286,8 +286,8 @@ status_e user_parser( pset_h values,
       return( FAILED ) ;
    }
    str_fill( pw->pw_passwd, ' ' );
-   scp->sc_uid = pw->pw_uid ;
-   scp->sc_user_gid = pw->pw_gid ;
+   SC_UID(scp) = pw->pw_uid ;
+   SC_USER_GID(scp) = pw->pw_gid ;
    return( OK ) ;
 }
 
@@ -307,7 +307,7 @@ status_e group_parser( pset_h values,
       return( FAILED ) ;
    }
    
-   scp->sc_gid = grp->gr_gid ;
+   SC_GID(scp) = grp->gr_gid ;
    return( OK ) ;
 }
 
@@ -341,9 +341,9 @@ status_e groups_parser( pset_h values,
    const char *func = "groups_parser" ;
 
    if ( EQ( val, "yes" ) )
-      scp->sc_groups = YES ;
+      SC_GROUPS(scp) = YES ;
    else if ( EQ( val, "no" ) )
-      scp->sc_groups = NO ;
+      SC_GROUPS(scp) = NO ;
    else
    {
       parsemsg( LOG_ERR, func, "Bad value for groups: %s", val ) ;
@@ -362,9 +362,9 @@ status_e v6only_parser( pset_h values,
    const char *func = "v6only_parser" ;
 
    if ( EQ( val, "yes" ) )
-      scp->sc_v6only = YES;
+      SC_V6ONLY(scp) = YES;
    else if ( EQ( val, "no" ) )
-      scp->sc_v6only = NO;
+      SC_V6ONLY(scp) = NO;
    else
    {
       parsemsg( LOG_ERR, func, "Bad value for v6only: %s", val );
@@ -397,8 +397,8 @@ status_e server_parser( pset_h values,
       return( FAILED ) ;
    }
 
-   scp->sc_server = new_string( server ) ;
-   if ( scp->sc_server == NULL )
+   SC_SERVER(scp) = new_string( server ) ;
+   if ( SC_SERVER(scp) == NULL )
    {
       out_of_memory( func ) ;
       return( FAILED ) ;
@@ -468,7 +468,7 @@ status_e server_args_parser( pset_h values,
       }
       argv[ argv_index ] = argv[ 0 ] = NULL ;
    }
-   scp->sc_server_argv = argv ;
+   SC_SERVER_ARGV(scp) = argv ;
    return( OK ) ;
 }
 
@@ -481,11 +481,11 @@ status_e instances_parser( pset_h values,
    const char *func = "instances_parser" ;
 
    if ( EQ( instances, "UNLIMITED" ) )
-      scp->sc_instances = UNLIMITED ;
+      SC_INSTANCES(scp) = UNLIMITED ;
    else
    {
-      if ( parse_base10(instances, &scp->sc_instances) ||
-           scp->sc_instances < 0 )
+      if ( parse_base10(instances, &SC_INSTANCES(scp)) ||
+           SC_INSTANCES(scp) < 0 )
       {
          parsemsg( LOG_ERR, func,
             "Number of instances is invalid: %s", instances ) ;
@@ -504,11 +504,11 @@ status_e per_source_parser( pset_h values,
    const char *func = "per_source_parser" ;
 
    if ( EQ( per_source, "UNLIMITED" ) )
-      scp->sc_per_source = UNLIMITED;
+      SC_PER_SOURCE(scp) = UNLIMITED;
    else
    {
-      if ( parse_base10(per_source, &scp->sc_per_source) ||
-           scp->sc_per_source < 0 )
+      if ( parse_base10(per_source, &SC_PER_SOURCE(scp)) ||
+           SC_PER_SOURCE(scp) < 0 )
       {
          parsemsg( LOG_ERR, func, "Number of per source instances is invalid: %s", per_source ) ;
          return( FAILED );
@@ -532,23 +532,23 @@ status_e cps_parser( pset_h values,
    }
    if( parse_base10(cps, &conn_max) ) {
       parsemsg(LOG_ERR, "cps_parser", "cps argument not a number");
-      scp->sc_time_conn_max = 0;
-      scp->sc_time_wait = 0;
+      SC_TIME_CONN_MAX(scp) = 0;
+      SC_TIME_WAIT(scp) = 0;
       return( FAILED );
    }
    if( parse_base10(waittime, &waittime_int) ) {
       parsemsg(LOG_ERR, "cps_parser", "cps time argument not a number");
-      scp->sc_time_conn_max = 0;
-      scp->sc_time_wait = 0;
+      SC_TIME_CONN_MAX(scp) = 0;
+      SC_TIME_WAIT(scp) = 0;
       return( FAILED );
    }
-   scp->sc_time_wait = waittime_int;
-   scp->sc_time_conn_max = conn_max;
+   SC_TIME_WAIT(scp) = waittime_int;
+   SC_TIME_CONN_MAX(scp) = conn_max;
 
-   if( scp->sc_time_conn_max < 0 || scp->sc_time_wait < 0 ) {
+   if( SC_TIME_CONN_MAX(scp) < 0 || SC_TIME_WAIT(scp) < 0 ) {
       parsemsg(LOG_ERR, "cps_parser", "cps arguments invalid");
-      scp->sc_time_conn_max = 0;
-      scp->sc_time_wait = 0;
+      SC_TIME_CONN_MAX(scp) = 0;
+      SC_TIME_WAIT(scp) = 0;
       return( FAILED );
    }
 
@@ -561,8 +561,8 @@ status_e id_parser( pset_h values,
 {
    const char *func = "id_parser" ;
 
-   scp->sc_id = new_string( (char *) pset_pointer( values, 0 ) ) ;
-   if ( scp->sc_id != NULL )
+   SC_ID(scp) = new_string( (char *) pset_pointer( values, 0 ) ) ;
+   if ( SC_ID(scp) != NULL )
       return( OK ) ;
    out_of_memory( func ) ;
    return( FAILED ) ;
@@ -586,7 +586,7 @@ status_e port_parser( pset_h values,
       parsemsg( LOG_ERR, func, "port number is invalid" ) ;
       return( FAILED ) ;
    }
-   scp->sc_port = (uint16_t)port ;
+   SC_PORT(scp) = (uint16_t)port ;
    return( OK ) ;
 }
 
@@ -625,12 +625,12 @@ status_e env_parser( pset_h values,
       return( FAILED ) ;
    }
 
-   NEW_SET( scp->sc_env_var_defs, 5, 5 ) ;
+   NEW_SET( SC_ENV_VAR_DEFS(scp), 5, 5 ) ;
 
-   if ( op == SET_EQ && pset_count( scp->sc_env_var_defs ) != 0 )
+   if ( op == SET_EQ && pset_count( SC_ENV_VAR_DEFS(scp) ) != 0 )
    {
-      pset_apply( scp->sc_env_var_defs, free, NULL ) ;
-      pset_clear( scp->sc_env_var_defs ) ;
+      pset_apply( SC_ENV_VAR_DEFS(scp), free, NULL ) ;
+      pset_clear( SC_ENV_VAR_DEFS(scp) ) ;
    }
 
    for ( u = 0 ; u < pset_count( values ) ; u++ )
@@ -646,7 +646,7 @@ status_e env_parser( pset_h values,
          return( FAILED ) ;
       }
 
-      if ( add_new_string( scp->sc_env_var_defs, str ) == FAILED )
+      if ( add_new_string( SC_ENV_VAR_DEFS(scp), str ) == FAILED )
          return( FAILED ) ;
    }
    return( OK ) ;
@@ -661,9 +661,9 @@ status_e passenv_parser( pset_h values,
    unsigned u ;
    const char *func = "passenv_parser" ;
 
-   NEW_SET( scp->sc_pass_env_vars, 0, 0 ) ;
+   NEW_SET( SC_PASS_ENV_VARS(scp), 0, 0 ) ;
 
-   var_set = scp->sc_pass_env_vars ;
+   var_set = SC_PASS_ENV_VARS(scp) ;
 
    if ( op == SET_EQ )
    {
@@ -720,13 +720,13 @@ status_e disabled_parser( pset_h values,
    unsigned u ;
    const char *func = "disabled_parser" ;
 
-   NEW_SET( scp->sc_disabled, pset_count( values ), 0 ) ;
+   NEW_SET( SC_DISABLED(scp), pset_count( values ), 0 ) ;
    
    for ( u = 0 ; u < pset_count( values ) ; u++ )
    {
       char *name = (char *) pset_pointer( values, u ) ;
 
-      if ( add_new_string( scp->sc_disabled, name ) == FAILED )
+      if ( add_new_string( SC_DISABLED(scp), name ) == FAILED )
          return( FAILED ) ;
    }
    return( OK ) ;
@@ -740,13 +740,13 @@ status_e enabled_parser( pset_h values,
    unsigned u ;
    const char *func = "enabled_parser" ;
 
-   NEW_SET( scp->sc_enabled, pset_count( values ), 0 ) ;
+   NEW_SET( SC_ENABLED(scp), pset_count( values ), 0 ) ;
    
    for ( u = 0 ; u < pset_count( values ) ; u++ )
    {
       char *name = (char *) pset_pointer( values, u ) ;
 
-      if ( add_new_string( scp->sc_enabled, name ) == FAILED )
+      if ( add_new_string( SC_ENABLED(scp), name ) == FAILED )
          return( FAILED ) ;
    }
    return( OK ) ;
@@ -969,7 +969,7 @@ status_e log_on_success_parser( pset_h values,
                                 enum assign_op op )
 {
    return( parse_log_flags( values, op,
-      &scp->sc_log_on_success, success_log_options, "log_on_success flag" ) ) ;
+      &SC_LOG_ON_SUCCESS(scp), success_log_options, "log_on_success flag" ) ) ;
 }
 
 
@@ -978,7 +978,7 @@ status_e log_on_failure_parser( pset_h values,
                                 enum assign_op op )
 {
    return( parse_log_flags( values, op,
-      &scp->sc_log_on_failure, failure_log_options, "log_on_failure flag" ) ) ;
+      &SC_LOG_ON_FAILURE(scp), failure_log_options, "log_on_failure flag" ) ) ;
 }
 
 
@@ -1033,7 +1033,7 @@ status_e only_from_parser( pset_h values,
                            struct service_config *scp, 
                            enum assign_op op )
 {
-   return( parse_inet_addresses( values, op, &scp->sc_only_from ) ) ;
+   return( parse_inet_addresses( values, op, &SC_ONLY_FROM(scp) ) ) ;
 }
 
 
@@ -1041,7 +1041,7 @@ status_e no_access_parser( pset_h values,
                            struct service_config *scp, 
                            enum assign_op op )
 {
-   return( parse_inet_addresses( values, op, &scp->sc_no_access ) ) ;
+   return( parse_inet_addresses( values, op, &SC_NO_ACCESS(scp) ) ) ;
 }
 
 
@@ -1057,8 +1057,8 @@ status_e banner_parser(pset_h values,
       return( FAILED );
    }
 
-   scp->sc_banner = new_string( pset_pointer(values,0) );
-   if( scp->sc_banner == NULL ) {
+   SC_BANNER(scp) = new_string( pset_pointer(values,0) );
+   if( SC_BANNER(scp) == NULL ) {
       msg(LOG_ERR, func, ES_NOMEM);
       return( FAILED );
    }
@@ -1077,8 +1077,8 @@ status_e banner_success_parser(pset_h values,
       return( FAILED );
    }
 
-   scp->sc_banner_success = new_string(pset_pointer(values,0) );
-   if( scp->sc_banner_success == NULL ) {
+   SC_BANNER_SUCCESS(scp) = new_string(pset_pointer(values,0) );
+   if( SC_BANNER_SUCCESS(scp) == NULL ) {
       msg(LOG_ERR, func, ES_NOMEM);
       return( FAILED );
    }
@@ -1097,8 +1097,8 @@ status_e banner_fail_parser(pset_h values,
       return( FAILED );
    }
 
-   scp->sc_banner_fail = new_string(pset_pointer(values,0) );
-   if( scp->sc_banner_fail == NULL ) {
+   SC_BANNER_FAIL(scp) = new_string(pset_pointer(values,0) );
+   if( SC_BANNER_FAIL(scp) == NULL ) {
       msg(LOG_ERR, func, ES_NOMEM);
       return( FAILED );
    }
@@ -1114,12 +1114,12 @@ status_e max_load_parser(pset_h values,
    const char *func = "max_load_parser" ;
    char *adr = (char *)pset_pointer(values, 0);
 
-   if( sscanf(adr, "%lf", &scp->sc_max_load) < 1 ) {
+   if( sscanf(adr, "%lf", &SC_MAX_LOAD(scp)) < 1 ) {
       parsemsg(LOG_ERR, func, "error reading max_load argument");
       return( FAILED );
    }
 
-   if( scp->sc_max_load == 0 ) {
+   if( SC_MAX_LOAD(scp) == 0 ) {
       parsemsg(LOG_ERR, func, "error parsing max_load argument");
       return( FAILED );
    }
@@ -1156,8 +1156,8 @@ status_e redir_parser(pset_h values,
       return FAILED;
    }
    
-   scp->sc_redir_addr = (union xsockaddr *)malloc(sizeof(union xsockaddr));
-   if( scp->sc_redir_addr == NULL )
+   SC_REDIR_ADDR(scp) = (union xsockaddr *)malloc(sizeof(union xsockaddr));
+   if( SC_REDIR_ADDR(scp) == NULL )
    {
       parsemsg(LOG_ERR, func, "can't allocate space for redir addr");
       return FAILED;
@@ -1173,24 +1173,24 @@ status_e redir_parser(pset_h values,
 
    if( getaddrinfo(adr, NULL, &hints, &res) < 0 ) {
       parsemsg(LOG_ERR, func, "bad address");
-      free( scp->sc_redir_addr );
-      scp->sc_redir_addr = NULL;
+      free( SC_REDIR_ADDR(scp) );
+      SC_REDIR_ADDR(scp) = NULL;
       return FAILED;
    }
 
    if( (res == NULL) || (res->ai_addr == NULL) ) {
       parsemsg(LOG_ERR, func, "no addresses returned");
-      free( scp->sc_redir_addr );
-      scp->sc_redir_addr = NULL;
+      free( SC_REDIR_ADDR(scp) );
+      SC_REDIR_ADDR(scp) = NULL;
       return FAILED;
    }
       
    if( (res->ai_family == AF_INET) || (res->ai_family == AF_INET6) )
-      memcpy(scp->sc_redir_addr, res->ai_addr, res->ai_addrlen);
-   if( scp->sc_redir_addr->sa.sa_family == AF_INET ) 
-      scp->sc_redir_addr->sa_in.sin_port = port_int;
-   if( scp->sc_redir_addr->sa.sa_family == AF_INET6 ) 
-      scp->sc_redir_addr->sa_in6.sin6_port = port_int;
+      memcpy(SC_REDIR_ADDR(scp), res->ai_addr, res->ai_addrlen);
+   if( SC_REDIR_ADDR(scp)->sa.sa_family == AF_INET ) 
+      SC_REDIR_ADDR(scp)->sa_in.sin_port = port_int;
+   if( SC_REDIR_ADDR(scp)->sa.sa_family == AF_INET6 ) 
+      SC_REDIR_ADDR(scp)->sa_in6.sin6_port = port_int;
 
    freeaddrinfo(res);
    return OK;
@@ -1254,16 +1254,16 @@ status_e bind_parser( pset_h values,
 
    if (addr_cnt == 1)
    {
-      scp->sc_bind_addr = (union xsockaddr *)malloc(sizeof(union xsockaddr));
-      if( scp->sc_bind_addr == NULL )
+      SC_BIND_ADDR(scp) = (union xsockaddr *)malloc(sizeof(union xsockaddr));
+      if( SC_BIND_ADDR(scp) == NULL )
       {
          parsemsg(LOG_ERR, func, "can't allocate space for bind addr");
          return( FAILED );
       } 
-      memcpy(scp->sc_bind_addr, res->ai_addr, res->ai_addrlen);
+      memcpy(SC_BIND_ADDR(scp), res->ai_addr, res->ai_addrlen);
    }	   
    else
-      scp->sc_orig_bind_addr = new_string(adr);
+      SC_ORIG_BIND_ADDR(scp) = new_string(adr);
 
    freeaddrinfo(res);
    return( OK );
@@ -1276,7 +1276,7 @@ status_e access_times_parser( pset_h values,
    unsigned u, count ;
    const char *func = "access_times_parser" ;
 
-   NEW_SET( scp->sc_access_times, 0, 0 ) ;
+   NEW_SET( SC_ACCESS_TIMES(scp), 0, 0 ) ;
    count = pset_count( values) ;
 
    if ( count == 0 )
@@ -1289,7 +1289,7 @@ status_e access_times_parser( pset_h values,
    {
       register char *interval = (char *) pset_pointer( values, u ) ;
 
-      if ( ti_add( scp->sc_access_times, interval ) == FAILED )
+      if ( ti_add( SC_ACCESS_TIMES(scp), interval ) == FAILED )
          return FAILED ;
    }
    return OK ;
@@ -1300,7 +1300,7 @@ status_e nice_parser( pset_h values,
                       struct service_config *scp, 
                       enum assign_op op )
 {
-   if ( parse_base10((char *) pset_pointer( values, 0 ), &scp->sc_nice) ) {
+   if ( parse_base10((char *) pset_pointer( values, 0 ), &SC_NICE(scp)) ) {
       parsemsg(LOG_ERR, "nice_parser", "Error parsing: %s", (char *)pset_pointer( values, 0 ));
       return( FAILED );
    }
@@ -1316,10 +1316,10 @@ status_e rlim_as_parser( pset_h values,
    const char *func = "rlim_as_parser" ;
 
    if ( EQ( mem, "UNLIMITED" ) )
-      scp->sc_rlim_as = (rlim_t)RLIM_INFINITY ;
+      SC_RLIM_AS(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
-      if ( get_limit ( mem, &scp->sc_rlim_as) )
+      if ( get_limit ( mem, &SC_RLIM_AS(scp)) )
       {
          parsemsg( LOG_ERR, func,
             "Address space limit is invalid: %s", mem ) ;
@@ -1340,7 +1340,7 @@ status_e rlim_cpu_parser( pset_h values,
    const char *func = "rlim_cpu_parser" ;
 
    if ( EQ( cpu_str, "UNLIMITED" ) )
-      scp->sc_rlim_cpu = (rlim_t)RLIM_INFINITY ;
+      SC_RLIM_CPU(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
       if ( parse_base10(cpu_str, &cpu_int) || cpu_int < 0 )
@@ -1349,7 +1349,7 @@ status_e rlim_cpu_parser( pset_h values,
             "CPU limit is invalid: %s", cpu_str ) ;
          return( FAILED ) ;
       }
-      scp->sc_rlim_cpu = (rlim_t) cpu_int ;
+      SC_RLIM_CPU(scp) = (rlim_t) cpu_int ;
    }
    return( OK ) ;
 }
@@ -1364,10 +1364,10 @@ status_e rlim_data_parser( pset_h values,
    const char *func = "rlim_data_parser" ;
 
    if ( EQ( mem, "UNLIMITED" ) )
-      scp->sc_rlim_data = (rlim_t)RLIM_INFINITY ;
+      SC_RLIM_DATA(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
-      if ( get_limit ( mem, &scp->sc_rlim_data ) )
+      if ( get_limit ( mem, &SC_RLIM_DATA(scp) ) )
       {
          parsemsg( LOG_ERR, func,
             "Data limit is invalid: %s", mem ) ;
@@ -1387,10 +1387,10 @@ status_e rlim_rss_parser( pset_h values,
    const char *func = "rlim_rss_parser" ;
 
    if ( EQ( mem, "UNLIMITED" ) )
-      scp->sc_rlim_rss = (rlim_t)RLIM_INFINITY ;
+      SC_RLIM_RSS(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
-      if ( get_limit ( mem, &scp->sc_rlim_rss ) )
+      if ( get_limit ( mem, &SC_RLIM_RSS(scp) ) )
       {
          parsemsg( LOG_ERR, func,
             "RSS limit is invalid: %s", mem ) ;
@@ -1410,10 +1410,10 @@ status_e rlim_stack_parser( pset_h values,
    const char *func = "rlim_stack_parser" ;
 
    if ( EQ( mem, "UNLIMITED" ) )
-      scp->sc_rlim_stack = (rlim_t)RLIM_INFINITY ;
+      SC_RLIM_STACK(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
-      if ( get_limit ( mem, &scp->sc_rlim_stack ) )
+      if ( get_limit ( mem, &SC_RLIM_STACK(scp) ) )
       {
          parsemsg( LOG_ERR, func,
             "Stack limit is invalid: %s", mem ) ;
@@ -1431,10 +1431,10 @@ status_e deny_time_parser( pset_h values,
    char *deny_time = (char *) pset_pointer( values, 0 ) ;
 
    if ( EQ( deny_time, "FOREVER" ) )
-      scp->sc_deny_time = -1 ;
+      SC_DENY_TIME(scp) = -1 ;
    else if ( EQ( deny_time, "NEVER" ) )
-      scp->sc_deny_time = 0 ;
-   else if ( parse_base10( deny_time, &scp->sc_deny_time ) ) {
+      SC_DENY_TIME(scp) = 0 ;
+   else if ( parse_base10( deny_time, &SC_DENY_TIME(scp) ) ) {
       parsemsg(LOG_ERR, "deny_time_parser", "Error parsing: %s", deny_time);
       return( FAILED );
    }
@@ -1454,7 +1454,7 @@ status_e umask_parser( pset_h values,
       parsemsg(LOG_ERR, "umask_parser", "umask argument is invalid.\n");
       return( FAILED );
    }
-   scp->sc_umask = umask_int;
+   SC_UMASK(scp) = umask_int;
    return( OK );
 }
 

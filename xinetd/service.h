@@ -77,6 +77,11 @@ struct service
 #define SVC_REFCOUNT( sp )         (sp)->svc_ref_count
 #define SVC_ID( sp )               SC_ID( SVC_CONF( sp ) )
 #define SVC_SOCKET_TYPE( sp )      SC_SOCKET_TYPE( SVC_CONF( sp ) )
+#define SVC_STATE( sp )            (sp)->svc_state
+#define SVC_ATTEMPTS( sp )         (sp)->svc_attempts
+#define SVC_LAST_DGRAM_ADDR( sp )  (sp)->svc_last_dgram_addr
+#define SVC_LAST_DGRAM_TIME( sp )  (sp)->svc_last_dgram_time
+#define SVC_NOT_GENERIC( sp )      (sp)->svc_not_generic
 
 #define SVC_IS_ACTIVE( sp )      ( (sp)->svc_state == SVC_ACTIVE )
 #define SVC_IS_SUSPENDED( sp )   ( (sp)->svc_state == SVC_SUSPENDED )

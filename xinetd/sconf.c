@@ -48,7 +48,7 @@ struct service_config *sc_alloc( const char *name )
       return( NULL ) ;
    }
    CLEAR( *scp ) ;
-   scp->sc_name = new_string( name ) ;
+   SC_NAME(scp) = new_string( name ) ;
    return( scp ) ;
 }
 
@@ -66,62 +66,62 @@ static void release_string_pset( pset_h pset )
 void sc_free( struct service_config *scp )
 {
 #ifdef HAVE_DNSREGISTRATION
-   COND_FREE( scp->sc_mdns_name );
+   COND_FREE( SC_MDNS_NAME(scp) );
 #endif
-   COND_FREE( scp->sc_name ) ;
-   COND_FREE( scp->sc_id ) ;
-   COND_FREE( scp->sc_protocol.name ) ;
-   COND_FREE( scp->sc_server ) ;
-   COND_FREE( (char *)scp->sc_redir_addr ) ;
-   COND_FREE( (char *)scp->sc_bind_addr ) ;
-   COND_FREE( (char *)scp->sc_orig_bind_addr ) ;
-   COND_FREE( (char *)scp->sc_banner ) ;
-   COND_FREE( (char *)scp->sc_banner_success ) ;
-   COND_FREE( (char *)scp->sc_banner_fail ) ;
-   if ( scp->sc_server_argv )
+   COND_FREE( SC_NAME(scp) ) ;
+   COND_FREE( SC_ID(scp) ) ;
+   COND_FREE( SC_PROTONAME(scp) ) ;
+   COND_FREE( SC_SERVER(scp) ) ;
+   COND_FREE( (char *)SC_REDIR_ADDR(scp) ) ;
+   COND_FREE( (char *)SC_BIND_ADDR(scp) ) ;
+   COND_FREE( (char *)SC_ORIG_BIND_ADDR(scp) ) ;
+   COND_FREE( (char *)SC_BANNER(scp) ) ;
+   COND_FREE( (char *)SC_BANNER_SUCCESS(scp) ) ;
+   COND_FREE( (char *)SC_BANNER_FAIL(scp) ) ;
+   if ( SC_SERVER_ARGV(scp) )
    {
       char **pp ;
 
       /*
        * argv[ 0 ] is a special case because it may not have been allocated yet
        */
-      if ( scp->sc_server_argv[ 0 ] != NULL)
-         free( scp->sc_server_argv[ 0 ] ) ;
-      for ( pp = &scp->sc_server_argv[ 1 ] ; *pp != NULL ; pp++ )
+      if ( SC_SERVER_ARGV(scp)[ 0 ] != NULL)
+         free( SC_SERVER_ARGV(scp)[ 0 ] ) ;
+      for ( pp = &SC_SERVER_ARGV(scp)[ 1 ] ; *pp != NULL ; pp++ )
          free( *pp ) ;
-      free( (char *) scp->sc_server_argv ) ;
+      free( (char *) SC_SERVER_ARGV(scp) ) ;
    }
    COND_FREE( LOG_GET_FILELOG( SC_LOG( scp ) )->fl_filename ) ;
 
-   if ( scp->sc_access_times != NULL )
+   if ( SC_ACCESS_TIMES(scp) != NULL )
    {
-      ti_free( scp->sc_access_times ) ;
-      pset_destroy( scp->sc_access_times ) ;
+      ti_free( SC_ACCESS_TIMES(scp) ) ;
+      pset_destroy( SC_ACCESS_TIMES(scp) ) ;
    }
 
-   if ( scp->sc_only_from != NULL )
+   if ( SC_ONLY_FROM(scp) != NULL )
    {
-      addrlist_free( scp->sc_only_from ) ;
-      pset_destroy( scp->sc_only_from ) ;
+      addrlist_free( SC_ONLY_FROM(scp) ) ;
+      pset_destroy( SC_ONLY_FROM(scp) ) ;
    }
 
-   if ( scp->sc_no_access != NULL )
+   if ( SC_NO_ACCESS(scp) != NULL )
    {
-      addrlist_free( scp->sc_no_access ) ;
-      pset_destroy( scp->sc_no_access ) ;
+      addrlist_free( SC_NO_ACCESS(scp) ) ;
+      pset_destroy( SC_NO_ACCESS(scp) ) ;
    }
 
-   if ( scp->sc_env_var_defs != NULL )
-      release_string_pset( scp->sc_env_var_defs ) ;
-   if ( scp->sc_pass_env_vars != NULL )
-      release_string_pset( scp->sc_pass_env_vars ) ;
+   if ( SC_ENV_VAR_DEFS(scp) != NULL )
+      release_string_pset( SC_ENV_VAR_DEFS(scp) ) ;
+   if ( SC_PASS_ENV_VARS(scp) != NULL )
+      release_string_pset( SC_PASS_ENV_VARS(scp) ) ;
    if ( SC_ENV( scp )->env_type == CUSTOM_ENV && 
                                     SC_ENV( scp )->env_handle != ENV_NULL )
       env_destroy( SC_ENV( scp )->env_handle ) ;
-   if (scp->sc_disabled ) 
-      release_string_pset( scp->sc_disabled ) ;
-   if (scp->sc_enabled ) 
-      release_string_pset( scp->sc_enabled ) ;
+   if (SC_DISABLED(scp) ) 
+      release_string_pset( SC_DISABLED(scp) ) ;
+   if (SC_ENABLED(scp) ) 
+      release_string_pset( SC_ENABLED(scp) ) ;
    
    CLEAR( *scp ) ;
    FREE_SCONF( scp ) ;
@@ -141,8 +141,8 @@ struct service_config *sc_make_special( const char *service_name,
    if ( ( scp = sc_alloc( service_name ) ) == NULL )
       return( NULL ) ;
 
-   scp->sc_id = new_string( scp->sc_name ) ;
-   if ( scp->sc_id == NULL )
+   SC_ID(scp) = new_string( SC_NAME(scp) ) ;
+   if ( SC_ID(scp) == NULL )
    {
       out_of_memory( func ) ;
       return( NULL ) ;
@@ -152,18 +152,18 @@ struct service_config *sc_make_special( const char *service_name,
    /*
     * All special services are internal
     */
-   M_SET( scp->sc_type, ST_SPECIAL ) ;
-   M_SET( scp->sc_type, ST_INTERNAL ) ;
-   scp->sc_builtin = bp ;
+   M_SET( SC_TYPE(scp), ST_SPECIAL ) ;
+   M_SET( SC_TYPE(scp), ST_INTERNAL ) ;
+   SC_BUILTIN(scp) = bp ;
    SC_SPECIFY( scp, A_TYPE ) ;
 
-   M_SET( scp->sc_xflags, SF_NORETRY ) ;
+   M_SET( SC_XFLAGS(scp), SF_NORETRY ) ;
    SC_SPECIFY( scp, A_FLAGS ) ;
 
-   scp->sc_instances = instances ;
+   SC_INSTANCES(scp) = instances ;
    SC_SPECIFY( scp, A_INSTANCES ) ;
 
-   scp->sc_wait = NO ;
+   SC_WAIT(scp) = NO ;
    SC_SPECIFY( scp, A_WAIT ) ;
 
    return( scp ) ;
@@ -207,13 +207,13 @@ static void dump_log_data( int fd, struct service_config *scp, int tab_level )
 
    tabprint( fd, tab_level, "Log_on_success flags =" ) ;
    for ( i = 0 ; success_log_options[ i ].name != NULL ; i++ )
-      if ( M_IS_SET( scp->sc_log_on_success, success_log_options[ i ].value ) )
+      if ( M_IS_SET( SC_LOG_ON_SUCCESS(scp), success_log_options[ i ].value ) )
          Sprint( fd, " %s", success_log_options[ i ].name ) ;
    Sputchar( fd, '\n' ) ;
 
    tabprint( fd, tab_level, "Log_on_failure flags =" ) ;
    for ( i = 0 ; failure_log_options[ i ].name != NULL ; i++ )
-      if ( M_IS_SET( scp->sc_log_on_failure, failure_log_options[ i ].value ) )
+      if ( M_IS_SET( SC_LOG_ON_FAILURE(scp), failure_log_options[ i ].value ) )
          Sprint( fd, " %s", failure_log_options[ i ].name ) ;
    Sputchar( fd, '\n' ) ;
 }
@@ -234,103 +234,103 @@ void sc_dump( struct service_config *scp,
    if ( is_defaults )
       tabprint( fd, tab_level, "Service defaults\n" ) ;
    else
-      tabprint( fd, tab_level, "Service configuration: %s\n", scp->sc_name ) ;
+      tabprint( fd, tab_level, "Service configuration: %s\n", SC_NAME(scp) ) ;
 
    if ( ! is_defaults )
    {
-      tabprint( fd, tab_level+1, "id = %s\n", scp->sc_id ) ;
+      tabprint( fd, tab_level+1, "id = %s\n", SC_ID(scp) ) ;
 
-      if ( ! M_ARE_ALL_CLEAR( scp->sc_xflags ) )
+      if ( ! M_ARE_ALL_CLEAR( SC_XFLAGS(scp) ) )
       {
          tabprint( fd, tab_level+1, "flags =" ) ;
          for ( nvp = &service_flags[ 0 ] ; nvp->name != NULL ; nvp++ )
-            if ( M_IS_SET( scp->sc_xflags, nvp->value ) )
+            if ( M_IS_SET( SC_XFLAGS(scp), nvp->value ) )
                Sprint( fd, " %s", nvp->name ) ;
          Sputchar( fd, '\n' ) ;
       }
 
-      if ( ! M_ARE_ALL_CLEAR( scp->sc_type ) )
+      if ( ! M_ARE_ALL_CLEAR( SC_TYPE(scp) ) )
       {
          tabprint( fd, tab_level+1, "type =" ) ;
          for ( nvp = &service_types[ 0 ] ; nvp->name != NULL ; nvp++ )
-            if ( M_IS_SET( scp->sc_type, nvp->value ) )
+            if ( M_IS_SET( SC_TYPE(scp), nvp->value ) )
                Sprint( fd, " %s", nvp->name ) ;
          Sputchar( fd, '\n' ) ;
       }
 
       tabprint( fd, tab_level+1, "socket_type = %s\n",
-         nv_get_name( socket_types, scp->sc_socket_type ) ) ;
+         nv_get_name( socket_types, SC_SOCKET_TYPE(scp) ) ) ;
 
       tabprint( fd, tab_level+1, "Protocol (name,number) = (%s,%d)\n",
-            scp->sc_protocol.name, scp->sc_protocol.value ) ;
+            SC_PROTONAME(scp), SC_PROTOVAL(scp) ) ;
       
       if ( SC_SPECIFIED( scp, A_PORT ) )
-         tabprint( fd, tab_level+1, "port = %d\n", scp->sc_port ) ;
+         tabprint( fd, tab_level+1, "port = %d\n", SC_PORT(scp) ) ;
    }
 
    if ( SC_SPECIFIED( scp, A_INSTANCES ) ) {
-      if ( scp->sc_instances == UNLIMITED )
+      if ( SC_INSTANCES(scp) == UNLIMITED )
          tabprint( fd, tab_level+1, "Instances = UNLIMITED\n" ) ;
       else
-         tabprint( fd, tab_level+1, "Instances = %d\n", scp->sc_instances ) ;
+         tabprint( fd, tab_level+1, "Instances = %d\n", SC_INSTANCES(scp) ) ;
    }
 
    if ( SC_SPECIFIED( scp, A_WAIT ) ) {
-      if ( scp->sc_wait )
+      if ( SC_WAIT(scp) )
          tabprint( fd, tab_level+1, "wait = yes\n" ) ;
       else
          tabprint( fd, tab_level+1, "wait = no\n" ) ;
    }
       
    if ( SC_SPECIFIED( scp, A_USER ) )
-      tabprint( fd, tab_level+1, "user = %d\n", scp->sc_uid ) ;
+      tabprint( fd, tab_level+1, "user = %d\n", SC_UID(scp) ) ;
       
    if ( SC_SPECIFIED( scp, A_GROUP ) )
-      tabprint( fd, tab_level+1, "group = %d\n", scp->sc_gid ) ;
+      tabprint( fd, tab_level+1, "group = %d\n", SC_GID(scp) ) ;
       
    if ( SC_SPECIFIED( scp, A_GROUPS ) )
    {
-      if (scp->sc_groups == 1)
+      if (SC_GROUPS(scp) == 1)
          tabprint( fd, tab_level+1, "Groups = yes\n" );
       else
          tabprint( fd, tab_level+1, "Groups = no\n" );
    }
 
    if ( SC_SPECIFIED( scp, A_UMASK ) )
-      tabprint( fd, tab_level+1, "umask = %o\n", scp->sc_umask ) ;
+      tabprint( fd, tab_level+1, "umask = %o\n", SC_UMASK(scp) ) ;
       
    if ( SC_SPECIFIED( scp, A_NICE ) )
-      tabprint( fd, tab_level+1, "Nice = %d\n", scp->sc_nice ) ;
+      tabprint( fd, tab_level+1, "Nice = %d\n", SC_NICE(scp) ) ;
 
    if ( SC_SPECIFIED( scp, A_CPS ) )
       tabprint( fd, tab_level+1, "CPS = max conn:%lu wait:%lu\n", 
-         scp->sc_time_conn_max, scp->sc_time_wait );
+         SC_TIME_CONN_MAX(scp), SC_TIME_WAIT(scp) );
 
    if ( SC_SPECIFIED( scp, A_PER_SOURCE ) )
       tabprint( fd, tab_level+1, "PER_SOURCE = %d\n", 
-         scp->sc_per_source );
+         SC_PER_SOURCE(scp) );
 
    if ( SC_SPECIFIED( scp, A_BIND ) ) {
-	   if (  scp->sc_bind_addr ) {
+	   if (  SC_BIND_ADDR(scp) ) {
 		  char bindname[NI_MAXHOST];
 		  unsigned int len = 0;
-		  if( scp->sc_bind_addr->sa.sa_family == AF_INET ) 
+		  if( SC_BIND_ADDR(scp)->sa.sa_family == AF_INET ) 
 			 len = sizeof(struct sockaddr_in);
 		  else  
 			 len = sizeof(struct sockaddr_in6);
 		  memset(bindname, 0, sizeof(bindname));
-		  if( getnameinfo(&scp->sc_bind_addr->sa, len, bindname, 
+		  if( getnameinfo(&SC_BIND_ADDR(scp)->sa, len, bindname, 
                                   NI_MAXHOST, NULL, 0, 0) != 0 ) 
 			 strcpy(bindname, "unknown");
 		  tabprint( fd, tab_level+1, "Bind = %s\n", bindname );
 	   }
-	   else if ( scp->sc_orig_bind_addr ) {
+	   else if ( SC_ORIG_BIND_ADDR(scp) ) {
 		  tabprint( fd, tab_level+1, "Bind = %s\n", 
-                            scp->sc_orig_bind_addr );
+                            SC_ORIG_BIND_ADDR(scp) );
 	   }
 	   else { /* This should NEVER happen */
 		msg(LOG_ERR, "sc_dump", "bad configuration for %s:", 
-                    scp->sc_name);
+                    SC_NAME(scp));
 	   }
    }
    else
@@ -338,13 +338,13 @@ void sc_dump( struct service_config *scp,
 
    if ( ! is_defaults )
    {
-      if ( (! SC_IS_INTERNAL( scp )) && (scp->sc_redir_addr == NULL) )
+      if ( (! SC_IS_INTERNAL( scp )) && (SC_REDIR_ADDR(scp) == NULL) )
       {
-         tabprint( fd, tab_level+1, "Server = %s\n", scp->sc_server ) ;
+         tabprint( fd, tab_level+1, "Server = %s\n", SC_SERVER(scp) ) ;
          tabprint( fd, tab_level+1, "Server argv =" ) ;
-	 if ( scp->sc_server_argv )
+	 if ( SC_SERVER_ARGV(scp) )
 	 {
-            for ( pp = scp->sc_server_argv ; *pp ; pp++ )
+            for ( pp = SC_SERVER_ARGV(scp) ; *pp ; pp++ )
                Sprint( fd, " %s", *pp ) ;
 	 }
 	 else
@@ -352,20 +352,20 @@ void sc_dump( struct service_config *scp,
          Sputchar( fd, '\n' ) ;
       } 
 
-      if ( scp->sc_redir_addr != NULL ) 
+      if ( SC_REDIR_ADDR(scp) != NULL ) 
       {
          char redirname[NI_MAXHOST];
          unsigned int len = 0;
-         if( scp->sc_redir_addr->sa.sa_family == AF_INET ) 
+         if( SC_REDIR_ADDR(scp)->sa.sa_family == AF_INET ) 
             len = sizeof(struct sockaddr_in);
-         if( scp->sc_redir_addr->sa.sa_family == AF_INET6 ) 
+         if( SC_REDIR_ADDR(scp)->sa.sa_family == AF_INET6 ) 
             len = sizeof(struct sockaddr_in6);
          memset(redirname, 0, sizeof(redirname));
-         if( getnameinfo(&scp->sc_redir_addr->sa, len,  redirname, NI_MAXHOST, 
+         if( getnameinfo(&SC_REDIR_ADDR(scp)->sa, len,  redirname, NI_MAXHOST, 
                NULL, 0, 0) != 0 ) 
             strcpy(redirname, "unknown");
          tabprint( fd, tab_level+1, "Redirect = %s:%d\n", redirname, 
-	    scp->sc_redir_addr->sa_in.sin_port );
+	    SC_REDIR_ADDR(scp)->sa_in.sin_port );
       }
 
       if ( SC_IS_RPC( scp ) )
@@ -386,19 +386,19 @@ void sc_dump( struct service_config *scp,
       if ( SC_SPECIFIED( scp, A_ACCESS_TIMES ) )
       {
          tabprint( fd, tab_level+1, "Access times =" ) ;
-         ti_dump( scp->sc_access_times, fd ) ;
+         ti_dump( SC_ACCESS_TIMES(scp), fd ) ;
          Sputchar ( fd, '\n' ) ;
       }
    }
 
    /* This is important enough that each service should list it. */
    tabprint( fd, tab_level+1, "Only from: " ) ;
-   if ( scp->sc_only_from )
+   if ( SC_ONLY_FROM(scp) )
    {  /* Next check is done since -= doesn't zero out lists. */
-      if ( pset_count(scp->sc_only_from) == 0)
+      if ( pset_count(SC_ONLY_FROM(scp)) == 0)
          Sprint( fd, "All sites" );
       else
-         addrlist_dump( scp->sc_only_from, fd ) ;
+         addrlist_dump( SC_ONLY_FROM(scp), fd ) ;
    }
    else
       Sprint( fd, "All sites" );
@@ -406,12 +406,12 @@ void sc_dump( struct service_config *scp,
 
    /* This is important enough that each service should list it. */
    tabprint( fd, tab_level+1, "No access: " ) ;
-   if ( scp->sc_no_access )
+   if ( SC_NO_ACCESS(scp) )
    {  /* Next check is done since -= doesn't zero out lists. */
-      if ( pset_count(scp->sc_no_access) == 0)
+      if ( pset_count(SC_NO_ACCESS(scp)) == 0)
          Sprint( fd, "No blocked sites" );
       else
-         addrlist_dump( scp->sc_no_access, fd ) ;
+         addrlist_dump( SC_NO_ACCESS(scp), fd ) ;
    }
    else
       Sprint( fd, "No blocked sites" );
@@ -420,7 +420,7 @@ void sc_dump( struct service_config *scp,
    if ( SC_SENSOR(scp) )
    {
       tabprint( fd, tab_level+1, "Deny Time: " ) ;
-      Sprint( fd, "%d\n", scp->sc_deny_time);
+      Sprint( fd, "%d\n", SC_DENY_TIME(scp));
    }
    
    dump_log_data( fd, scp, tab_level+1 ) ;
@@ -428,9 +428,9 @@ void sc_dump( struct service_config *scp,
    if ( SC_IS_PRESENT( scp, A_PASSENV ) )
    {
       tabprint( fd, tab_level+1, "Passenv =" ) ;
-      for ( u = 0 ; u < pset_count( scp->sc_pass_env_vars ) ; u++ )
+      for ( u = 0 ; u < pset_count( SC_PASS_ENV_VARS(scp) ) ; u++ )
          Sprint( fd, " %s",
-                  (char *) pset_pointer( scp->sc_pass_env_vars, u ) ) ;
+                  (char *) pset_pointer( SC_PASS_ENV_VARS(scp), u ) ) ;
       Sputchar ( fd, '\n' ) ;
    }
 
@@ -438,9 +438,9 @@ void sc_dump( struct service_config *scp,
       if ( SC_SPECIFIED( scp, A_ENV ) )
       {
          tabprint( fd, tab_level+1, "Environment additions:\n" ) ;
-         for ( u = 0 ; u < pset_count( scp->sc_env_var_defs ) ; u++ )
+         for ( u = 0 ; u < pset_count( SC_ENV_VAR_DEFS(scp) ) ; u++ )
             tabprint( fd, tab_level+2,
-                  "%s\n", (char *) pset_pointer( scp->sc_env_var_defs, u ) ) ;
+                  "%s\n", (char *) pset_pointer( SC_ENV_VAR_DEFS(scp), u ) ) ;
       }
    
    if ( SC_ENV( scp )->env_type == CUSTOM_ENV )
@@ -455,8 +455,8 @@ void sc_dump( struct service_config *scp,
 
 #define SC_RPCPROGNUM( s )    RD_PROGNUM( SC_RPCDATA( s ) )
 #define SAME_RPC( s1, s2 )    ( SC_RPCPROGNUM( s1 ) == SC_RPCPROGNUM( s2 ) )
-#define SAME_NONRPC( s1, s2 ) ( (s1)->sc_socket_type == (s2)->sc_socket_type \
-                                 && (s1)->sc_port == (s2)->sc_port )
+#define SAME_NONRPC( s1, s2 ) ( SC_SOCKET_TYPE((s1)) == SC_SOCKET_TYPE((s2)) \
+                                 && SC_PORT((s1)) == SC_PORT((s2)) )
 
 /*
  * Two service configurations are considered different if any of the
@@ -485,10 +485,10 @@ bool_int sc_different_confs( struct service_config *scp1,
                SC_IS_RPC( scp1 ) != SC_IS_RPC( scp2 ) )
       return( TRUE ) ;
 
-   if ( scp1->sc_wait != scp2->sc_wait )
+   if ( SC_WAIT(scp1) != SC_WAIT(scp2) )
       return( TRUE ) ;
   
-   if ( scp1->sc_protocol.value != scp2->sc_protocol.value )
+   if ( SC_PROTOVAL(scp1) != SC_PROTOVAL(scp2) )
       return( TRUE ) ;
 
    if ( SC_IS_RPC( scp1 ) )

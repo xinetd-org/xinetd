@@ -47,7 +47,7 @@ void process_sensor( const struct service *sp, const union xsockaddr *addr)
 {
    const char *func = "process_sensor";
 
-   if (sp->svc_conf->sc_deny_time != 0)   /* 0 simply logs it   */
+   if (SC_DENY_TIME(SVC_CONF(sp)) != 0)   /* 0 simply logs it   */
    {
       if ( pset_count( global_no_access ) < MAX_GLOBAL_NO_ACCESS)
       {
@@ -71,13 +71,13 @@ void process_sensor( const struct service *sp, const union xsockaddr *addr)
 	       nowtime = time(NULL);
 	       msg(LOG_CRIT, func,
 	           "Adding %s to the global_no_access list for %d minutes",
-	            dup_addr, sp->svc_conf->sc_deny_time);
+	            dup_addr, SC_DENY_TIME(SVC_CONF(sp)));
 
-	       if (sp->svc_conf->sc_deny_time == -1)
+	       if (SC_DENY_TIME(SVC_CONF(sp)) == -1)
                     strcpy(time_buf, "-1");
                else
                     strx_nprint(time_buf, 38, "%ld",
-                       (time_t)nowtime+(60*sp->svc_conf->sc_deny_time));
+                       (time_t)nowtime+(60*SC_DENY_TIME(SVC_CONF(sp))));
 
 	       tmp = new_string(time_buf);
                if (tmp != NULL)
@@ -114,7 +114,7 @@ void process_sensor( const struct service *sp, const union xsockaddr *addr)
                   time_t nowtime, new_time;
 
                   nowtime = time(NULL);
-                  new_time = (time_t)nowtime+(60*sp->svc_conf->sc_deny_time);                     if (difftime(new_time, (time_t)stored_time) > 0.0)
+                  new_time = (time_t)nowtime+(60*SC_DENY_TIME(SVC_CONF(sp)));                     if (difftime(new_time, (time_t)stored_time) > 0.0)
 	          {   /* new_time is longer save it   */
 		     char time_buf[40], *new_exp_time;
 

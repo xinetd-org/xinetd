@@ -107,7 +107,7 @@ void int_init( struct intercept_s *ip, struct server *serp )
       if ( sp == SERVER_SERVICE( serp ) )
          continue ;
       if ( LOG_GET_TYPE( SC_LOG( SVC_CONF( sp ) ) ) == L_FILE )
-         xlog_destroy( sp->svc_log ) ;
+         xlog_destroy( SVC_LOG( sp ) ) ;
       (void) Sclose( SVC_FD( sp ) ) ;
    }
 

@@ -434,19 +434,19 @@ static status_e readjust( struct service *sp,
     * compared directly, otherwise use the IPv6 macro. If they are not the 
     * same, terminate & restart the service. 
     */
-   if( (old_conf->sc_bind_addr != NULL) && (new_conf->sc_bind_addr != NULL) ) {
+   if( (SC_BIND_ADDR(old_conf) != NULL) && (SC_BIND_ADDR(new_conf) != NULL) ) {
       int same = 0;
 
-      if ( SA(old_conf->sc_bind_addr)->sa_family == 
-           SA(new_conf->sc_bind_addr)->sa_family ) {
-         if ( SA(old_conf->sc_bind_addr)->sa_family == AF_INET ) {
-            if ( SAIN(old_conf->sc_bind_addr)->sin_addr.s_addr == 
-                 SAIN(new_conf->sc_bind_addr)->sin_addr.s_addr)
+      if ( SA(SC_BIND_ADDR(old_conf))->sa_family == 
+           SA(SC_BIND_ADDR(new_conf))->sa_family ) {
+         if ( SA(SC_BIND_ADDR(old_conf))->sa_family == AF_INET ) {
+            if ( SAIN(SC_BIND_ADDR(old_conf))->sin_addr.s_addr == 
+                 SAIN(SC_BIND_ADDR(new_conf))->sin_addr.s_addr)
                same = 1;
          }
          else if ( IN6_ARE_ADDR_EQUAL(
-                  &SAIN6(old_conf->sc_bind_addr)->sin6_addr, 
-                  &SAIN6(new_conf->sc_bind_addr)->sin6_addr) )
+                  &SAIN6(SC_BIND_ADDR(old_conf))->sin6_addr, 
+                  &SAIN6(SC_BIND_ADDR(new_conf))->sin6_addr) )
             same = 1;
       }
       
@@ -462,7 +462,7 @@ static status_e readjust( struct service *sp,
    /* If the service didn't have a bind address before, but does now,
     * make sure the new bind directive takes effect.
     */
-   if( (old_conf->sc_bind_addr == NULL) && (new_conf->sc_bind_addr != NULL) ) {
+   if( (SC_BIND_ADDR(old_conf) == NULL) && (SC_BIND_ADDR(new_conf) != NULL) ) {
       terminate_servers( sp );
       svc_deactivate(sp);
       stop_log( sp, old_conf ); /* svc_activate re-starts logging */

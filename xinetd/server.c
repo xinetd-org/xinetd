@@ -77,7 +77,7 @@ struct server *server_alloc( const struct server *init_serp )
    }
 
    *serp = *init_serp ;         /* initialize it */
-   SVC_HOLD( serp->svr_sp ) ;
+   SVC_HOLD( SERVER_SERVICE(serp) ) ;
 
    return( serp ) ;
 }
@@ -108,17 +108,17 @@ void server_release( struct server *serp )
  */
 static void server_internal( struct server *serp )
 {
-   struct service *sp = serp->svr_sp ;
+   struct service *sp = SERVER_SERVICE(serp) ;
    const char *func = "server_internal" ;
 
-   serp->svr_pid = 0 ;
+   SERVER_PID(serp) = 0 ;
    if ( SVC_ACCEPTS_CONNECTIONS( sp ) &&
             fcntl( SERVER_FD( serp ), F_SETFL, FNDELAY ) == -1 )
    {
       msg( LOG_ERR, func, "%s: fcntl F_SETFL failed: %m", SVC_ID( sp ) ) ;
       return ;
    }
-   svc_log_success( sp, SERVER_CONNECTION(serp), serp->svr_pid ) ;
+   svc_log_success( sp, SERVER_CONNECTION(serp), SERVER_PID(serp) ) ;
    SVC_INTERNAL( sp, serp ) ;
 }
  
@@ -203,16 +203,16 @@ status_e server_run( struct service *sp, connection_s *cp )
  */
 status_e server_start( struct server *serp )
 {
-   struct service   *sp = serp->svr_sp ;
+   struct service   *sp = SERVER_SERVICE(serp) ;
    const char       *func = "server_start" ;
 
    if( debug.on )
       msg( LOG_DEBUG, func, "Starting service %s", SC_NAME( SVC_CONF( sp ) ) );
-   serp->svr_log_remote_user = SVC_LOGS_USERID_ON_SUCCESS( sp ) ;
+   SERVER_LOGUSER(serp) = SVC_LOGS_USERID_ON_SUCCESS( sp ) ;
    
-   serp->svr_pid = do_fork() ;
+   SERVER_PID(serp) = do_fork() ;
 
-   switch ( serp->svr_pid )
+   switch ( SERVER_PID(serp) )
    {
       case 0:
          ps.rws.env_is_valid = FALSE ;
@@ -224,11 +224,11 @@ status_e server_start( struct server *serp )
       
       case -1:
          msg( LOG_ERR, func, "%s: fork failed: %m", SVC_ID( sp ) ) ;
-         serp->svr_fork_failures++ ;
+         SERVER_FORK_FAILURES(serp)++ ;
          return( FAILED ) ;
 
       default:
-         (void) time( &serp->svr_start_time ) ;
+         (void) time( &SERVER_STARTTIME(serp) ) ;
          SVC_INC_RUNNING_SERVERS( sp ) ;
 
          /*
@@ -237,10 +237,10 @@ status_e server_start( struct server *serp )
           * we will have to check the log size).
           */
          if ( ! SVC_IS_INTERCEPTED( sp ) )
-            svc_log_success( sp, SERVER_CONNECTION(serp), serp->svr_pid ) ;
+            svc_log_success( sp, SERVER_CONNECTION(serp), SERVER_PID(serp) ) ;
          else
-            serp->svr_writes_to_log = SVC_IS_LOGGING( sp ) ;
-         serp->svr_writes_to_log |= serp->svr_log_remote_user ;
+            SERVER_WRITES_TO_LOG(serp) = SVC_IS_LOGGING( sp ) ;
+         SERVER_WRITES_TO_LOG(serp) |= SERVER_LOGUSER(serp) ;
          return( OK ) ;
    }
 }
@@ -248,19 +248,19 @@ status_e server_start( struct server *serp )
 
 void server_dump( const struct server *serp, int fd )
 {
-   const struct service *sp = serp->svr_sp ;
+   const struct service *sp = SERVER_SERVICE(serp) ;
 
    Sprint( fd, "%s server\n", SVC_ID( sp ) ) ;
-   Sprint( fd, "pid = %d\n", serp->svr_pid ) ;
-   Sprint( fd, "start_time = %s", ctime( &serp->svr_start_time ) ) ;
+   Sprint( fd, "pid = %d\n", SERVER_PID(serp) ) ;
+   Sprint( fd, "start_time = %s", ctime( &SERVER_STARTTIME(serp) ) ) ;
    Sprint( fd, "Connection info:\n" ) ;
-   conn_dump( serp->svr_conn, fd ) ;
-   if ( serp->svr_fork_failures )
-      Sprint( fd, "fork_failures = %d\n", serp->svr_fork_failures ) ;
+   conn_dump( SERVER_CONNECTION(serp), fd ) ;
+   if ( SERVER_FORK_FAILURES(serp) )
+      Sprint( fd, "fork_failures = %d\n", SERVER_FORK_FAILURES(serp) ) ;
    Sprint( fd,
-         "log_remote_user = %s\n", serp->svr_log_remote_user ? "YES" : "NO" ) ;
+         "log_remote_user = %s\n", SERVER_LOGUSER(serp) ? "YES" : "NO" ) ;
    Sprint( fd,
-         "writes_to_log = %s\n", serp->svr_writes_to_log ? "YES" : "NO" ) ;
+         "writes_to_log = %s\n", SERVER_WRITES_TO_LOG(serp) ? "YES" : "NO" ) ;
    Sputchar( fd, '\n' ) ;
    Sflush( fd ) ;
 }
@@ -272,25 +272,25 @@ void server_dump( const struct server *serp, int fd )
  */
 void server_end( struct server *serp )
 {
-   struct service *sp = serp->svr_sp ;
+   struct service *sp = SERVER_SERVICE(serp) ;
    const char *func = "server_end" ;
 
-   if ( PROC_EXITED( serp->svr_exit_status ) || 
-         PROC_SIGNALED( serp->svr_exit_status ) )
+   if ( PROC_EXITED( SERVER_EXITSTATUS(serp) ) || 
+         PROC_SIGNALED( SERVER_EXITSTATUS(serp) ) )
    {
-      const char *death_type = PROC_EXITED( serp->svr_exit_status ) ? "exited"
+      const char *death_type = PROC_EXITED( SERVER_EXITSTATUS(serp) ) ? "exited"
            : "died" ;
       if ( debug.on )
       {
-         struct service *conn_sp = CONN_SERVICE( serp->svr_conn ) ;
+         struct service *conn_sp = CONN_SERVICE( SERVER_CONNECTION(serp) ) ;
 
          if ( conn_sp == sp )
             msg( LOG_DEBUG, func,
-               "%s server %d %s", SVC_ID( sp ) , serp->svr_pid, death_type ) ;
+               "%s server %d %s", SVC_ID( sp ) , SERVER_PID(serp), death_type ) ;
          else
             msg( LOG_DEBUG, func,
                "%s server %d running on behalf of service %s %s",
-                  SVC_ID( sp ), serp->svr_pid, SVC_ID( conn_sp ), death_type ) ;
+                  SVC_ID( sp ), SERVER_PID(serp), SVC_ID( conn_sp ), death_type ) ;
       }
       
       /* Added this for when accepting wait=yes services */
@@ -300,9 +300,9 @@ void server_end( struct server *serp )
       svc_postmortem( sp, serp ) ;
       server_release( serp ) ;
    }
-   else if ( PROC_STOPPED( serp->svr_exit_status ) )
+   else if ( PROC_STOPPED( SERVER_EXITSTATUS(serp) ) )
       msg( LOG_WARNING, func, "service %s: server with pid %d stopped",
-         SVC_ID( sp ), serp->svr_pid ) ;
+         SVC_ID( sp ), SERVER_PID(serp) ) ;
 }
 
 
@@ -318,7 +318,7 @@ struct server *server_lookup( pid_t pid )
       register struct server *serp ;
 
       serp = SERP( pset_pointer( SERVERS( ps ), u ) ) ;
-      if ( serp->svr_pid == pid )
+      if ( SERVER_PID(serp) == pid )
          return( serp ) ;
    }
    return( NULL ) ;

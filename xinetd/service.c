@@ -61,7 +61,7 @@
 #define NEW_SVC()              NEW( struct service )
 #define FREE_SVC( sp )         FREE( sp )
 
-#define DISABLE( sp )          (sp)->svc_state = SVC_DISABLED
+#define DISABLE( sp )          SVC_STATE((sp)) = SVC_DISABLED
 
 static void deactivate( const struct service *sp );
 static int banner_always( const struct service *sp, const connection_s *cp );
@@ -94,7 +94,7 @@ struct service *svc_new( struct service_config *scp )
    }
    CLEAR( *sp ) ;
 
-   sp->svc_conf = scp ;
+   SVC_CONF(sp) = scp ;
    return( sp ) ;
 }
 
@@ -110,17 +110,17 @@ struct service *svc_make_special( struct service_config *scp )
       return( NULL ) ;
    }
 
-   sp->svc_not_generic = 1 ;
-   sp->svc_log = ps.rws.program_log ;
-   sp->svc_ref_count = 1 ;
-   sp->svc_state = SVC_ACTIVE ;
+   SVC_NOT_GENERIC(sp) = 1 ;
+   SVC_LOG(sp) = ps.rws.program_log ;
+   SVC_REFCOUNT(sp) = 1 ;
+   SVC_STATE(sp) = SVC_ACTIVE ;
    return( sp ) ;
 }
 
 
 void svc_free( struct service *sp )
 {
-   sc_free( sp->svc_conf ) ;
+   sc_free( SVC_CONF(sp) ) ;
    CLEAR( *sp ) ;
    FREE_SVC( sp ) ;
 }
@@ -176,8 +176,8 @@ static status_e activate_rpc( struct service *sp )
    int                    sd = SVC_FD( sp ) ;
    const char            *func = "activate_rpc" ;
 
-   if( scp->sc_bind_addr != 0 )
-      memcpy( &tsin, scp->sc_bind_addr, sizeof(tsin) );
+   if( SC_BIND_ADDR(scp) != 0 )
+      memcpy( &tsin, SC_BIND_ADDR(scp), sizeof(tsin) );
    else
       memset( &tsin, 0, sizeof(tsin));
 
@@ -258,8 +258,8 @@ static status_e activate_normal( struct service *sp )
    int                     v6on           = 0;
 #endif
 
-   if( scp->sc_bind_addr != NULL )
-      memcpy(&tsin, scp->sc_bind_addr, sin_len);
+   if( SC_BIND_ADDR(scp) != NULL )
+      memcpy(&tsin, SC_BIND_ADDR(scp), sin_len);
    else
       memset(&tsin, 0, sin_len);
    
@@ -291,7 +291,7 @@ static status_e activate_normal( struct service *sp )
       msg( LOG_WARNING, func, 
            "setsockopt SO_REUSEADDR failed (%m). service = %s", sid ) ;
 
-   if( SC_NODELAY( scp ) && (scp->sc_protocol.value == IPPROTO_TCP) )
+   if( SC_NODELAY( scp ) && (SC_PROTOVAL(scp) == IPPROTO_TCP) )
    {
       if ( setsockopt( sd, IPPROTO_TCP, TCP_NODELAY, 
                        (char *) &on, sizeof( on ) ) == -1 )
@@ -299,7 +299,7 @@ static status_e activate_normal( struct service *sp )
               "setsockopt TCP_NODELAY failed (%m). service = %s", sid ) ;
    }
 
-   if( SC_KEEPALIVE( scp ) && (scp->sc_protocol.value == IPPROTO_TCP) ) 
+   if( SC_KEEPALIVE( scp ) && (SC_PROTOVAL(scp) == IPPROTO_TCP) ) 
    {
       if( setsockopt(sd, SOL_SOCKET, SO_KEEPALIVE, 
                      (char *)&on, sizeof( on ) ) < 0 )
@@ -335,14 +335,14 @@ status_e svc_activate( struct service *sp )
    }
 
    if( SC_IPV4( scp ) ) {
-      sp->svc_fd = socket( AF_INET, 
+      SVC_FD(sp) = socket( AF_INET, 
                            SC_SOCKET_TYPE( scp ), SC_PROTOVAL( scp ) ) ;
    } else if( SC_IPV6( scp ) ) {
-      sp->svc_fd = socket( AF_INET6, 
+      SVC_FD(sp) = socket( AF_INET6, 
                            SC_SOCKET_TYPE( scp ), SC_PROTOVAL( scp ) ) ;
    }
 
-   if ( sp->svc_fd == -1 )
+   if ( SVC_FD(sp) == -1 )
    {
       msg( LOG_ERR, func,
                   "socket creation failed (%m). service = %s", SC_ID( scp ) ) ;
@@ -351,7 +351,7 @@ status_e svc_activate( struct service *sp )
 
    if ( set_fd_modes( sp ) == FAILED )
    {
-      (void) Sclose( sp->svc_fd ) ;
+      (void) Sclose( SVC_FD(sp) ) ;
       return( FAILED ) ;
    }
 
@@ -364,27 +364,27 @@ status_e svc_activate( struct service *sp )
    
    if ( status == FAILED )
    {
-      (void) Sclose( sp->svc_fd ) ;
+      (void) Sclose( SVC_FD(sp) ) ;
       return( FAILED ) ;
    }
 
 #ifdef HAVE_DNSREGISTRATION
-   if ( scp->sc_mdns == YES )
+   if ( SC_MDNS(scp) == YES )
    {
-      if( scp->sc_mdns_name )
-         free(scp->sc_mdns_name);
-      if( asprintf(&scp->sc_mdns_name, "_%s._%s", scp->sc_name, scp->sc_protocol.name) < 0 ) 
+      if( SC_MDNS_NAME(scp) )
+         free(SC_MDNS_NAME(scp));
+      if( asprintf(&SC_MDNS_NAME(scp), "_%s._%s", SC_NAME(scp), SC_PROTONAME(scp)) < 0 ) 
       {
           deactivate( sp );
           return( FAILED );
       }
 
-      scp->sc_mdnscon = DNSServiceRegistrationCreate("", scp->sc_mdns_name, "", 
-		   htons(scp->sc_port), "", mdns_callback, NULL);
+      SC_MDNSCON(scp) = DNSServiceRegistrationCreate("", SC_MDNS_NAME(scp), "", 
+		   htons(SC_PORT(scp)), "", mdns_callback, NULL);
    }
 #endif
 
-   if ( log_start( sp, &sp->svc_log ) == FAILED )
+   if ( log_start( sp, &SVC_LOG(sp) ) == FAILED )
    {
       deactivate( sp ) ;
       return( FAILED ) ;
@@ -393,18 +393,18 @@ status_e svc_activate( struct service *sp )
    /*
     * Initialize the service data
     */
-   sp->svc_running_servers   = sp->svc_retry_servers = 0 ;
+   SVC_RUNNING_SERVERS(sp)   = SVC_RETRIES(sp) = 0 ;
 
    if ( SC_MUST_LISTEN( scp ) )
-      (void) listen( sp->svc_fd, LISTEN_BACKLOG ) ;
+      (void) listen( SVC_FD(sp), LISTEN_BACKLOG ) ;
 
    ps.rws.descriptors_free-- ;
 
-   sp->svc_state = SVC_ACTIVE ;
+   SVC_STATE(sp) = SVC_ACTIVE ;
 
-   FD_SET( sp->svc_fd, &ps.rws.socket_mask ) ;
-   if ( sp->svc_fd > ps.rws.mask_max )
-      ps.rws.mask_max = sp->svc_fd ;
+   FD_SET( SVC_FD(sp), &ps.rws.socket_mask ) ;
+   if ( SVC_FD(sp) > ps.rws.mask_max )
+      ps.rws.mask_max = SVC_FD(sp) ;
 
    ps.rws.active_services++ ;
    ps.rws.available_services++ ;
@@ -418,8 +418,8 @@ static void deactivate( const struct service *sp )
    (void) Sclose( SVC_FD( sp ) ) ;
 
 #ifdef HAVE_DNSREGISTRATION
-   if( SVC_CONF(sp)->sc_mdnscon )
-      DNSServiceDiscoveryDeallocate(SVC_CONF(sp)->sc_mdnscon);
+   if( SC_MDNSCON( SVC_CONF(sp) ) )
+      DNSServiceDiscoveryDeallocate( SC_MDNSCON(SVC_CONF(sp)) );
 #endif
 
    if (debug.on)
@@ -518,21 +518,21 @@ int svc_release( struct service *sp )
    char *sid = SVC_ID( sp ) ;
    const char *func = "svc_release" ;
 
-   if ( sp->svc_ref_count == 0 )
+   if ( SVC_REFCOUNT(sp) == 0 )
    {
       msg( LOG_ERR, func, "%s: svc_release with 0 count", sid ) ;
       return( 0 ) ;
    }
    
-   sp->svc_ref_count-- ;
-   if ( sp->svc_ref_count == 0 )
+   SVC_REFCOUNT(sp)-- ;
+   if ( SVC_REFCOUNT(sp) == 0 )
    {
       if ( debug.on )
          msg( LOG_DEBUG, func, "ref count of service %s dropped to 0", sid ) ;
       if ( ! SC_IS_SPECIAL( SVC_CONF( sp ) ) )
       {
-         if ( sp->svc_log )
-            log_end( SC_LOG( SVC_CONF( sp ) ), sp->svc_log ) ;
+         if ( SVC_LOG(sp) )
+            log_end( SC_LOG( SVC_CONF( sp ) ), SVC_LOG(sp) ) ;
          svc_deactivate( sp ) ;
          svc_free( sp ) ;
          sp = NULL;
@@ -543,7 +543,7 @@ int svc_release( struct service *sp )
       return( 0 ) ;
    }
    else
-      return( sp->svc_ref_count ) ;
+      return( SVC_REFCOUNT(sp) ) ;
 }
 
 
@@ -551,16 +551,16 @@ void svc_dump( const struct service *sp, int fd )
 {
    tabprint( fd, 0, "Service = %s\n", SC_NAME( SVC_CONF( sp ) ) ) ;
    tabprint( fd, 1, "State = %s\n",
-                        nv_get_name( service_states, (int) sp->svc_state ) ) ;
+                        nv_get_name( service_states, (int) SVC_STATE(sp) ) ) ;
 
    sc_dump( SVC_CONF( sp ), fd, 1, FALSE ) ;
 
-   if ( sp->svc_state == SVC_ACTIVE )
+   if ( SVC_IS_ACTIVE(sp) )
    {
-      tabprint( fd, 1, "running servers = %d\n", sp->svc_running_servers ) ;
-      tabprint( fd, 1, "retry servers = %d\n", sp->svc_retry_servers ) ;
-      tabprint( fd, 1, "attempts = %d\n", sp->svc_attempts ) ;
-      tabprint( fd, 1, "service fd = %d\n", sp->svc_fd ) ;
+      tabprint( fd, 1, "running servers = %d\n", SVC_RUNNING_SERVERS(sp) ) ;
+      tabprint( fd, 1, "retry servers = %d\n", SVC_RETRIES(sp) ) ;
+      tabprint( fd, 1, "attempts = %d\n", SVC_ATTEMPTS(sp) ) ;
+      tabprint( fd, 1, "service fd = %d\n", SVC_FD(sp) ) ;
    }
    Sputchar( fd, '\n' ) ;
 }
@@ -581,7 +581,7 @@ void svc_request( struct service *sp )
     */
    banner_always(sp, cp);
 
-   if (sp->svc_not_generic)
+   if (SVC_NOT_GENERIC(sp))
       ret_code = spec_service_handler(sp, cp);
    else 
       ret_code = svc_generic_handler(sp, cp);
@@ -608,7 +608,7 @@ void svc_request( struct service *sp )
 	 free( cp );
       }
    }
-   else if ((sp->svc_not_generic) || (!SC_FORKS( SVC_CONF( sp ) ) ) )
+   else if ((SVC_NOT_GENERIC(sp)) || (!SC_FORKS( SVC_CONF( sp ) ) ) )
      free( cp );
 }
 
@@ -630,14 +630,14 @@ static int banner_always( const struct service *sp, const connection_s *cp )
    const struct service_config *scp = SVC_CONF( sp ) ;
 
    /* print the banner regardless of access control */
-   if ( scp->sc_banner != NULL ) {
+   if ( SC_BANNER(scp) != NULL ) {
       char tmpbuf[TMPSIZE];
       int retval;
-      int bannerfd = open(scp->sc_banner, O_RDONLY);
+      int bannerfd = open(SC_BANNER(scp), O_RDONLY);
 
       if( bannerfd < 0 ) {
          msg( LOG_ERR, func, "service = %s, open of banner %s failed", 
-			 SVC_ID( sp ), scp->sc_banner);
+			 SVC_ID( sp ), SC_BANNER(scp));
          return(-1);
       }
 
@@ -649,7 +649,7 @@ static int banner_always( const struct service *sp, const connection_s *cp )
             else
             {
                msg(LOG_ERR, func, "service %s, Error %m reading banner %s", 
-			       SVC_ID( sp ), scp->sc_banner);
+			       SVC_ID( sp ), SC_BANNER(scp));
                break;
             }
          }
@@ -669,16 +669,16 @@ static int banner_fail( const struct service *sp, const connection_s *cp )
    const struct service_config *scp = SVC_CONF( sp ) ;
 
 
-   if ( scp->sc_banner_fail != NULL )
+   if ( SC_BANNER_FAIL(scp) != NULL )
    {
       char tmpbuf[TMPSIZE];
       int retval;
-      int bannerfd = open(scp->sc_banner_fail, O_RDONLY);
+      int bannerfd = open(SC_BANNER_FAIL(scp), O_RDONLY);
 
       if( bannerfd < 0 )
       {
          msg( LOG_ERR, func, "service = %s, open of banner %s failed", 
-            SVC_ID( sp ), scp->sc_banner_fail);
+            SVC_ID( sp ), SC_BANNER_FAIL(scp));
          return(-1);
       }
 
@@ -690,7 +690,7 @@ static int banner_fail( const struct service *sp, const connection_s *cp )
             else
             {
                msg(LOG_ERR, func, "service %s, Error %m reading banner %s", 
-			       SVC_ID( sp ), scp->sc_banner);
+			       SVC_ID( sp ), SC_BANNER(scp));
                break;
             }
          }
@@ -710,14 +710,14 @@ static int banner_success( const struct service *sp, const connection_s *cp )
    const struct service_config *scp = SVC_CONF( sp ) ;
 
    /* print the access granted banner */
-   if ( scp->sc_banner_success != NULL ) {
+   if ( SC_BANNER_SUCCESS(scp) != NULL ) {
       char tmpbuf[TMPSIZE];
       int retval;
-      int bannerfd = open(scp->sc_banner_success, O_RDONLY);
+      int bannerfd = open(SC_BANNER_SUCCESS(scp), O_RDONLY);
 
       if( bannerfd < 0 ) {
          msg( LOG_ERR, func, "service = %s, open of banner %s failed", 
-			 SVC_ID( sp ), scp->sc_banner_success);
+			 SVC_ID( sp ), SC_BANNER_SUCCESS(scp));
          return(-1);
       }
 
@@ -729,7 +729,7 @@ static int banner_success( const struct service *sp, const connection_s *cp )
             else
             {
                msg(LOG_ERR, func, "service %s, Error %m reading banner %s", 
-			       SVC_ID( sp ), scp->sc_banner);
+			       SVC_ID( sp ), SC_BANNER(scp));
                break;
             }
          }
@@ -763,14 +763,14 @@ static status_e failed_service(struct service *sp,
       {
          if( SC_IPV4( scp ) ) {
             struct sockaddr_in *sinp = SAIN(CONN_ADDRESS( cp )) ;
-            struct sockaddr_in *last = SAIN(sp->svc_last_dgram_addr) ;
+            struct sockaddr_in *last = SAIN(SVC_LAST_DGRAM_ADDR(sp)) ;
             time_t current_time ;
 
             if (sinp == NULL )
                return FAILED;
 
             if ( last == NULL ) {
-               last = SAIN( sp->svc_last_dgram_addr ) = 
+               last = SAIN( SVC_LAST_DGRAM_ADDR(sp) ) = 
 		  SAIN( calloc( 1, sizeof(union xsockaddr) ) );
             }
 
@@ -778,26 +778,26 @@ static status_e failed_service(struct service *sp,
             if ( sinp->sin_addr.s_addr == last->sin_addr.s_addr &&
                                           sinp->sin_port == last->sin_port )
             {
-               if( current_time - sp->svc_last_dgram_time <= DGRAM_IGNORE_TIME )
+               if( current_time - SVC_LAST_DGRAM_TIME(sp) <= DGRAM_IGNORE_TIME )
                   report_failure = FALSE ;
                else
-                  sp->svc_last_dgram_time = current_time ;
+                  SVC_LAST_DGRAM_TIME(sp) = current_time ;
             }
             else
             {
-               memcpy(sp->svc_last_dgram_addr, sinp,sizeof(struct sockaddr_in));
-               sp->svc_last_dgram_time = current_time ;
+               memcpy(SVC_LAST_DGRAM_ADDR(sp), sinp,sizeof(struct sockaddr_in));
+               SVC_LAST_DGRAM_TIME(sp) = current_time ;
             }
          } else if( SC_IPV6( scp ) ) {
             struct sockaddr_in6 *sinp = SAIN6(CONN_ADDRESS( cp )) ;
-            struct sockaddr_in6 *last = SAIN6(sp->svc_last_dgram_addr) ;
+            struct sockaddr_in6 *last = SAIN6(SVC_LAST_DGRAM_ADDR(sp)) ;
             time_t current_time ;
 
 	    if (sinp == NULL )
                return FAILED;
 
 	    if( last == NULL ) {
-               last = SAIN6(sp->svc_last_dgram_addr) = 
+               last = SAIN6(SVC_LAST_DGRAM_ADDR(sp)) = 
 		  SAIN6(calloc( 1, sizeof(union xsockaddr) ) );
             }
 
@@ -805,15 +805,15 @@ static status_e failed_service(struct service *sp,
             if ( IN6_ARE_ADDR_EQUAL(&(sinp->sin6_addr), &(last->sin6_addr)) && 
                  sinp->sin6_port == last->sin6_port )
             {
-               if((current_time - sp->svc_last_dgram_time) <= DGRAM_IGNORE_TIME)
+               if((current_time - SVC_LAST_DGRAM_TIME(sp)) <= DGRAM_IGNORE_TIME)
                   report_failure = FALSE ;
                else
-                  sp->svc_last_dgram_time = current_time ;
+                  SVC_LAST_DGRAM_TIME(sp) = current_time ;
             }
             else
             {
-               memcpy(sp->svc_last_dgram_addr,sinp,sizeof(struct sockaddr_in6));
-               sp->svc_last_dgram_time = current_time ;
+               memcpy(SVC_LAST_DGRAM_ADDR(sp),sinp,sizeof(struct sockaddr_in6));
+               SVC_LAST_DGRAM_TIME(sp) = current_time ;
             }
          }
       }
@@ -870,7 +870,7 @@ void svc_postmortem( struct service *sp, struct server *serp )
     */
    if ( SVC_IS_LOGGING( sp ) )
    {
-      if ( serp->svr_writes_to_log )
+      if ( SERVER_WRITES_TO_LOG(serp) )
       {
          if ( debug.on )
             msg( LOG_DEBUG, func,

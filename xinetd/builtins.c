@@ -629,7 +629,7 @@ static void tcpmux_handler( const struct server *serp )
       Sclose(descriptor);
 
    server.svr_sp = sp;
-   server.svr_conn = serp->svr_conn;
+   server.svr_conn = SERVER_CONNECTION(serp);
    nserp = server_alloc(&server);
    if( SC_IS_INTERNAL( scp ) ) {
       SC_INTERNAL(scp, nserp);

@@ -75,9 +75,9 @@ void redir_handler( struct server *serp )
    close_all_svc_descriptors();
 
    /* If it's a tcp service we are redirecting */
-   if( scp->sc_protocol.value == IPPROTO_TCP )
+   if( SC_PROTOVAL(scp) == IPPROTO_TCP )
    {
-      memcpy(&serveraddr, scp->sc_redir_addr, sizeof(serveraddr));
+      memcpy(&serveraddr, SC_REDIR_ADDR(scp), sizeof(serveraddr));
       if( serveraddr.sa_in.sin_family == AF_INET ) {
          sin_len = sizeof( struct sockaddr_in );
          RedirServerFd = socket(AF_INET, SOCK_STREAM, 0);
@@ -205,7 +205,7 @@ void redir_handler( struct server *serp )
          }
       }
 REDIROUT:
-      if( M_IS_SET( (scp)->sc_log_on_success, LO_TRAFFIC ) ) {
+      if( M_IS_SET( SC_LOG_ON_SUCCESS(scp), LO_TRAFFIC ) ) {
          svc_logprint( SERVER_CONNSERVICE( serp ), "TRAFFIC",
                        "in=%lu(bytes) out=%lu(bytes)", bytes_in, bytes_out );
       }

@@ -84,7 +84,7 @@ void svc_log_success( struct service *sp, const connection_s *cp, pid_t pid )
    len += cc ;
    bufsize -= cc ;
 
-   xlog_write( sp->svc_log, buf, len, XLOG_NO_ERRNO ) ;
+   xlog_write( SVC_LOG(sp), buf, len, XLOG_NO_ERRNO ) ;
 }
 
 
@@ -121,7 +121,7 @@ void svc_log_failure( struct service *sp,
    len += cc ;
    bufsize -= cc ;
 
-   xlog_write( sp->svc_log, buf, len, XLOG_NO_ERRNO ) ;
+   xlog_write( SVC_LOG(sp), buf, len, XLOG_NO_ERRNO ) ;
 }
 
 
@@ -210,7 +210,7 @@ void svc_log_exit( struct service *sp, const struct server *serp )
       len += cc ;
       bufsize -= cc ;
    }
-   xlog_write( sp->svc_log, buf, len, XLOG_NO_ERRNO ) ;
+   xlog_write( SVC_LOG(sp), buf, len, XLOG_NO_ERRNO ) ;
 }
 
 
@@ -236,6 +236,6 @@ void svc_logprint( struct service *sp, const char *line_id,
    va_start( ap, fmt ) ;
    cc = strx_nprintv( &buf[ len ], bufsize-len, fmt, ap ) ;
    va_end( ap ) ;
-   xlog_write( sp->svc_log, buf, len+cc, XLOG_NO_ERRNO | XLOG_NO_SIZECHECK ) ;
+   xlog_write( SVC_LOG(sp), buf, len+cc, XLOG_NO_ERRNO | XLOG_NO_SIZECHECK ) ;
 }
 

@@ -80,17 +80,17 @@ static void cps_service_restart(void)
 
       sp = pset_pointer( SERVICES(ps), i);
 
-      if( sp->svc_state == SVC_DISABLED ) {
+      if( SVC_STATE(sp) == SVC_DISABLED ) {
          scp = SVC_CONF( sp );
-         if ( scp->sc_time_reenable <= nowtime ) {
+         if ( SC_TIME_REENABLE(scp) <= nowtime ) {
             /* re-enable the service */
             if( svc_activate(sp) == OK ) {
                msg(LOG_ERR, func,
-               "Activating service %s", scp->sc_name);
+               "Activating service %s", SC_NAME(scp));
             } else {
                msg(LOG_ERR, func,
                "Error activating service %s", 
-               scp->sc_name) ;
+               SC_NAME(scp)) ;
             } /* else */
          }
       }
@@ -114,7 +114,7 @@ static status_e remote_address_check(const struct service *sp,
    if (sinp == NULL )
       return FAILED;
 
-   if ( SC_SENSOR( sp->svc_conf ))
+   if ( SC_SENSOR( SVC_CONF(sp) ))
    {   /* They hit a sensor...return FAILED since this isn't a real service */
       process_sensor( sp, sinp ) ; 
       return FAILED ;
@@ -127,11 +127,11 @@ static status_e remote_address_check(const struct service *sp,
     * The addrlist_match function returns an offset+1 to a matching
     * entry in the supplied list. It is not a true/false answer.
     */
-   if ( SC_NO_ACCESS( sp->svc_conf ) != NULL )
-      na_matched = addrlist_match( SC_NO_ACCESS( sp->svc_conf ), SA(sinp));
+   if ( SC_NO_ACCESS( SVC_CONF(sp) ) != NULL )
+      na_matched = addrlist_match( SC_NO_ACCESS( SVC_CONF(sp) ), SA(sinp));
 
-   if ( SC_ONLY_FROM( sp->svc_conf ) != NULL )
-      of_matched = addrlist_match( SC_ONLY_FROM( sp->svc_conf ), SA(sinp));
+   if ( SC_ONLY_FROM( SVC_CONF(sp) ) != NULL )
+      of_matched = addrlist_match( SC_ONLY_FROM( SVC_CONF(sp) ), SA(sinp));
 
    /*
     * Check if the specified address is in both lists
@@ -151,11 +151,11 @@ static status_e remote_address_check(const struct service *sp,
    }
 
    /* A no_access list was specified and the socket is on it, fail */
-   if ( SC_NO_ACCESS( sp->svc_conf ) != NULL && (na_matched != 0) )
+   if ( SC_NO_ACCESS( SVC_CONF(sp) ) != NULL && (na_matched != 0) )
       return FAILED ;
 
    /* A only_from list was specified and the socket wasn't on the list, fail */
-   if ( SC_ONLY_FROM( sp->svc_conf ) != NULL && (of_matched == 0) )
+   if ( SC_ONLY_FROM( SVC_CONF(sp) ) != NULL && (of_matched == 0) )
       return FAILED ;
 
    /* If no lists were specified, the default is to allow starting a server */
@@ -200,31 +200,31 @@ access_e access_control( struct service *sp,
       /* get the server name to pass to libwrap */
       if( SC_NAMEINARGS( scp ) )
       {
-         if ( scp->sc_server_argv )
-            server = strrchr( scp->sc_server_argv[0], '/' );
+         if ( SC_SERVER_ARGV(scp) )
+            server = strrchr( SC_SERVER_ARGV(scp)[0], '/' );
       }
       else {
-         if( scp->sc_server == NULL ) {
+         if( SC_SERVER(scp) == NULL ) {
             /* probably an internal server, use the service id instead */
-            server = scp->sc_id;
+            server = SC_ID(scp);
             server--;  /* nasty.  we increment it later... */
          } else {
-            server = strrchr( scp->sc_server, '/' );
+            server = strrchr( SC_SERVER(scp), '/' );
          }
       }
 
       /* If this is a redirection or internal , go by the service name,
        * since the server name will be bogus.
        */
-      if( (scp->sc_redir_addr != NULL) || (SC_IS_INTERNAL(scp) )) {
-         server = scp->sc_name;
+      if( (SC_REDIR_ADDR(scp) != NULL) || (SC_IS_INTERNAL(scp) )) {
+         server = SC_NAME(scp);
          server--; /* nasty but ok. */
       }
 
       if( server == NULL )
       {
-         if ( scp->sc_server_argv)
-            server = scp->sc_server_argv[0];
+         if ( SC_SERVER_ARGV(scp))
+            server = SC_SERVER_ARGV(scp)[0];
       }
       else
          server++;
@@ -263,34 +263,34 @@ access_e parent_access_control( struct service *sp, const connection_s *cp )
       return (AC_OK);
 
    /* CPS handler */
-   if( scp->sc_time_conn_max != 0 ) {
+   if( SC_TIME_CONN_MAX(scp) != 0 ) {
       int time_diff;
       nowtime = time(NULL);
-      time_diff = nowtime - scp->sc_time_limit ;
+      time_diff = nowtime - SC_TIME_LIMIT(scp) ;
 
-      if( scp->sc_time_conn == 0 ) {
-         scp->sc_time_conn++;
-         scp->sc_time_limit = nowtime;
-      } else if( time_diff < scp->sc_time_conn_max ) {
-         scp->sc_time_conn++;
+      if( SC_TIME_CONN(scp) == 0 ) {
+         SC_TIME_CONN(scp)++;
+         SC_TIME_LIMIT(scp) = nowtime;
+      } else if( time_diff < SC_TIME_CONN_MAX(scp) ) {
+         SC_TIME_CONN(scp)++;
          if( time_diff == 0 ) time_diff = 1;
-         if( scp->sc_time_conn/time_diff > scp->sc_time_conn_max ) {
+         if( SC_TIME_CONN(scp)/time_diff > SC_TIME_CONN_MAX(scp) ) {
             svc_deactivate(sp);
-            msg(LOG_ERR, "xinetd", "Deactivating service %s due to excessive incoming connections.  Restarting in %d seconds.", scp->sc_name, (int)scp->sc_time_wait);
+            msg(LOG_ERR, "xinetd", "Deactivating service %s due to excessive incoming connections.  Restarting in %d seconds.", SC_NAME(scp), (int)SC_TIME_WAIT(scp));
             nowtime = time(NULL);
-            scp->sc_time_reenable = nowtime + scp->sc_time_wait;
-            xtimer_add(cps_service_restart, scp->sc_time_wait);
+            SC_TIME_REENABLE(scp) = nowtime + SC_TIME_WAIT(scp);
+            xtimer_add(cps_service_restart, SC_TIME_WAIT(scp));
             return(AC_CPS);
          }
       } else {
-         scp->sc_time_limit = nowtime;
-         scp->sc_time_conn = 1;
+         SC_TIME_LIMIT(scp) = nowtime;
+         SC_TIME_CONN(scp) = 1;
       }
    }
 
 #ifdef HAVE_LOADAVG
-   if ( scp->sc_max_load != 0 ) {
-      if ( xgetloadavg() >= scp->sc_max_load ) {
+   if ( SC_MAX_LOAD(scp) != 0 ) {
+      if ( xgetloadavg() >= SC_MAX_LOAD(scp) ) {
          msg(LOG_ERR, "xinetd", 
             "refused connect from %s due to excessive load", 
             conn_addrstr(cp));
@@ -306,7 +306,7 @@ access_e parent_access_control( struct service *sp, const connection_s *cp )
    if ( SVC_RUNNING_SERVERS( sp ) >= SC_INSTANCES( scp ) )
       return( AC_SERVICE_LIMIT ) ;
 
-   if( scp->sc_per_source != UNLIMITED ) {
+   if( SC_PER_SOURCE(scp) != UNLIMITED ) {
       if ( CONN_XADDRESS(cp) != NULL ) {
          unsigned int u ; 
          n = 0 ;
@@ -328,7 +328,7 @@ access_e parent_access_control( struct service *sp, const connection_s *cp )
             }
          }
 
-         if ( n >= scp->sc_per_source )
+         if ( n >= SC_PER_SOURCE(scp) )
             return( AC_PER_SOURCE_LIMIT ) ;
       }
    }

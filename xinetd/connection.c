@@ -60,12 +60,12 @@ static status_e get_connection( struct service *sp, connection_s *cp )
          return( FAILED ) ;
       }
 
-      if( SC_NODELAY( scp ) && (scp->sc_protocol.value == IPPROTO_TCP) )
+      if( SC_NODELAY( scp ) && (SC_PROTOVAL( scp ) == IPPROTO_TCP) )
          if( setsockopt(SVC_FD(sp), IPPROTO_TCP, TCP_NODELAY, 
                         (char *)&on, sizeof( on ) ) < 0 )
             msg( LOG_WARNING, func, "service %s, setsockopt: %m", SVC_ID(sp));
 
-      if( SC_KEEPALIVE( scp ) && (scp->sc_protocol.value == IPPROTO_TCP) )
+      if( SC_KEEPALIVE( scp ) && (SC_PROTOVAL( scp ) == IPPROTO_TCP) )
       {
          if( setsockopt(SVC_FD(sp), SOL_SOCKET, SO_KEEPALIVE, 
                         (char *)&on, sizeof( on ) ) < 0 )

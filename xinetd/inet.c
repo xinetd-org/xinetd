@@ -118,7 +118,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
     * service actually works on system where setgroups(0,NULL) doesn't
     * work.
     */
-   scp->sc_groups = YES;
+   SC_GROUPS(scp) = YES;
    SC_SPECIFY( scp, A_GROUPS );
 
    /* Get the socket type (stream dgram) */
@@ -138,7 +138,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
       return -1;
    }
 
-   scp->sc_socket_type = nvp->value;
+   SC_SOCKET_TYPE(scp) = nvp->value;
 
    /* Get the protocol type */
    proto = (char *)pset_pointer(args,2);
@@ -196,7 +196,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
          return -1;
       }
 
-      M_SET(scp->sc_type, nvp->value);
+      M_SET(SC_TYPE(scp), nvp->value);
    }
    if ( ( pep = getprotobyname( proto ) ) == NULL )
    {
@@ -207,15 +207,15 @@ int get_next_inet_entry( int fd, pset_h sconfs,
       return -1;
    }
 
-   scp->sc_protocol.name = new_string( proto ) ;
-   if ( scp->sc_protocol.name == NULL )
+   SC_PROTONAME(scp) = new_string( proto ) ;
+   if ( SC_PROTONAME(scp) == NULL )
    {
       out_of_memory( func ) ;
       pset_destroy(args);
       sc_free(scp);
       return -1;
    }
-   scp->sc_protocol.value = pep->p_proto;
+   SC_PROTOVAL(scp) = pep->p_proto;
    SC_SPECIFY(scp, A_PROTOCOL);
 
    /* Get the wait attribute */
@@ -226,9 +226,9 @@ int get_next_inet_entry( int fd, pset_h sconfs,
       return -1;
    }
    if ( EQ( p, "wait" ) )
-      scp->sc_wait = YES ;
+      SC_WAIT(scp) = YES ;
    else if ( EQ( p, "nowait" ) )
-      scp->sc_wait = NO ;
+      SC_WAIT(scp) = NO ;
    else
       parsemsg( LOG_ERR, func, "inetd.conf - Bad value for wait: %s", p ) ;
 
@@ -253,7 +253,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
          return -1;
       }   
 
-      scp->sc_gid = ((struct group *)grp)->gr_gid;
+      SC_GID(scp) = ((struct group *)grp)->gr_gid;
       SC_SPECIFY( scp, A_GROUP );
    }
 
@@ -266,8 +266,8 @@ int get_next_inet_entry( int fd, pset_h sconfs,
       return -1;
    }
    str_fill( pw->pw_passwd, ' ' );
-   scp->sc_uid = pw->pw_uid;
-   scp->sc_user_gid = pw->pw_gid;
+   SC_UID(scp) = pw->pw_uid;
+   SC_USER_GID(scp) = pw->pw_gid;
 
    /* Get server name, or flag as internal */
    p = (char *)pset_pointer(args, 5);
@@ -287,37 +287,37 @@ int get_next_inet_entry( int fd, pset_h sconfs,
          return -1;
       }
 
-      M_SET(scp->sc_type, nvp->value);
+      M_SET(SC_TYPE(scp), nvp->value);
 
-      if( EQ( scp->sc_name, "time" ) ) {
+      if( EQ( SC_NAME(scp), "time" ) ) {
          if( EQ( proto, "stream" ) )
-            scp->sc_id = new_string("time-stream");
+            SC_ID(scp) = new_string("time-stream");
          else
-            scp->sc_id = new_string("time-dgram");
+            SC_ID(scp) = new_string("time-dgram");
       }
 
-      if( EQ( scp->sc_name, "daytime" ) ) {
+      if( EQ( SC_NAME(scp), "daytime" ) ) {
          if( EQ( proto, "stream" ) )
-            scp->sc_id = new_string("daytime-stream");
+            SC_ID(scp) = new_string("daytime-stream");
          else
-            scp->sc_id = new_string("daytime-dgram");
+            SC_ID(scp) = new_string("daytime-dgram");
       }
 
-      if( EQ( scp->sc_name, "chargen" ) ) {
+      if( EQ( SC_NAME(scp), "chargen" ) ) {
          if( EQ( proto, "stream" ) )
-            scp->sc_id = new_string("chargen-stream");
+            SC_ID(scp) = new_string("chargen-stream");
          else
-            scp->sc_id = new_string("chargen-dgram");
+            SC_ID(scp) = new_string("chargen-dgram");
       }
 
-      if( EQ( scp->sc_name, "echo" ) ) {
+      if( EQ( SC_NAME(scp), "echo" ) ) {
          if( EQ( proto, "stream" ) )
-            scp->sc_id = new_string("echo-stream");
+            SC_ID(scp) = new_string("echo-stream");
          else
-            scp->sc_id = new_string("echo-dgram");
+            SC_ID(scp) = new_string("echo-dgram");
       }
 
-      if( EQ( scp->sc_name, "discard" ) ) 
+      if( EQ( SC_NAME(scp), "discard" ) ) 
       {
          parsemsg(LOG_WARNING, func, 
 		  "inetd.conf - service discard not supported");
@@ -328,8 +328,8 @@ int get_next_inet_entry( int fd, pset_h sconfs,
    }
    else
    {
-      scp->sc_server = new_string( p );
-      if ( scp->sc_server == NULL )
+      SC_SERVER(scp) = new_string( p );
+      if ( SC_SERVER(scp) == NULL )
       {
          out_of_memory( func ) ;
          pset_destroy(args);
@@ -339,7 +339,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
       SC_SPECIFY( scp, A_SERVER);
 
       /* Get argv */ 
-      scp->sc_server_argv = (char **)argv_alloc(pset_count(args)+1);
+      SC_SERVER_ARGV(scp) = (char **)argv_alloc(pset_count(args)+1);
 
       for( u = 0; u < pset_count(args)-6 ; u++ )
       {
@@ -347,13 +347,13 @@ int get_next_inet_entry( int fd, pset_h sconfs,
          if( p == NULL )
          {
             for ( i = 1 ; i < u ; i++ )
-               free( scp->sc_server_argv[i] );
-            free( scp->sc_server_argv );
+               free( SC_SERVER_ARGV(scp)[i] );
+            free( SC_SERVER_ARGV(scp) );
             pset_destroy(args);
             sc_free(scp);
             return -1;
          }
-         scp->sc_server_argv[u] = p;
+         SC_SERVER_ARGV(scp)[u] = p;
       }
       /* Set the reuse flag, as this is the default for inetd */
       nvp = nv_find_value( service_flags, "REUSE" );
@@ -364,7 +364,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
          sc_free(scp);
          return -1;
       }
-      M_SET(scp->sc_xflags, nvp->value);
+      M_SET(SC_XFLAGS(scp), nvp->value);
 
       /* Set the NOLIBWRAP flag, since inetd doesn't have libwrap built in */
       nvp = nv_find_value( service_flags, "NOLIBWRAP" );
@@ -375,7 +375,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
          sc_free(scp);
          return -1;
       }
-      M_SET(scp->sc_xflags, nvp->value);
+      M_SET(SC_XFLAGS(scp), nvp->value);
    
       /* Set the NAMEINARGS flag, as that's the default for inetd */
       nvp = nv_find_value( service_flags, "NAMEINARGS" );
@@ -386,10 +386,10 @@ int get_next_inet_entry( int fd, pset_h sconfs,
          sc_free(scp);
          return (-1);
       }
-      M_SET(scp->sc_xflags, nvp->value);
+      M_SET(SC_XFLAGS(scp), nvp->value);
       SC_SPECIFY( scp, A_SERVER_ARGS );
 
-      if ( (scp->sc_id = new_string( scp->sc_name )) )
+      if ( (SC_ID(scp) = new_string( SC_NAME(scp) )) )
          SC_PRESENT( scp, A_ID ) ;
       else
       {
@@ -414,7 +414,7 @@ int get_next_inet_entry( int fd, pset_h sconfs,
    }
 
    pset_destroy(args);
-   parsemsg( LOG_DEBUG, func, "added service %s", scp->sc_name);
+   parsemsg( LOG_DEBUG, func, "added service %s", SC_NAME(scp));
    return 0;
 }
 

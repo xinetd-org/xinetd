@@ -168,6 +168,7 @@ struct service_config
 #define SC_LOG( scp )            (&(scp)->sc_log)
 #define SC_RPCDATA( scp )        (&(scp)->sc_rd)
 #define SC_ENV( scp )            (&(scp)->sc_environment)
+#define SC_ENV_VAR_DEFS( scp )   (scp)->sc_env_var_defs
 #define SC_PORT( scp )           (scp)->sc_port
 #define SC_NICE( scp )           (scp)->sc_nice
 #define SC_SOCKET_TYPE( scp )    (scp)->sc_socket_type
@@ -177,6 +178,8 @@ struct service_config
 #define SC_PROTONAME( scp )      (scp)->sc_protocol.name
 #define SC_INSTANCES( scp )      (scp)->sc_instances
 #define SC_UID( scp )            (scp)->sc_uid
+#define SC_GID( scp )            (scp)->sc_gid
+#define SC_USER_GID( scp )       (scp)->sc_user_gid
 #define SC_SERVER( scp )         (scp)->sc_server
 #define SC_SERVER_ARGV( scp )    (scp)->sc_server_argv
 #define SC_ONLY_FROM( scp )      (scp)->sc_only_from
@@ -184,13 +187,38 @@ struct service_config
 #define SC_ACCESS_TIMES( scp )   (scp)->sc_access_times
 #define SC_LOG_ON_SUCCESS( scp ) (scp)->sc_log_on_success
 #define SC_LOG_ON_FAILURE( scp ) (scp)->sc_log_on_failure
+#define SC_PASS_ENV_VARS( scp )  (scp)->sc_pass_env_vars
 #define SC_RLIM_AS( scp )        (scp)->sc_rlim_as
 #define SC_RLIM_CPU( scp )       (scp)->sc_rlim_cpu
 #define SC_RLIM_DATA( scp )      (scp)->sc_rlim_data
 #define SC_RLIM_RSS( scp )       (scp)->sc_rlim_rss
 #define SC_RLIM_STACK( scp )     (scp)->sc_rlim_stack
+#define SC_TYPE( scp )           (scp)->sc_type
+#define SC_WAIT( scp )           (scp)->sc_wait
+#define SC_XFLAGS( scp )         (scp)->sc_xflags
 #define SC_V6ONLY( scp )         (scp)->sc_v6only
-
+#define SC_ENABLED( scp )        (scp)->sc_enabled
+#define SC_DISABLED( scp )       (scp)->sc_disabled
+#define SC_BUILTIN( scp )        (scp)->sc_builtin
+#define SC_REDIR_ADDR( scp )     (scp)->sc_redir_addr
+#define SC_ORIG_BIND_ADDR( scp ) (scp)->sc_orig_bind_addr
+#define SC_BIND_ADDR( scp )      (scp)->sc_bind_addr
+#define SC_BANNER( scp )         (scp)->sc_banner
+#define SC_BANNER_SUCCESS( scp ) (scp)->sc_banner_success
+#define SC_BANNER_FAIL( scp )    (scp)->sc_banner_fail
+#define SC_GROUPS( scp )         (scp)->sc_groups
+#define SC_MAX_LOAD( scp )       (scp)->sc_max_load
+#define SC_TIME_LIMIT( scp )     (scp)->sc_time_limit
+#define SC_TIME_CONN( scp )      (scp)->sc_time_conn
+#define SC_TIME_CONN_MAX( scp )  (scp)->sc_time_conn_max
+#define SC_TIME_WAIT( scp )      (scp)->sc_time_wait
+#define SC_TIME_REENABLE( scp )  (scp)->sc_time_reenable
+#define SC_UMASK( scp )          (scp)->sc_umask
+#define SC_DENY_TIME( scp )      (scp)->sc_deny_time
+#define SC_MDNSCON( scp )        (scp)->sc_mdnscon
+#define SC_MDNS_NAME( scp )      (scp)->sc_mdns_name
+#define SC_MDNS( scp )           (scp)->sc_mdns
+#define SC_PER_SOURCE( scp )     (scp)->sc_per_source
 /*
  * Field set macros
  */

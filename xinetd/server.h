@@ -52,6 +52,8 @@ struct server
 #define SERVER_EXITSTATUS( serp )      (serp)->svr_exit_status
 #define SERVER_STARTTIME( serp )       (serp)->svr_start_time
 #define SERVER_LOGUSER( serp )         (serp)->svr_log_remote_user
+#define SERVER_FORK_FAILURES( serp )   (serp)->svr_fork_failures
+#define SERVER_WRITES_TO_LOG( serp )   (serp)->svr_writes_to_log
 
 #define SERVER_FORKLIMIT( serp )         \
                   ( (serp)->svr_fork_failures >= MAX_FORK_FAILURES )

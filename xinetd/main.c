@@ -251,7 +251,7 @@ void quit_program(void)
        */
       if( SC_IS_INTERNAL( scp ) )
          svc_deactivate( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
-      if( scp->sc_redir_addr != NULL )
+      if( SC_REDIR_ADDR(scp) != NULL )
          svc_deactivate( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
       if( SC_IS_RPC( scp ) )
          svc_deactivate( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
@@ -282,7 +282,7 @@ void terminate_program(void)
        */
       if( SC_IS_INTERNAL( scp ) )
          terminate_servers( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
-      if( scp->sc_redir_addr != NULL )
+      if( SC_REDIR_ADDR( scp ) != NULL )
          terminate_servers( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
       if( SC_IS_RPC( scp ) )
          terminate_servers( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;

@@ -50,7 +50,7 @@ struct service_config *cnf_extract( struct configuration *confp,
    {
       struct service_config *iscp = SCP( pset_pointer( stab, u ) ) ;
 
-      if ( ! EQ( scp->sc_id, iscp->sc_id ) || sc_different_confs( scp, iscp ) )
+      if ( ! EQ( SC_ID(scp), SC_ID(iscp) ) || sc_different_confs( scp, iscp ) )
          continue ;
 
       pset_remove_index( stab, u ) ;

@@ -55,10 +55,10 @@ static status_e fix_server_argv( struct service_config *scp )
    char *server_name ;
    const char *func = "fix_server_argv" ;
 
-   if( scp->sc_server == NULL )
+   if( SC_SERVER(scp) == NULL )
    {
       msg( LOG_ERR, func, 
-           "Must specify a server in %s", scp->sc_name);
+           "Must specify a server in %s", SC_NAME(scp));
       return( FAILED );
    }
    
@@ -80,31 +80,31 @@ static status_e fix_server_argv( struct service_config *scp )
     */
    if ( ! SC_SPECIFIED( scp, A_SERVER_ARGS ) )
    {
-      scp->sc_server_argv = (char **) malloc( 2 * sizeof( char * ) ) ;
-      if ( scp->sc_server_argv == NULL )
+      SC_SERVER_ARGV(scp) = (char **) malloc( 2 * sizeof( char * ) ) ;
+      if ( SC_SERVER_ARGV(scp) == NULL )
       {
          out_of_memory( func ) ;
          return( FAILED ) ;
       }
-      scp->sc_server_argv[ 0 ] = NULL ;
-      scp->sc_server_argv[ 1 ] = NULL ;
+      SC_SERVER_ARGV(scp)[ 0 ] = NULL ;
+      SC_SERVER_ARGV(scp)[ 1 ] = NULL ;
       SC_PRESENT( scp, A_SERVER_ARGS ) ;
    }
 
    /*
     * Determine server name
     */
-   server_name = strrchr( scp->sc_server, '/' ) ;
+   server_name = strrchr( SC_SERVER(scp), '/' ) ;
    if ( server_name == NULL )
-      server_name = scp->sc_server ;
+      server_name = SC_SERVER(scp) ;
    else
       server_name++ ;      /* skip the '/' */
 
    /*
     * Place it in argv[ 0 ]
     */
-   scp->sc_server_argv[ 0 ] = new_string( server_name ) ;
-   if ( scp->sc_server_argv[ 0 ] == NULL )
+   SC_SERVER_ARGV(scp)[ 0 ] = new_string( server_name ) ;
+   if ( SC_SERVER_ARGV(scp)[ 0 ] == NULL )
    {
       out_of_memory( func ) ;
       return( FAILED ) ;
@@ -131,10 +131,10 @@ static status_e service_fill( struct service_config *scp,
    const char *func = "service_fill" ;
 
    /* Note: if the service was specified, it won't be honored. */
-   if( (scp->sc_redir_addr != NULL) ) {
-       if ( SC_SPECIFIED( scp, A_SERVER ) && scp->sc_server)
-          free(scp->sc_server);
-       scp->sc_server = new_string( "/bin/true" );
+   if( (SC_REDIR_ADDR(scp) != NULL) ) {
+       if ( SC_SPECIFIED( scp, A_SERVER ) && SC_SERVER(scp))
+          free(SC_SERVER(scp));
+       SC_SERVER(scp) = new_string( "/bin/true" );
        SC_SPECIFY(scp, A_SERVER);
    }
 
@@ -149,50 +149,50 @@ static status_e service_fill( struct service_config *scp,
     */
    if ( ! SC_SPECIFIED( scp, A_INSTANCES ) )
    {
-      scp->sc_instances = SC_SPECIFIED( def, A_INSTANCES ) ? def->sc_instances
+      SC_INSTANCES(scp) = SC_SPECIFIED( def, A_INSTANCES ) ? SC_INSTANCES(def)
                                                      : DEFAULT_INSTANCE_LIMIT ;
       SC_PRESENT( scp, A_INSTANCES ) ;
    }
 
    if ( (! SC_SPECIFIED( scp, A_UMASK )) && SC_SPECIFIED( def, A_UMASK ) ) 
    {
-      scp->sc_umask = def->sc_umask;
+      SC_UMASK(scp) = SC_UMASK(def);
       SC_SPECIFY( scp, A_UMASK );
    }
 
    if ( ! SC_SPECIFIED( scp, A_PER_SOURCE ) )
    {
-      scp->sc_per_source = SC_SPECIFIED( def, A_PER_SOURCE ) ? 
-         def->sc_per_source : DEFAULT_INSTANCE_LIMIT ;
+      SC_PER_SOURCE(scp) = SC_SPECIFIED( def, A_PER_SOURCE ) ? 
+         SC_PER_SOURCE(def) : DEFAULT_INSTANCE_LIMIT ;
       SC_SPECIFY( scp, A_PER_SOURCE ) ;
    }
 
 #ifdef HAVE_DNSREGISTRATION
    if ( ! SC_SPECIFIED( scp, A_MDNS ) )
    {
-      scp->sc_mdns = SC_SPECIFIED( def, A_MDNS ) ? def->sc_mdns : YES;
+      SC_MDNS(scp) = SC_SPECIFIED( def, A_MDNS ) ? SC_MDNS(def) : YES;
       SC_SPECIFY( scp, A_MDNS );
    }
 #endif
 
    if ( ! SC_SPECIFIED( scp, A_GROUPS ) )
    {
-      scp->sc_groups = SC_SPECIFIED( def, A_GROUPS ) ? def->sc_groups : NO;
+      SC_GROUPS(scp) = SC_SPECIFIED( def, A_GROUPS ) ? SC_GROUPS(def) : NO;
       SC_SPECIFY( scp, A_GROUPS );
    }
 
    if ( ! SC_SPECIFIED( scp, A_CPS ) ) 
    {
-      scp->sc_time_conn_max = SC_SPECIFIED( def, A_CPS ) ? 
-         def->sc_time_conn_max : DEFAULT_LOOP_RATE;
-      scp->sc_time_wait = SC_SPECIFIED( def, A_CPS ) ? 
-         def->sc_time_wait : DEFAULT_LOOP_TIME;
-      scp->sc_time_reenable = 0;
+      SC_TIME_CONN_MAX(scp) = SC_SPECIFIED( def, A_CPS ) ? 
+         SC_TIME_CONN_MAX(def) : DEFAULT_LOOP_RATE;
+      SC_TIME_WAIT(scp) = SC_SPECIFIED( def, A_CPS ) ? 
+         SC_TIME_WAIT(def) : DEFAULT_LOOP_TIME;
+      SC_TIME_REENABLE(scp) = 0;
    }
 
 #ifdef HAVE_LOADAVG
    if ( ! SC_SPECIFIED( scp, A_MAX_LOAD ) ) {
-      scp->sc_max_load = SC_SPECIFIED( def, A_MAX_LOAD ) ? def->sc_max_load : 0;
+      SC_MAX_LOAD(scp) = SC_SPECIFIED( def, A_MAX_LOAD ) ? SC_MAX_LOAD(def) : 0;
       SC_SPECIFY( scp, A_MAX_LOAD ) ;
    }
 #endif
@@ -203,31 +203,31 @@ static status_e service_fill( struct service_config *scp,
     * and it was stored into sc_orig_bind_addr. We unset the attribute
     * so that its processed correctly.
     */
-   if (SC_SPECIFIED( scp, A_BIND) && scp->sc_bind_addr == NULL)
+   if (SC_SPECIFIED( scp, A_BIND ) && SC_BIND_ADDR(scp) == NULL)
       M_CLEAR( scp->sc_specified_attributes, A_BIND ) ;
    
-   if ( (! SC_SPECIFIED( scp, A_BIND )) && (scp->sc_orig_bind_addr == 0) ) {
+   if ( (! SC_SPECIFIED( scp, A_BIND )) && (SC_ORIG_BIND_ADDR(scp) == 0) ) {
       if ( SC_SPECIFIED( def, A_BIND ) ) {
-         scp->sc_bind_addr = (union xsockaddr *)malloc(sizeof(union xsockaddr));
-         if( scp->sc_bind_addr == NULL ) {
+         SC_BIND_ADDR(scp) = (union xsockaddr *)malloc(sizeof(union xsockaddr));
+         if( SC_BIND_ADDR(scp) == NULL ) {
             msg(LOG_ERR, func, "can't allocate space for bind addr");
             return( FAILED );
          }
-         memcpy(scp->sc_bind_addr, def->sc_bind_addr, sizeof(union xsockaddr));
+         memcpy(SC_BIND_ADDR(scp), SC_BIND_ADDR(def), sizeof(union xsockaddr));
          SC_SPECIFY( scp, A_BIND ) ;
       }
-      else if ( def->sc_orig_bind_addr )
-         scp->sc_orig_bind_addr = new_string( def->sc_orig_bind_addr );
+      else if ( SC_ORIG_BIND_ADDR(def) )
+         SC_ORIG_BIND_ADDR(scp) = new_string( SC_ORIG_BIND_ADDR(def) );
    }
    
    if ( ! SC_SPECIFIED( scp, A_V6ONLY ) ) {
-      scp->sc_v6only = SC_SPECIFIED( def, A_V6ONLY ) ? def->sc_v6only : NO;
+      SC_V6ONLY(scp) = SC_SPECIFIED( def, A_V6ONLY ) ? SC_V6ONLY(def) : NO;
    }
 
    if ( ! SC_SPECIFIED( scp, A_DENY_TIME ) )
    {
-      scp->sc_deny_time = SC_SPECIFIED( def, A_DENY_TIME ) ? 
-         def->sc_deny_time  : 0 ;
+      SC_DENY_TIME(scp) = SC_SPECIFIED( def, A_DENY_TIME ) ? 
+         SC_DENY_TIME(def)  : 0 ;
       SC_SPECIFY( scp, A_DENY_TIME ) ;
    }
 
@@ -237,18 +237,18 @@ static status_e service_fill( struct service_config *scp,
        * If bind is specified, check the address and see what family is
        * available. If not, then use default.
        */
-      if ( SC_SPECIFIED( scp, A_BIND ) && !scp->sc_orig_bind_addr ) 
+      if ( SC_SPECIFIED( scp, A_BIND ) && !SC_ORIG_BIND_ADDR(scp) ) 
       {
-	  if ( SAIN(scp->sc_bind_addr)->sin_family == AF_INET )
-             M_SET(scp->sc_xflags, SF_IPV4);
+	  if ( SAIN(SC_BIND_ADDR(scp))->sin_family == AF_INET )
+             M_SET(SC_XFLAGS(scp), SF_IPV4);
 	  else
-             M_SET(scp->sc_xflags, SF_IPV6);
+             M_SET(SC_XFLAGS(scp), SF_IPV6);
       }
       else
-         M_SET(scp->sc_xflags, SF_IPV4);
+         M_SET(SC_XFLAGS(scp), SF_IPV4);
    }
 
-   if (scp->sc_orig_bind_addr)
+   if (SC_ORIG_BIND_ADDR(scp))
    {
       /*
        * If we are here, we have a dual stack machine with multiple
@@ -264,32 +264,32 @@ static status_e service_fill( struct service_config *scp,
       else
          hints.ai_family = AF_INET;
 
-      if( getaddrinfo(scp->sc_orig_bind_addr, NULL, &hints, &res) < 0 ) 
+      if( getaddrinfo(SC_ORIG_BIND_ADDR(scp), NULL, &hints, &res) < 0 ) 
       {
-         msg(LOG_ERR, func, "bad address given for:%s", scp->sc_name);
+         msg(LOG_ERR, func, "bad address given for:%s", SC_NAME(scp));
          return( FAILED );
       }
 
       if( (res == NULL) || (res->ai_addr == NULL) ) 
       {
-         msg(LOG_ERR, func, "no addresses returned for: %s", scp->sc_name);
+         msg(LOG_ERR, func, "no addresses returned for: %s", SC_NAME(scp));
 	 return( FAILED );
       }
 
       if( (res->ai_family == AF_INET) || (res->ai_family == AF_INET6) )
       {
-         scp->sc_bind_addr = (union xsockaddr *)
+         SC_BIND_ADDR(scp) = (union xsockaddr *)
             malloc(sizeof(union xsockaddr));
-         if( scp->sc_bind_addr == NULL )
+         if( SC_BIND_ADDR(scp) == NULL )
          {
             msg(LOG_ERR, func, "can't allocate space for bind addr of:%s",
-                scp->sc_name);
+                SC_NAME(scp));
             return( FAILED );
          }
-         memset(scp->sc_bind_addr, 0, sizeof(union xsockaddr));
-         memcpy(scp->sc_bind_addr, res->ai_addr, res->ai_addrlen);
-         free(scp->sc_orig_bind_addr);
-         scp->sc_orig_bind_addr = 0;
+         memset(SC_BIND_ADDR(scp), 0, sizeof(union xsockaddr));
+         memcpy(SC_BIND_ADDR(scp), res->ai_addr, res->ai_addrlen);
+         free(SC_BIND_ADDR(scp));
+         SC_ORIG_BIND_ADDR(scp) = 0;
  	 SC_SPECIFY( scp, A_BIND );
       }
       freeaddrinfo(res);
@@ -303,22 +303,22 @@ static status_e service_fill( struct service_config *scp,
    {
       struct protoent *pep ;
 
-      if( scp->sc_socket_type == SOCK_STREAM ) {
+      if( SC_SOCKET_TYPE(scp) == SOCK_STREAM ) {
          if( (pep = getprotobyname( "tcp" )) != NULL ) {
-            scp->sc_protocol.name = new_string ( "tcp" );
-            if( scp->sc_protocol.name == NULL )
+            SC_PROTONAME(scp) = new_string ( "tcp" );
+            if( SC_PROTONAME(scp) == NULL )
                return( FAILED );
-            scp->sc_protocol.value = pep->p_proto ;
+            SC_PROTOVAL(scp) = pep->p_proto ;
             SC_SPECIFY(scp, A_PROTOCOL);
          }
       }
 
-      if( scp->sc_socket_type == SOCK_DGRAM ) {
+      if( SC_SOCKET_TYPE(scp) == SOCK_DGRAM ) {
          if( (pep = getprotobyname( "udp" )) != NULL ) {
-            scp->sc_protocol.name = new_string ( "udp" );
-            if( scp->sc_protocol.name == NULL )
+            SC_PROTONAME(scp) = new_string ( "udp" );
+            if( SC_PROTONAME(scp) == NULL )
                return( FAILED );
-            scp->sc_protocol.value = pep->p_proto ;
+            SC_PROTOVAL(scp) = pep->p_proto ;
             SC_SPECIFY(scp, A_PROTOCOL);
          }
       }
@@ -326,15 +326,15 @@ static status_e service_fill( struct service_config *scp,
    if ( ( SC_SPECIFIED( scp, A_PROTOCOL )) && 
         (! SC_SPECIFIED( scp, A_SOCKET_TYPE ) ) )
    {
-      if( (scp->sc_protocol.name != NULL) && EQ("tcp", scp->sc_protocol.name) )
+      if( (SC_PROTONAME(scp) != NULL) && EQ("tcp", SC_PROTONAME(scp)) )
       {
-            scp->sc_socket_type = SOCK_STREAM;
+            SC_SOCKET_TYPE(scp) = SOCK_STREAM;
             SC_SPECIFY(scp, A_SOCKET_TYPE);
       }
 
-      if( (scp->sc_protocol.name != NULL) && EQ("udp", scp->sc_protocol.name) )
+      if( (SC_PROTONAME(scp) != NULL) && EQ("udp", SC_PROTONAME(scp)) )
       {
-            scp->sc_socket_type = SOCK_DGRAM;
+            SC_SOCKET_TYPE(scp) = SOCK_DGRAM;
             SC_SPECIFY(scp, A_SOCKET_TYPE);
       }
    }
@@ -349,7 +349,7 @@ static status_e service_fill( struct service_config *scp,
                                         ! SC_IS_RPC( scp )) {
        if ( SC_IS_UNLISTED( scp ) ) {
           msg(LOG_ERR, func, "Unlisted service:%s must have a port entry",
-              scp->sc_name);
+              SC_NAME(scp));
           return(FAILED);
        }
        if ( SC_SPECIFIED( scp, A_PROTOCOL ) ) {
@@ -358,37 +358,37 @@ static status_e service_fill( struct service_config *scp,
 	   * If not found, don't worry. Message will be emitted in
 	   * check_entry().
            */
-         struct servent *sep = getservbyname( scp->sc_name, 
-                                           scp->sc_protocol.name ) ;
+         struct servent *sep = getservbyname( SC_NAME(scp), 
+                                           SC_PROTONAME(scp) ) ;
          if ( sep != NULL ) {
             /* s_port is in network-byte-order */
-            scp->sc_port = ntohs(sep->s_port);
+            SC_PORT(scp) = ntohs(sep->s_port);
             SC_SPECIFY(scp, A_PORT);
          }
          else {
             msg(LOG_ERR, func, 
               "Port not specified and can't find service:%s with getservbyname",
-               scp->sc_name);
+               SC_NAME(scp));
             return(FAILED);
          }
       }
       else {
          msg(LOG_ERR, func, 
              "Port not specified for service:%s and no protocol given", 
-             scp->sc_name);
+             SC_NAME(scp));
          return(FAILED);
       }
    }
    
    if ( USE_DEFAULT( scp, def, A_LOG_ON_SUCCESS ) )
    {
-      scp->sc_log_on_success = def->sc_log_on_success ;
+      SC_LOG_ON_SUCCESS(scp) = SC_LOG_ON_SUCCESS(def) ;
       SC_SPECIFY( scp, A_LOG_ON_SUCCESS ) ;
    }
 
    if ( USE_DEFAULT( scp, def, A_LOG_ON_FAILURE ) )
    {
-      scp->sc_log_on_failure = def->sc_log_on_failure ;
+      SC_LOG_ON_FAILURE(scp) = SC_LOG_ON_FAILURE(def) ;
       SC_SPECIFY( scp, A_LOG_ON_FAILURE ) ;
    }
 
@@ -432,7 +432,7 @@ static void remove_disabled_services( struct configuration *confp )
    struct service_config *defaults = confp->cnf_defaults ;
 
    if( SC_SPECIFIED( defaults, A_ENABLED ) ) {
-      enabled_services = defaults->sc_enabled ;
+      enabled_services = SC_ENABLED(defaults) ;
       
 
       /* Mark all the services disabled */
@@ -457,7 +457,7 @@ static void remove_disabled_services( struct configuration *confp )
    /* Remove any services that are left marked disabled */
    for ( scp = SCP( psi_start( iter ) ) ; scp ; scp = SCP( psi_next(iter)) ){
       if( SC_IS_DISABLED( scp ) ) {
-         msg(LOG_DEBUG, "remove_disabled_services", "removing %s", scp->sc_name);
+         msg(LOG_DEBUG, "remove_disabled_services", "removing %s", SC_NAME(scp));
          SC_DISABLE( scp );
          sc_free(scp);
          psi_remove(iter);
@@ -467,7 +467,7 @@ static void remove_disabled_services( struct configuration *confp )
    if ( ! SC_SPECIFIED( defaults, A_DISABLED ) )
       return ;
    
-   disabled_services = defaults->sc_disabled ;
+   disabled_services = SC_DISABLED(defaults) ;
 
    for ( scp = SCP( psi_start( iter ) ) ; scp ; scp = SCP( psi_next( iter ) ) )
    {
@@ -561,7 +561,7 @@ static status_e service_attr_check( const struct service_config *scp )
       {
          msg( LOG_ERR, func,
             "Service %s missing attribute %s - DISABLING", 
-	    scp->sc_id, attr_name ) ;
+	    SC_ID(scp), attr_name ) ;
       }
    return FAILED ;
 }
@@ -594,31 +594,31 @@ static status_e check_entry( struct service_config *scp,
       const struct service_config *tmp_scp = SCP( pset_pointer( sconfs, u ) );
       if (tmp_scp == scp)
          break; /* Don't check ourselves, or anything after us */
-      if ( EQ( tmp_scp->sc_id, scp->sc_id ) )
+      if ( EQ( SC_ID(tmp_scp), SC_ID(scp) ) )
       { 
          diff = 0;
       }
-      if( tmp_scp->sc_bind_addr == NULL)
+      if( SC_BIND_ADDR(tmp_scp) == NULL)
          continue; /* problem entry, skip it */
-      if ( (scp->sc_port != tmp_scp->sc_port) || 
-           (scp->sc_protocol.value != tmp_scp->sc_protocol.value) )
+      if ( (SC_PORT(scp) != SC_PORT(tmp_scp)) || 
+           (SC_PROTOVAL(scp) != SC_PROTOVAL(tmp_scp)) )
          continue; /* if port or protocol are different, its OK */
-      if (scp->sc_bind_addr != NULL)
+      if (SC_BIND_ADDR(scp) != NULL)
       {
-         if (scp->sc_bind_addr->sa.sa_family != 
-             tmp_scp->sc_bind_addr->sa.sa_family)
+         if (SC_BIND_ADDR(scp)->sa.sa_family != 
+             SC_BIND_ADDR(tmp_scp)->sa.sa_family)
             continue;
-         if (scp->sc_bind_addr->sa.sa_family == AF_INET)
+         if (SC_BIND_ADDR(scp)->sa.sa_family == AF_INET)
          {
-            if (memcmp(&scp->sc_bind_addr->sa_in.sin_addr, 
-                       &tmp_scp->sc_bind_addr->sa_in.sin_addr, 
+            if (memcmp(&SC_BIND_ADDR(scp)->sa_in.sin_addr, 
+                       &SC_BIND_ADDR(tmp_scp)->sa_in.sin_addr, 
                        sizeof(struct in_addr) ) )
                continue;
          }
          else /* We assume that all bad address families are weeded out */
          {
-            if (memcmp(&scp->sc_bind_addr->sa_in6.sin6_addr, 
-                       &tmp_scp->sc_bind_addr->sa_in6.sin6_addr, 
+            if (memcmp(&SC_BIND_ADDR(scp)->sa_in6.sin6_addr, 
+                       &SC_BIND_ADDR(tmp_scp)->sa_in6.sin6_addr, 
                        sizeof(struct in6_addr) ) )
                continue;
          }
@@ -636,11 +636,11 @@ static status_e check_entry( struct service_config *scp,
          msg( LOG_ERR, func, 
            "service:%s id:%s is unique but its identical to service:%s id:%s "
 	   "- DISABLING",
-           scp->sc_name, scp->sc_id, tmp_scp->sc_name, tmp_scp->sc_id ) ;
+           SC_NAME(scp), SC_ID(scp), SC_NAME(tmp_scp), SC_ID(tmp_scp) ) ;
       else
          msg( LOG_ERR, func, 
            "service:%s id:%s not unique or is a duplicate - DISABLING",
-           scp->sc_name, scp->sc_id ) ;
+           SC_NAME(scp), SC_ID(scp) ) ;
       return FAILED ;
    } /* for */
    
@@ -655,33 +655,33 @@ static status_e check_entry( struct service_config *scp,
       if ( SC_IS_INTERNAL( scp ) )
       {
          msg( LOG_ERR, func,
-            "Internal services cannot be intercepted: %s ", scp->sc_id ) ;
-         M_CLEAR( scp->sc_xflags, SF_INTERCEPT ) ;
+            "Internal services cannot be intercepted: %s ", SC_ID(scp) ) ;
+         M_CLEAR( SC_XFLAGS(scp), SF_INTERCEPT ) ;
       }
-      if ( scp->sc_wait == NO )
+      if ( SC_WAIT(scp) == NO )
       {
          msg( LOG_ERR, func,
-            "Multi-threaded services cannot be intercepted: %s", scp->sc_id ) ;
-         M_CLEAR( scp->sc_xflags, SF_INTERCEPT ) ;
+            "Multi-threaded services cannot be intercepted: %s", SC_ID(scp) ) ;
+         M_CLEAR( SC_XFLAGS(scp), SF_INTERCEPT ) ;
       }
    }
    
    /* Steer the lost sheep home */
    if ( SC_SENSOR( scp ) )
-      M_SET( scp->sc_type, ST_INTERNAL );
+      M_SET( SC_TYPE(scp), ST_INTERNAL );
 
    if ( SC_IS_INTERNAL( scp ) )
    {   /* If SENSOR flagged redirect to internal builtin function. */ 
       if ( SC_SENSOR( scp ) )
       {
 	 init_sensor();
-         scp->sc_builtin =
-            builtin_find( "sensor", scp->sc_socket_type );
+         SC_BUILTIN(scp) =
+            builtin_find( "sensor", SC_SOCKET_TYPE(scp) );
       }
       else
-         scp->sc_builtin =
-            builtin_find( scp->sc_name, scp->sc_socket_type );
-      if (scp->sc_builtin == NULL )
+         SC_BUILTIN(scp) =
+            builtin_find( SC_NAME(scp), SC_SOCKET_TYPE(scp) );
+      if (SC_BUILTIN(scp) == NULL )
          return( FAILED ) ;
    }
 
@@ -691,15 +691,15 @@ static status_e check_entry( struct service_config *scp,
 	   {
                msg(LOG_ERR, func, 
                    "Service: %s (tcpmux) should have UNLISTED in type.",
-		   scp->sc_name);
+		   SC_NAME(scp));
 	       return( FAILED );
 	   }
 	   
-	   if (!EQ("tcp", scp->sc_protocol.name))
+	   if (!EQ("tcp", SC_PROTONAME(scp)))
 	   {
                msg(LOG_ERR, func, 
                    "Service: %s (tcpmux) should have tcp in protocol.",
-		   scp->sc_name);
+		   SC_NAME(scp));
 	       return( FAILED );
 	   }
    }
@@ -708,11 +708,11 @@ static status_e check_entry( struct service_config *scp,
 #if defined(HAVE_RPC_RPCENT_H) || defined(HAVE_NETDB_H)
    if ( SC_IS_RPC( scp ) && !SC_IS_UNLISTED( scp ) )
    {
-      struct rpcent *rep = (struct rpcent *)getrpcbyname( scp->sc_name ) ;
+      struct rpcent *rep = (struct rpcent *)getrpcbyname( SC_NAME(scp) ) ;
 
       if ( rep == NULL )
       {
-         msg( LOG_ERR, func, "unknown RPC service: %s", scp->sc_name ) ;
+         msg( LOG_ERR, func, "unknown RPC service: %s", SC_NAME(scp) ) ;
          return( FAILED ) ;
       }
       SC_RPCDATA( scp )->rd_program_number = rep->r_number ;
@@ -735,12 +735,12 @@ static status_e check_entry( struct service_config *scp,
            */
           if ( SC_SPECIFIED( scp, A_PROTOCOL ) )
           {
-             sep = getservbyname( scp->sc_name, scp->sc_protocol.name ) ;
+             sep = getservbyname( SC_NAME(scp), SC_PROTONAME(scp) ) ;
              if ( (sep == NULL) )
              {
                 msg( LOG_ERR, func, 
                    "service/protocol combination not in /etc/services: %s/%s",
-                   scp->sc_name, scp->sc_protocol.name ) ;
+                   SC_NAME(scp), SC_PROTONAME(scp) ) ;
                 return( FAILED ) ;
              }
           }
@@ -748,7 +748,7 @@ static status_e check_entry( struct service_config *scp,
           {
              msg( LOG_ERR, func,
                 "A protocol or a socket_type must be specified for service:%s.",
-                scp->sc_name ) ;
+                SC_NAME(scp) ) ;
              return( FAILED ) ;
           }
  
@@ -759,10 +759,10 @@ static status_e check_entry( struct service_config *scp,
            * If a port was specified, it must be the right one
            */
           if ( SC_SPECIFIED( scp, A_PORT ) && 
-               scp->sc_port != service_port )
+               SC_PORT(scp) != service_port )
           {
              msg( LOG_ERR, func, "Service %s expects port %d, not %d",
-                  scp->sc_name, service_port, scp->sc_port ) ;
+                  SC_NAME(scp), service_port, SC_PORT(scp) ) ;
              return( FAILED ) ;
           }
       } /* if not unlisted */
@@ -773,30 +773,30 @@ static status_e check_entry( struct service_config *scp,
        {
           msg( LOG_ERR, func, 
  	      "Only tcp sockets are supported for redirected service %s",
- 	      scp->sc_name);
+ 	      SC_NAME(scp));
           return FAILED;
        }
        if ( SC_WAITS( scp ) )
        {
           msg( LOG_ERR, func, 
- 	      "Redirected service %s must not wait", scp->sc_name);
+ 	      "Redirected service %s must not wait", SC_NAME(scp));
           return FAILED;
        }
        if ( SC_NAMEINARGS( scp ) )
        {
           msg( LOG_ERR, func, 
  	      "Redirected service %s should not have NAMEINARGS flag set", 
-	      scp->sc_name);
+	      SC_NAME(scp));
           return FAILED;
        }
     }
     else /* Not a redirected service */
     {
-       if( M_IS_SET( (scp)->sc_log_on_success, LO_TRAFFIC ) )
+       if( M_IS_SET( SC_LOG_ON_SUCCESS(scp), LO_TRAFFIC ) )
        {
           msg( LOG_ERR, func,
              "Service %s should not have TRAFFIC flag set since its"
-             " not redirected", scp->sc_name);
+             " not redirected", SC_NAME(scp));
           return FAILED;
        }
     }
@@ -807,14 +807,14 @@ static status_e check_entry( struct service_config *scp,
       {
          msg( LOG_ERR, func, 
               "Service %s is INTERNAL and has NAMEINARGS flag set", 
-	      scp->sc_name );
+	      SC_NAME(scp) );
          return FAILED;
       }
       else if (!SC_SPECIFIED( scp, A_SERVER_ARGS) )
       {
          msg( LOG_ERR, func, 
               "Service %s has NAMEINARGS flag set and no server_args", 
-	      scp->sc_name );
+	      SC_NAME(scp) );
          return FAILED;
       }
    }
@@ -840,7 +840,7 @@ static status_e get_conf( int fd, struct configuration *confp )
    if ( M_IS_SET( mask, LO_USERID ) )                                         \
    {                                                                          \
       msg( LOG_WARNING, func,                                                 \
-      "%s service: clearing USERID option from %s", scp->sc_id, mask_name ) ; \
+      "%s service: clearing USERID option from %s", SC_ID(scp), mask_name ) ; \
       M_CLEAR( mask, LO_USERID ) ;                                            \
    }
 
@@ -909,7 +909,7 @@ status_e cnf_get( struct configuration *confp )
       {
          const builtin_s *bp ;
 
-         bp = spec_find( INTERCEPT_SERVICE_NAME, scp->sc_socket_type ) ;
+         bp = spec_find( INTERCEPT_SERVICE_NAME, SC_SOCKET_TYPE(scp) ) ;
          if ( bp == NULL )
          {
             msg( LOG_ERR, func, "removing service %s", SC_ID( scp ) ) ;
@@ -918,8 +918,8 @@ status_e cnf_get( struct configuration *confp )
             continue ;
          }
 
-         scp->sc_builtin = bp ;
-         M_SET( scp->sc_type, ST_INTERNAL ) ;
+         SC_BUILTIN(scp) = bp ;
+         M_SET( SC_TYPE(scp), ST_INTERNAL ) ;
       }
 
       /*
@@ -928,11 +928,11 @@ status_e cnf_get( struct configuration *confp )
        * local xinetd issues request to remote xinetd etc.)
        * We identify the identity service by its (protocol,port) combination.
        */
-      if ( scp->sc_port == IDENTITY_SERVICE_PORT && 
-                                       scp->sc_protocol.value == IPPROTO_TCP )
+      if ( SC_PORT(scp) == IDENTITY_SERVICE_PORT && 
+                                       SC_PROTOVAL(scp) == IPPROTO_TCP )
       {
-         CHECK_AND_CLEAR( scp, scp->sc_log_on_success, "log_on_success" ) ;
-         CHECK_AND_CLEAR( scp, scp->sc_log_on_failure, "log_on_failure" ) ;
+         CHECK_AND_CLEAR( scp, SC_LOG_ON_SUCCESS(scp), "log_on_success" ) ;
+         CHECK_AND_CLEAR( scp, SC_LOG_ON_FAILURE(scp), "log_on_failure" ) ;
       }
    }
 
