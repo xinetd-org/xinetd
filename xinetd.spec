@@ -1,7 +1,7 @@
 
 Summary:	xinetd -- A better inetd.
 Name:		xinetd
-Version:	2.3.12
+Version:	2.3.13
 Release:	1
 License:	BSD
 Vendor:		xinetd.org (Rob Braun)
@@ -11,7 +11,7 @@ URL:		http://www.xinetd.org/
 Source:		%{name}-%{version}.tar.gz
 BuildRoot:	%{_tmppath}/%{name}-%{version}-root
 Provides:	inetd
-Prereq:		/sbin/chkconfig 
+Prereq:		/sbin/chkconfig, /sbin/service 
 BuildRequires:  tcp_wrappers >= 7.6
 Obsoletes:	inetd
 
@@ -23,53 +23,66 @@ of servers that can be started, and has a configurable defence
 mechanism to protect against port scanners, among other things.
  
 %prep
-#rm -rf $RPM_BUILD_ROOT
-
-%setup
+%setup -q
 
 %build
-  CFLAGS="$RPM_OPT_FLAGS" ./configure \
-	--sbindir=$RPM_BUILD_ROOT/usr/sbin \
-	--mandir=$RPM_BUILD_ROOT/usr/share/man \
-	--with-libwrap \
+  ./configure				\
+	--sbindir=%{_sbindir} 		\
+	--mandir=%{_datadir}/man	\
+	--with-libwrap 			\
 	--with-inet6
   make
   strip xinetd/xinetd
   cp xinetd/xinetd xinetd6
   make distclean
-  CFLAGS="$RPM_OPT_FLAGS" ./configure \
-	--sbindir=$RPM_BUILD_ROOT/usr/sbin \
-	--mandir=$RPM_BUILD_ROOT/usr/share/man \
+  ./configure \
+	--sbindir=$RPM_BUILD_ROOT/%{_sbindir} 		\
+	--mandir=$RPM_BUILD_ROOT/%{_datadir}/man	\
 	--with-libwrap 
   make
   strip xinetd/xinetd
 
 %install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/%{_sbindir}
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
-mkdir -p $RPM_BUILD_ROOT/usr/sbin
+mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d
 
-%makeinstall 
-install -m 0755 xinetd6 $RPM_BUILD_ROOT/usr/sbin
+%makeinstall  
+install -m 0755 xinetd6 $RPM_BUILD_ROOT/%{_sbindir}
 install -m 0755 contrib/xinetd $RPM_BUILD_ROOT/etc/rc.d/init.d/xinetd
+install -m 0600 contrib/xinetd.conf $RPM_BUILD_ROOT/etc/
+cp contrib/xinetd.d/* $RPM_BUILD_ROOT/etc/xinetd.d
 
 %clean
-  rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 %post
-chkconfig --add xinetd
-/etc/rc.d/init.d/xinetd restart
+if [ $1 = 1 ]; then
+   /sbin/chkconfig --add xinetd
+fi
 
 %preun
-/etc/rc.d/init.d/xinetd stop
-chkconfig --del xinetd
+if [ $1 = 0 ]; then
+   /sbin/service xinetd stop > /dev/null 2>&1
+   /sbin/chkconfig --del xinetd
+fi
+
+%postun
+if [ $1 -ge 1 ]; then
+   /sbin/service xinetd condrestart > /dev/null 2>&1
+fi
 
 %files
 %defattr(-, root, root)
-%doc CHANGELOG COPYRIGHT README xinetd/sample.conf 
-%{_sbindir}/xinetd6
-%{_sbindir}/xinetd
-%{_sbindir}/itox
-%{_sbindir}/xconv.pl
-%{_mandir}/*/*
+%doc CHANGELOG COPYRIGHT README xinetd/sample.conf contrib/empty.conf 
+%{_sbindir}/*
+%{_datadir}/man/*/*
 %config(noreplace) /etc/rc.d/init.d/xinetd
+%config(noreplace) /etc/xinetd.conf
+%config(noreplace) /etc/xinetd.d/*
+
+%changelog
+* Sun Sep 07 2003 Steve Grubb <linux_4ever@yahoo.com>
+- Refined installation and added services.
  
