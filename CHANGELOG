@@ -841,6 +841,14 @@ devel
 		each address family separately. -Steve Grubb
 	Add command line option to not fork. This will allow xinetd to be
 		started by init or daemontools. -Matthias Andree
-	Fixed a leak in reconfig. If file logging is used for a service and
+	Fixed a leak in reconfig. If log_type = file is used for a service and
 		SIGHUP is sent to xinetd, it leaked a file descriptor and 
-		44 bytes of memory per service using FILELOG. -Steve Grubb
+		44 bytes of memory per service using FILE. -Steve Grubb
+	Change all close() calls to Sclose() to prevent future 
+		problems. -Steve Grubb
+	Fixed bug if service name is unparsable and in an included directory
+		that caused xinetd to core dump. -Steve Grubb
+	Fixed bug where address lists had "version" uninitialized when the 
+		list used hostnames with no dots in the name. -Steve Grubb
+	Numerous memory leaks when parsing errors occurred. -Steve Grubb
+
