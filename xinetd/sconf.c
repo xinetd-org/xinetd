@@ -272,12 +272,19 @@ void sc_dump( struct service_config *scp,
          tabprint( fd, tab_level+1, "Instances = %d\n", scp->sc_instances ) ;
    }
 
-   if ( SC_SPECIFIED( scp, A_UMASK ) )
-      tabprint( fd, tab_level+1, "umask = %o\n", scp->sc_umask ) ;
+   if ( SC_SPECIFIED( scp, A_WAIT ) ) {
+      if ( scp->sc_wait )
+         tabprint( fd, tab_level+1, "wait = yes\n" ) ;
+      else
+         tabprint( fd, tab_level+1, "wait = no\n" ) ;
+   }
       
-   if ( SC_SPECIFIED( scp, A_NICE ) )
-      tabprint( fd, tab_level+1, "Nice = %d\n", scp->sc_nice ) ;
-
+   if ( SC_SPECIFIED( scp, A_USER ) )
+      tabprint( fd, tab_level+1, "user = %d\n", scp->sc_uid ) ;
+      
+   if ( SC_SPECIFIED( scp, A_GROUP ) )
+      tabprint( fd, tab_level+1, "group = %d\n", scp->sc_gid ) ;
+      
    if ( SC_SPECIFIED( scp, A_GROUPS ) )
    {
       if (scp->sc_groups == 1)
@@ -285,6 +292,12 @@ void sc_dump( struct service_config *scp,
       else
          tabprint( fd, tab_level+1, "Groups = no\n" );
    }
+
+   if ( SC_SPECIFIED( scp, A_UMASK ) )
+      tabprint( fd, tab_level+1, "umask = %o\n", scp->sc_umask ) ;
+      
+   if ( SC_SPECIFIED( scp, A_NICE ) )
+      tabprint( fd, tab_level+1, "Nice = %d\n", scp->sc_nice ) ;
 
    if ( SC_SPECIFIED( scp, A_CPS ) )
       tabprint( fd, tab_level+1, "CPS = max conn:%lu wait:%lu\n", 
@@ -303,17 +316,18 @@ void sc_dump( struct service_config *scp,
 		  else  
 			 len = sizeof(struct sockaddr_in6);
 		  memset(bindname, 0, sizeof(bindname));
-		  if( getnameinfo(&scp->sc_bind_addr->sa, len, bindname, NI_MAXHOST, 
-				NULL, 0, 0) != 0 ) 
+		  if( getnameinfo(&scp->sc_bind_addr->sa, len, bindname, 
+                                  NI_MAXHOST, NULL, 0, 0) != 0 ) 
 			 strcpy(bindname, "unknown");
 		  tabprint( fd, tab_level+1, "Bind = %s\n", bindname );
 	   }
 	   else if ( scp->sc_orig_bind_addr ) {
-		  tabprint( fd, tab_level+1, "Bind = %s\n", scp->sc_orig_bind_addr );
+		  tabprint( fd, tab_level+1, "Bind = %s\n", 
+                            scp->sc_orig_bind_addr );
 	   }
-	   else {
-			// This should NEVER happen
-			msg(LOG_ERR, "sc_dump", "bad configuration for %s:", scp->sc_name);
+	   else { // This should NEVER happen
+		msg(LOG_ERR, "sc_dump", "bad configuration for %s:", 
+                    scp->sc_name);
 	   }
    }
    else
