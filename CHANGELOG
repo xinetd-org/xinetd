@@ -894,3 +894,8 @@ cvs-devel
 	If log remote user is on, a descriptor between 0-2 is likely to
 		be opened. Call msg_suspend before dup'ing socket to
 		avoid this bug. -Glen Johnson
+	Added confparse() RPC patch from RedHat's RHEL4 srpm.
+	Fixed some service release bugs with accesses to dangling pointers.
+	Updated BACKLOG to 64 from 7
+	Updated xconv.pl to understand ":" in inetd.conf files from
+		FreeBSD ports patch.

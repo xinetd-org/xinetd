@@ -108,7 +108,7 @@ union xsockaddr {
 /*
  * Used for listen(2)
  */
-#define LISTEN_BACKLOG               7
+#define LISTEN_BACKLOG               64
 
 /*
  * When explicit values are given for enum's, that is because the structures 

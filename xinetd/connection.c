@@ -173,8 +173,10 @@ void conn_free( connection_s *cp, int release_mem )
    if( (SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM) && (SVC_IS_ACTIVE( sp )) )
       drain( cp->co_descriptor ) ;
 
-   if ( SVC_RELE( sp ) == 0 )
+   if ( SVC_RELE( sp ) == 0 ) {
       pset_remove( SERVICES( ps ), sp ) ;
+      svc_release( sp );
+   }
    cp->co_sp = NULL;
 
    CONN_CLOSE( cp ) ;

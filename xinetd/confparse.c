@@ -632,6 +632,18 @@ static status_e check_entry( struct service_config *scp,
           */
          continue;
       }
+#if defined(HAVE_RPC_RPCENT_H) || defined(HAVE_NETDB_H)
+      if ( SC_IS_RPC( scp ) && SC_IS_RPC ( tmp_scp ) )
+      {
+         struct rpc_data *rdp1 = SC_RPCDATA( scp ) ;
+         struct rpc_data *rdp2 = SC_RPCDATA( tmp_scp ) ;
+         if ( rdp1->rd_program_number != rdp2->rd_program_number )
+           continue;
+        if ( rdp1->rd_min_version > rdp2->rd_max_version ||
+             rdp1->rd_max_version < rdp2->rd_min_version )
+          continue;
+      }
+#endif
       if (diff) 
          msg( LOG_ERR, func, 
          "service: %s id: %s is unique but its identical to "

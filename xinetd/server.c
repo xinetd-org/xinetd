@@ -89,8 +89,11 @@ void server_release( struct server *serp )
    int              count = SVC_RELE( sp ) ;
 
    pset_remove(SERVERS(ps), serp);
-   if ( count == 0 && ! SC_IS_SPECIAL( SVC_CONF( sp ) ) )
-      pset_remove( SERVICES( ps ), sp ) ;
+   if ( count == 0 ) {
+      if( ! SC_IS_SPECIAL( SVC_CONF( sp ) )  )
+         pset_remove( SERVICES( ps ), sp ) ;
+      svc_release( sp );
+   }
    
    CLEAR( *serp ) ;
    FREE_SERVER( serp ) ;

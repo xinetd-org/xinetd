@@ -118,8 +118,7 @@ struct service
  * Reference counting macros
  */
 #define SVC_HOLD( sp )            (sp)->svc_ref_count++
-#define SVC_RELE( sp )   \
-   ( ( (sp)->svc_ref_count <= 1 ) ? svc_release( sp ) : --(sp)->svc_ref_count )
+#define SVC_RELE( sp )            ( --(sp)->svc_ref_count )
 
 
 #define SVC_INTERNAL( sp, serp )     SC_INTERNAL( SVC_CONF( sp ), serp )

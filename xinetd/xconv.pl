@@ -45,7 +45,7 @@ while( <STDIN> ) {
 	} else {
 		print "\twait        = yes\n";
 	}
-	@user = split /\./, $command[4];
+	@user = split /[:\.]/, $command[4];
 	print "\tuser        = $user[0]\n";
 	if( defined $user[1] ) {
 		print "\tgroup       = $user[1]\n";

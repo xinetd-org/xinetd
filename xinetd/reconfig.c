@@ -147,9 +147,10 @@ void hard_reconfig( void )
           */
          svc_deactivate( osp ) ;
          msg( LOG_NOTICE, func, "service %s deactivated", sid ) ;
-         if ( SVC_RELE( osp ) == 0 )
+         if ( SVC_RELE( osp ) == 0 ) {
             psi_remove( iter ) ;
-         else
+            svc_release( osp );
+         } else
             msg( LOG_ERR, func, "Errors deactivating service %s", sid ) ;
          dropped_services++ ;
       }
@@ -256,12 +257,10 @@ static void sendsig( struct server *serp, int sig )
          if (!killed)
             msg( LOG_ERR, func, "Server %d did not exit after SIGKILL", 
 	          pid ) ;
-         else {
-            struct server *tmp_serp;
-            if( (tmp_serp = server_lookup(pid)) != NULL ) {
-               server_end(tmp_serp);
-            }
-         }
+         /* no need to server_end() here.  The killed process will generate
+          * a sigchld, which will invoke the signal handler, and clean things
+          * up there.
+          */
       }
    } 
    else if ( pid != 0 )

@@ -893,7 +893,9 @@ void svc_postmortem( struct service *sp, struct server *serp )
             drain( cp->co_descriptor ) ;
          free(cp);
          cp = NULL;
-         SVC_RELE( sp );
+         if( SVC_RELE( sp ) == 0 )
+            svc_release( sp ); /* shouldn't be 0, but should remove from
+                                * pset if it is... */
       }
       svc_resume(sp);
    }
