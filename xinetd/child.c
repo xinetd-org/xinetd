@@ -89,8 +89,8 @@ void exec_server( const struct server *serp )
 
 
 #ifdef RLIMIT_NOFILE
-   rl.rlim_cur = ps.ros.orig_max_descriptors ;
-   rl.rlim_max = ps.ros.max_descriptors ;
+   rl.rlim_max = ps.ros.orig_max_descriptors ;
+   rl.rlim_cur = ps.ros.max_descriptors ;
    (void) setrlimit( RLIMIT_NOFILE, &rl ) ;
 #endif
 #ifdef RLIMIT_AS

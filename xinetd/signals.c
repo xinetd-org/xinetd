@@ -371,12 +371,16 @@ static void mem_fault_handler( int sig, siginfo_t * siginfo, void *context )
                case BUS_ADRALN:
                   msg(LOG_CRIT, func, "invalid address alignment");
                   break;
+#ifdef BUS_ADRERR
                case BUS_ADRERR:
                   msg(LOG_CRIT, func, "nonexistent physical address");
                   break;
+#endif
+#ifdef BUS_OBJERR
                case BUS_OBJERR:
                   msg(LOG_CRIT, func, "object-specific hardware error");
                   break;
+#endif
                default:
                   msg(LOG_CRIT, func, "unknown fault code");
             }

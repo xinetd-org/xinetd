@@ -64,8 +64,7 @@ XINETD_CHECK_TYPE(uint64_t, unsigned long long)
 XINETD_CHECK_TYPE(uid_t, unsigned int)
 XINETD_CHECK_TYPE(gid_t, unsigned int)
 XINETD_CHECK_TYPE(socklen_t, unsigned int)
-
-AC_CHECK_TYPE(rlim_t)
+XINETD_CHECK_TYPE(rlim_t, long long)
 
 AC_CACHE_CHECK([for struct addrinfo], ac_cv_have_struct_addrinfo, [
         AC_TRY_COMPILE(
@@ -174,7 +173,7 @@ osf*)
 			;;
 	esac ], AC_MSG_RESULT(no))
 	;;
-linux*)
+linux*|freebsd*)
 	AC_CHECK_LIB(crypt, main)
 
 	AC_MSG_CHECKING(whether to compile in loadavg)

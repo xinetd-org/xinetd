@@ -137,8 +137,8 @@ static void set_fd_limit()
 #ifdef RLIMIT_NOFILE
    struct rlimit rl ;
    const char *func = "set_fd_limit" ;
-   int maxfd = getdtablesize();
-
+   rlim_t maxfd ;
+    
    /*
     * Set the soft file descriptor limit to the hard limit.
     */
@@ -148,39 +148,26 @@ static void set_fd_limit()
       exit( 1 ) ;
    }
 
+   maxfd = rl.rlim_max;
+   if ( rl.rlim_max == RLIM_INFINITY ) 
+      rl.rlim_max = FD_SETSIZE;
+
    /* XXX: a dumb way to prevent fd_set overflow possibilities; the rest
     * of xinetd should be changed to use an OpenBSD inetd-like fd_grow(). */
    if ( rl.rlim_max > FD_SETSIZE )
       rl.rlim_max = FD_SETSIZE;
-
-#ifdef __APPLE__
-   /* Mac OS X's getrlimit() doesn't actually return the maximum you can
-    * set your max fd's to.  By default, it returns 256 in rlim_max, and
-    * you can set it up to whatever the sysctl kern.maxfiles is set to.
-    * This is 12288 on 10.1.4, and FD_SETSIZE is 1024.
-    */
-   rl.rlim_max = FD_SETSIZE;
-#endif
+     
    rl.rlim_cur = rl.rlim_max ;
    if ( setrlimit( RLIMIT_NOFILE, &rl ) == -1 )
    {
       msg(LOG_CRIT, func, "setrlimit failed");
-      ps.ros.max_descriptors = ps.ros.orig_max_descriptors = maxfd;
+      ps.ros.max_descriptors = FD_SETSIZE;
+      ps.ros.orig_max_descriptors = FD_SETSIZE;
       return ;
    }
 
-   ps.ros.orig_max_descriptors = rl.rlim_cur ;
+   ps.ros.orig_max_descriptors = maxfd ;
    ps.ros.max_descriptors = rl.rlim_max ;
-
-   /* handle wonky getrlimit/setrlimit implementations (Mac OS X) */
-   if ( ps.ros.max_descriptors < rl.rlim_max )
-      ps.ros.max_descriptors = rl.rlim_max;
-
-   /* Handle RLIM_INFINITY */
-   if ( ps.ros.orig_max_descriptors > maxfd )
-      ps.ros.orig_max_descriptors = maxfd ;
-   if ( ps.ros.max_descriptors > maxfd )
-      ps.ros.max_descriptors = maxfd ;
 #else      /* ! RLIMIT_NOFILE */
    ps.ros.max_descriptors = getdtablesize() ;
 #endif   /* RLIMIT_NOFILE */
