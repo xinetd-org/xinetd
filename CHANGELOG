@@ -876,3 +876,6 @@ devel
 		messages. -Steve Grubb
 	Fix addrlist_match to correctly handle IPv4 mapped IPv6 addresses.
 		-Christof Meerwald
+	Fixed a bug where reloading configuration would core dump if file 
+		logging was enabled in defaults and a connection existed when
+		SIGHUP was received. -Steve Grubb

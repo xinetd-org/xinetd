@@ -44,7 +44,8 @@
 
 static status_e readjust(struct service *sp, 
 		struct service_config **new_conf_ptr) ;
-static void swap_defaults(struct configuration *confp) ;
+static void swap_defaults(struct configuration *new_conf) ;
+static void close_default_log(struct configuration *confp, xlog_h def_log);
 
 #define SWAP( x, y, temp )         (temp) = (x), (x) = (y), (y) = (temp)
 
@@ -64,6 +65,7 @@ void hard_reconfig( void )
    unsigned                  new_services ;
    unsigned                  old_services      = 0 ;
    unsigned                  dropped_services   = 0 ;
+   xlog_h		     def_log = DEFAULT_LOG( ps );
    const char               *func               = "hard_reconfig" ;
 
 
@@ -83,6 +85,8 @@ void hard_reconfig( void )
       return ;
    }
 
+   /* After this call, new_conf's defaults point to the old one's defaults */
+   msg( LOG_NOTICE, func, "Swapping defaults" ) ;
    swap_defaults( &new_conf ) ;
 
    /*
@@ -154,11 +158,16 @@ void hard_reconfig( void )
    psi_destroy( iter ) ;
 
    /*
+    * All services have terminated by now, so close the old common logfile.
+    * remember that swap_defaults put the old defaults section in new_conf.
+    */
+   close_default_log( &new_conf, def_log ) ;
+
+   /*
     * At this point the new Lconf only contains services that were not
     * in the old Lconf.
     */
    new_services = cnf_start_services( &new_conf ) ;
-
    msg( LOG_NOTICE, func,
       "Reconfigured: new=%d old=%d dropped=%d (services)",
          new_services, old_services, dropped_services ) ;
@@ -178,21 +187,21 @@ void hard_reconfig( void )
 }
 
 
-static void swap_defaults( struct configuration *confp )
+static void swap_defaults( struct configuration *new_conf )
 {
    struct service_config *temp ;
 
-   /*
-    * Close the previous common log file, if one was specified
-    */
-   if ( DEFAULT_LOG( ps ) != NULL )
-   {
-      log_end( SC_LOG( DEFAULTS( ps ) ), DEFAULT_LOG( ps ) ) ;
-      DEFAULT_LOG( ps ) = NULL ;
-   }
    DEFAULT_LOG_ERROR( ps ) = FALSE ;
+   DEFAULT_LOG( ps ) = NULL ;
+   SWAP( DEFAULTS( ps ), CNF_DEFAULTS( new_conf ), temp ) ;
+}
 
-   SWAP( DEFAULTS( ps ), CNF_DEFAULTS( confp ), temp ) ;
+
+static void close_default_log(struct configuration *confp, xlog_h def_log)
+{
+   /* Close the common log file, if one was specified */
+   if ( def_log != NULL )
+      log_end( SC_LOG( CNF_DEFAULTS( confp ) ), def_log) ;
 }
 
 
