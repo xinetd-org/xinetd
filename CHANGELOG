@@ -872,3 +872,5 @@ devel
 		expected. -Jay Fenlason
 	Address list parsing considered the comma in factorized addresses to be
 		an error. Updated test to allow factorized address. -Steve Grubb
+	When parsing inet.conf, the filename wasn't being set for subsequent 
+		messages. -Steve Grubb

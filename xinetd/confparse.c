@@ -867,7 +867,8 @@ status_e cnf_get( struct configuration *confp )
    /* get_conf eventually calls Srdline, try Sclosing to unmmap memory. */
    Sclose( config_fd );
    if( inetd_compat ) {
-      config_fd = open("/etc/inetd.conf", O_RDONLY);
+      current_file = "/etc/inetd.conf";
+      config_fd = open(current_file, O_RDONLY);
       if( config_fd >= 0 ) {
          parse_inet_conf_file( config_fd, confp );
          parse_end() ;
