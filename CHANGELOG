@@ -859,3 +859,8 @@ devel
 	Added TRAFFIC logging option to report total bytes in and out for a 
 		redirected service. -Christof Meerwald 
 	Correct a double-free condition if a retry was scheduled. -Steve Grubb
+	Add filename to parse messages. -Steve Grubb
+	Improve port error messages after parsing. -Steve Grubb
+	Sclose dump_fd if SIO error causes dump abort. -Steve Grubb
+	Smorefds wasn't allocating the proper amount of sio descriptor space
+		if the fd was > 5 over its last known fd. -Steve Grubb

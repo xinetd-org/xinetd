@@ -858,10 +858,11 @@ int Smorefds(int fd)
    char *p ;
    int is_static ;
    unsigned new_size, old_size ;
-   int n_fds = 5;
+   int n_fds = 4; /* Let's bump 4 at a time for hysteresis */
 
-   if ( (__sio_n_descriptors+n_fds) < fd )
-      n_fds = (fd - __sio_n_descriptors)*2;
+   /* If the fd is out of range of the proposed size, make n_fds big enough */
+   if (fd > (__sio_n_descriptors+n_fds))
+      n_fds += fd - __sio_n_descriptors;
 
 #ifdef HAVE_MMAP
    old_size = __sio_n_descriptors * sizeof( mapd_s ) ;
