@@ -37,6 +37,7 @@
 #include "signals.h"
 #include "nvlists.h"
 #include "child.h"
+#include "access.h"
 
 #define BUFFER_SIZE               1024
 
@@ -133,11 +134,15 @@ static void stream_echo( const struct server *serp )
    char   buf[ BUFFER_SIZE ] ;
    int    cc ;
    int    descriptor = SERVER_FD( serp ) ;
-   const struct service *svc = SERVER_SERVICE( serp ) ;;
+   struct service *svc = SERVER_SERVICE( serp ) ;;
 
    if( SVC_WAITS( svc ) ) {
       descriptor = accept(descriptor, NULL, NULL);
-      if ( descriptor == -1 ) return;
+      if ( descriptor == -1 ) {
+         if (errno == ENFILE)
+            cps_service_stop(svc, "no available descriptors");
+         return;
+      }
    }
 
    close_all_svc_descriptors();
@@ -206,11 +211,15 @@ static void stream_discard( const struct server *serp )
    char  buf[ BUFFER_SIZE ] ;
    int   cc ;
    int    descriptor = SERVER_FD( serp ) ;
-   const struct service *svc = SERVER_SERVICE( serp ) ;;
+   struct service *svc = SERVER_SERVICE( serp ) ;;
 
    if( SVC_WAITS( svc ) ) {
       descriptor = accept(descriptor, NULL, NULL);
-      if ( descriptor == -1 ) return;
+      if ( descriptor == -1 ) {
+         if (errno == ENFILE)
+            cps_service_stop(svc, "no available descriptors");
+         return;
+      }
    }
 
    close_all_svc_descriptors();
@@ -283,11 +292,15 @@ static void stream_daytime( const struct server *serp )
    char  time_buf[ BUFFER_SIZE ] ;
    unsigned int buflen = sizeof( time_buf ) ;
    int    descriptor = SERVER_FD( serp ) ;
-   const struct service *svc = SERVER_SERVICE( serp ) ;;
+   struct service *svc = SERVER_SERVICE( serp ) ;;
 
    if( SVC_WAITS( svc ) ) {
       descriptor = accept(descriptor, NULL, NULL);
-      if ( descriptor == -1 ) return;
+      if ( descriptor == -1 ) {
+         if (errno == ENFILE)
+            cps_service_stop(svc, "no available descriptors");
+         return;
+      }
    }
    daytime_protocol( time_buf, &buflen ) ;
    (void) write_buf( descriptor, time_buf, buflen ) ;
@@ -345,11 +358,15 @@ static void stream_time( const struct server *serp )
 {
    unsigned char time_buf[4];
    int descriptor = SERVER_FD( serp );
-   const struct service *svc = SERVER_SERVICE( serp );
+   struct service *svc = SERVER_SERVICE( serp );
 
    if( SVC_WAITS( svc ) ) {
       descriptor = accept(descriptor, NULL, NULL);
-      if ( descriptor == -1 ) return;
+      if ( descriptor == -1 ) {
+         if (errno == ENFILE)
+            cps_service_stop(svc, "no available descriptors");
+         return;
+      }
    }
 
    time_protocol( time_buf ) ;
@@ -438,11 +455,15 @@ static void stream_chargen( const struct server *serp )
 {
    char   line_buf[ LINE_LENGTH+2 ] ;
    int    descriptor = SERVER_FD( serp ) ;
-   const struct service *svc = SERVER_SERVICE( serp );
+   struct service *svc = SERVER_SERVICE( serp );
 
    if( SVC_WAITS( svc ) ) {
       descriptor = accept(descriptor, NULL, NULL);
-      if ( descriptor == -1 ) return;
+      if ( descriptor == -1 ) {
+         if (errno == ENFILE)
+            cps_service_stop(svc, "no available descriptors");
+         return;
+      }
    }
 
    (void) shutdown( descriptor, 0 ) ;
