@@ -403,7 +403,7 @@ except for those explicitly defined using the
 attribute.
 (notice that you can use this attribute in conjunction with the
 .I env
-attribute to specify exactly what argument will be passed to the server).
+attribute to specify exactly what environment will be passed to the server).
 .TP
 .B port
 determines the service port. If this attribute is specified for a service 
@@ -491,7 +491,7 @@ child processes if the umask option is not used.
 .B enabled
 Takes a list of service names to enable.  This will enable only the
 services listed as arguments to this attribute; the rest will be
-disabled.  Not that the service "disable" attribute and "DISABLE"
+disabled.  Note that the service "disable" attribute and "DISABLE"
 flag can prevent a service from being enabled despite being listed
 in this attribute.
 .TP
@@ -1157,32 +1157,37 @@ service unlisted
 .I "xinetd.log(5)"
 .LP
 Postel J.,
-.I "Echo Protocol",
+.IR "Echo Protocol" ,
 RFC 862,
 May 1983
 .LP
 Postel J.,
-.I "Discard Protocol",
+.IR "Discard Protocol" ,
 RFC 863,
 May 1983
 .LP
 Postel J.,
-.I "Character Generator Protocol",
+.IR "Character Generator Protocol" ,
 RFC 864,
 May 1983
 .LP
 Postel J.,
-.I "Daytime Protocol",
+.IR "Daytime Protocol" ,
 RFC 867,
 May 1983
 .LP
 Postel J., Harrenstien K.,
-.I "Time Protocol",
+.IR "Time Protocol" ,
 RFC 868,
 May 1983
 .LP
+M. Lottor,
+.IR "TCP Port Service Multiplexer (TCPMUX)" ,
+RFC 1078
+Nov 1988
+.LP
 StJohns M.,
-.I " Identification Protocol",
+.IR " Identification Protocol" ,
 RFC 1413,
 February 1993
 .\" *********************** BUGS ****************************
