@@ -63,7 +63,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    union xsockaddr     sin_local, sin_remote, sin_contact, sin_bind;
    volatile unsigned   local_port;
    volatile unsigned   remote_port;
-   int                 sd, ret_val ;
+   int                 sd ;
    int                 sin_len ;
    char               *p ;
    const char         *func = "log_remote_user" ;
@@ -125,7 +125,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
       msg( LOG_ERR, func, "socket creation: %m" ) ;
       return( IDR_ERROR ) ;
    }
-   if ( bind(sid, &sin_bind.sa, sizeof(sin_bind.sa)) == -1 )
+   if ( bind(sd, &sin_bind.sa, sizeof(sin_bind.sa)) == -1 )
    { 
       msg( LOG_ERR, func, "socket bind: %m" ) ;
       (void) close( sd ) ;
@@ -233,7 +233,7 @@ static char *verify_line( char *line,
     * Look for the 'USERID' string
     */
    {
-      char *line_id = "USERID" ;
+      const char *line_id = "USERID" ;
       int line_id_len = strlen( line_id ) ;
 
       start = p+1 ;
