@@ -95,8 +95,16 @@ static void server_retry(void)
          "%d servers started, %d left to retry",
             servers_started, pset_count( RETRIES( ps ) ) ) ;
 
-   if ( pset_count( RETRIES( ps ) ) == 0 )
-      stop_retry_timer() ;
+   /* If there's more, start another callback */
+   if ( pset_count( RETRIES( ps ) ) > 0 ) {
+      if ((retry_timer_running=xtimer_add(server_retry, RETRY_INTERVAL)) == -1)
+      {
+         msg( LOG_ERR, func, "xtimer_add: %m" ) ;
+         retry_timer_running = 0;
+      }
+   }
+   else
+      retry_timer_running = 0;
 }
 
 

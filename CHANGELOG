@@ -858,3 +858,4 @@ devel
 		access controls. -Steve Grubb
 	Added TRAFFIC logging option to report total bytes in and out for a 
 		redirected service. -Christof Meerwald 
+	Correct a double-free condition if a retry was scheduled. -Steve Grubb
