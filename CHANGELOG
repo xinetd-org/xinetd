@@ -868,3 +868,5 @@ devel
 	Add NULL entry to success_log_options to properly end the
 		 nvlist. -Steve Grubb
 	Portability updates to libportable.h. -Matthias Andree
+	Occasionally Smorefds didn't allocate more fds as 
+		expected. -Jay Fenlason

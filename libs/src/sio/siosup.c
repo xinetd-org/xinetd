@@ -861,7 +861,7 @@ int Smorefds(int fd)
    int n_fds = 4; /* Let's bump 4 at a time for hysteresis */
 
    /* If the fd is out of range of the proposed size, make n_fds big enough */
-   if (fd > (__sio_n_descriptors+n_fds))
+   if (fd >= (__sio_n_descriptors+n_fds))
       n_fds += fd - __sio_n_descriptors;
 
 #ifdef HAVE_MMAP
