@@ -1011,7 +1011,8 @@ static status_e parse_inet_addresses( pset_h values,
    {
       register char *str_addr = (char *) pset_pointer( values, u ) ;
 
-      if (strchr(str_addr, ','))
+      /* If it is factorized, allow a comma. Otherwise complain */
+      if (strchr(str_addr, ',') && !strchr(str_addr, '{'))
       {
          parsemsg( LOG_ERR, func, 
              "Address: %s has a comma in it - remove the comma", 

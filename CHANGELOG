@@ -870,3 +870,5 @@ devel
 	Portability updates to libportable.h. -Matthias Andree
 	Occasionally Smorefds didn't allocate more fds as 
 		expected. -Jay Fenlason
+	Address list parsing considered the comma in factorized addresses to be
+		an error. Updated test to allow factorized address. -Steve Grubb
