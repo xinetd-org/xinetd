@@ -133,7 +133,7 @@ extern __sio_descriptor_t *__sio_descriptors ;
  * Internally used macros
  */
 #define __SIO_FD_INITIALIZED( fd ) \
-	(fd < __sio_n_descriptors && __sio_descriptors[ fd ].initialized)
+   (fd >= 0 && fd < __sio_n_descriptors && __sio_descriptors[ fd ].initialized)
 #define __SIO_ID( fd )	(__sio_descriptors[ fd ].descriptor.input_descriptor)
 #define __SIO_OD( fd )	(__sio_descriptors[ fd ].descriptor.output_descriptor)
 #define __SIO_MUST_FLUSH( od, ch )				\
