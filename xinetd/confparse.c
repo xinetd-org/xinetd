@@ -488,7 +488,7 @@ static void remove_disabled_services( struct configuration *confp )
 /*
  * Check if all required attributes have been specified
  */
-static status_e service_attr_check( const struct service_config *scp )
+static status_e service_attr_check( struct service_config *scp )
 {
    mask_t         necessary_and_specified ;
    mask_t         necessary_and_missing ;
