@@ -16,6 +16,7 @@
 #include "timex.h"
 #include "addr.h"
 #include "nvlists.h"
+#include "xmdns.h"
 
 
 #define NEW_SCONF()               NEW( struct service_config )

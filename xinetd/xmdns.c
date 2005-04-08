@@ -1,5 +1,7 @@
 #include "config.h"
 #ifdef HAVE_MDNS
+#define _GNU_SOURCE
+#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include "state.h"
@@ -81,7 +83,7 @@ int xinetd_mdns_register(struct service_config *scp) {
       msg(LOG_DEBUG, "xinetd_mdns_register", "Registering service: %s (%s)", SC_MDNS_NAME(scp), SC_ID(scp));
 
 #ifdef HAVE_DNSREGISTRATION
-   (dns_service_discovery_ref)scp->mdns_state = DNSServiceRegistrationCreate("", SC_MDNS_NAME(scp), "", htons(SC_PORT(scp)), "", mdns_callback, NULL);
+   scp->mdns_state = DNSServiceRegistrationCreate("", SC_MDNS_NAME(scp), "", htons(SC_PORT(scp)), "", mdns_callback, NULL);
 #endif
 
 #ifdef HAVE_HOWL

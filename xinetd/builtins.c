@@ -188,7 +188,7 @@ static void dgram_echo( const struct server *serp )
    char            buf[ DATAGRAM_SIZE ] ;
    union xsockaddr lsin;
    int             cc ;
-   unsigned int    sin_len = 0;
+   socklen_t       sin_len = 0;
    int             descriptor = SERVER_FD( serp ) ;
    const char     *func = "dgram_echo";
 
@@ -310,7 +310,7 @@ static void dgram_daytime( const struct server *serp )
 {
    char            time_buf[ BUFFER_SIZE ] ;
    union xsockaddr lsin ;
-   unsigned int    sin_len     = 0 ;
+   socklen_t       sin_len     = 0 ;
    unsigned int    buflen      = sizeof( time_buf ) ;
    int             descriptor  = SERVER_FD( serp ) ;
    const char     *func       = "dgram_daytime";
@@ -379,7 +379,7 @@ static void dgram_time( const struct server *serp )
    char     buf[ 1 ] ;
    unsigned char time_buf[4];
    union xsockaddr lsin ;
-   unsigned int    sin_len = 0 ;
+   socklen_t       sin_len = 0 ;
    int             fd      = SERVER_FD( serp ) ;
    const char     *func    = "dgram_daytime";
 
@@ -485,7 +485,7 @@ static void dgram_chargen( const struct server *serp )
    char            *p ;
    unsigned int    len ;
    union xsockaddr lsin ;
-   unsigned int    sin_len = 0 ;
+   socklen_t       sin_len = 0 ;
    int             fd      = SERVER_FD( serp ) ;
    unsigned int    left    = sizeof( buf ) ;
    const char     *func    = "dgram_chargen";

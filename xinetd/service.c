@@ -162,7 +162,7 @@ static status_e set_fd_modes( struct service *sp )
 static status_e activate_rpc( struct service *sp )
 {
    union xsockaddr        tsin;
-   unsigned int           sin_len = sizeof(tsin);
+   socklen_t              sin_len = sizeof(tsin);
    unsigned long          vers ;
    struct service_config *scp = SVC_CONF( sp ) ;
    struct rpc_data       *rdp = SC_RPCDATA( scp ) ;

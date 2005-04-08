@@ -281,7 +281,7 @@ status_e user_parser( pset_h values,
    if (parse_all_digits(user) == TRUE)
    {   /* We will assume the number is a valid user. This is a workaround
           for some Solaris systems that have problems doing getgr*. */
-      if (parse_base10(user, &SC_UID(scp)))
+      if (parse_base10(user, (int *)&SC_UID(scp)))
       {
          parsemsg( LOG_ERR, func, "Error parsing user as a number: %s", user ) ;
          return( FAILED ) ;
@@ -316,7 +316,7 @@ status_e group_parser( pset_h values,
    if (parse_all_digits(group_ptr) == TRUE)
    {   /* We will assume the number is a valid group. This is a workaround
           for some Solaris systems that have problems doing getgr*. */
-      if (parse_base10(group_ptr, &SC_GID(scp)))
+      if (parse_base10(group_ptr, (int *)&SC_GID(scp)))
       {
          parsemsg( LOG_ERR, func, "Error parsing group as a number: %s", group_ptr ) ;
          return( FAILED ) ;

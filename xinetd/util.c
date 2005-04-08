@@ -264,7 +264,7 @@ void drain( int sd )
  */
 int parse_int(const char *str, int base, int term, int *res)
 {
-	unsigned char *endptr;
+	char *endptr;
 	long strtol_res;
 
 /* SUSv2 says:

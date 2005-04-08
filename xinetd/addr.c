@@ -190,9 +190,9 @@ int addrlist_match( const pset_h addr_list,
                   return( u+1 );
             }
             else {  /* NET_ADDR */ 
-               if ( xmatch( SAIN6(addr)->sin6_addr.s6_addr, 
-	                (char *)&(cap->m.mask6), 
-			(char *)&(cap->a.addr6), 16) == TRUE )
+               if ( xmatch( (const char *)SAIN6(addr)->sin6_addr.s6_addr, 
+	                (const char *)&(cap->m.mask6), 
+			(const char *)&(cap->a.addr6), 16) == TRUE )
                   return( u+1 );
             }
          } 
