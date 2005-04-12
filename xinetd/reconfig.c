@@ -238,12 +238,18 @@ static void sendsig( struct server *serp, int sig )
          tv.tv_usec = 500000; /* half a second */
          for (i=0; i<8; i++)
          {
-            int wret = waitpid(pid, NULL, WNOHANG);
-	    if (wret == pid)
+            if( server_lookup(pid) == NULL )
 	    {
 	       killed = 1;
 	       break;
-	    }
+	    } else {
+               int wret = waitpid(pid, NULL, WNOHANG);
+	       if (wret == pid) {
+	          killed = 1;
+	          break;
+               }
+               server_end(serp);
+            }
 	 
 	    /* May not have responded to TERM, send a KILL */
 	    if ( i == 5)
@@ -283,8 +289,11 @@ static void deliver_signal( struct service *sp, int sig )
       struct server *serp ;
 
       serp = SERP( pset_pointer( SERVERS( ps ), u ) ) ;
-      if ( SERVER_SERVICE( serp ) == sp )
+      if ( SERVER_SERVICE( serp ) == sp ) {
          sendsig( serp, sig ) ;
+         if ( (sig == SIGTERM) || (sig == SIGKILL) )
+            u--;
+      }
    }
 }
 
