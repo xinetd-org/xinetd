@@ -783,7 +783,7 @@ status_e enabled_parser( pset_h values,
  */
 static int get_limit( char *limit_str, rlim_t *res )
 {
-   unsigned int limit_int;
+   unsigned long long limit_int;
    int multiplier;
    char *p;
 
@@ -805,7 +805,13 @@ static int get_limit( char *limit_str, rlim_t *res )
    } else
       multiplier = 1;
 
-   if (parse_ubase10(limit_str, &limit_int)) {
+   if (parse_ull(limit_str, 10, -1, &limit_int)) {
+      *res = 0;
+      return -1;
+   }
+
+   *res = (rlim_t)limit_int;
+   if (*res != limit_int) {
       *res = 0;
       return -1;
    }
@@ -1362,20 +1368,25 @@ status_e rlim_cpu_parser( pset_h values,
                           enum assign_op op )
 {
    char *cpu_str = (char *) pset_pointer( values, 0 ) ;
-   unsigned int cpu_int;
+   unsigned long long cpu_int;
    const char *func = "rlim_cpu_parser" ;
 
    if ( EQ( cpu_str, "UNLIMITED" ) )
       SC_RLIM_CPU(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
-      if ( parse_ubase10(cpu_str, &cpu_int) || cpu_int < 0 )
+      if ( parse_ull(cpu_str, 10, -1, &cpu_int) || cpu_int < 0 )
       {
          parsemsg( LOG_ERR, func,
             "CPU limit is invalid: %s", cpu_str ) ;
          return( FAILED ) ;
       }
       SC_RLIM_CPU(scp) = (rlim_t) cpu_int ;
+      if ( SC_RLIM_CPU(scp) != cpu_int )
+      {
+         parsemsg( LOG_ERR, func, "CPU limit is invalid: %s", cpu_str );
+         return( FAILED );
+      }
    }
    return( OK ) ;
 }

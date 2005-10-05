@@ -42,6 +42,7 @@ int opt_recognize( int argc, char *argv[] )
 {
    int arg, arg_1 ;
    unsigned int uarg_1;
+   unsigned long long ullarg_1;
 
    program_name = strrchr( argv[ 0 ], '/' ) ;
    program_name = ( program_name == NULL ) ? argv[ 0 ] : program_name + 1 ;
@@ -77,9 +78,11 @@ int opt_recognize( int argc, char *argv[] )
          {
             if ( ++arg == argc )
                usage() ;
-            if ( parse_uint( argv[ arg ], 10, NUL, &uarg_1 ) || uarg_1 < 0 )
+            if ( parse_ull( argv[ arg ], 10, NUL, &ullarg_1 ) || ullarg_1 < 0 )
                usage() ;
-            ps.ros.process_limit = uarg_1 ;
+            ps.ros.process_limit = (rlim_t)ullarg_1 ;
+            if( ps.ros.process_limit != ullarg_1 )
+               usage() ;
          }
          else if ( strcmp( &argv[ arg ][ 1 ], "pidfile" ) == 0 ) {
             if( ++arg ==argc )
