@@ -67,5 +67,8 @@ status_e v6only_parser(pset_h, struct service_config *, enum assign_op);
 status_e deny_time_parser(pset_h, struct service_config *, enum assign_op) ;
 status_e umask_parser(pset_h, struct service_config *, enum assign_op) ;
 status_e mdns_parser(pset_h, struct service_config *, enum assign_op) ;
+#ifdef LIBWRAP
+status_e libwrap_parser(pset_h, struct service_config *, enum assign_op) ;
+#endif
 
 #endif

@@ -104,6 +104,9 @@ static const struct attribute service_attributes[] =
 #ifdef HAVE_MDNS
    { "mdns",           A_MDNS,           1,  mdns_parser            },
 #endif
+#ifdef LIBWRAP
+   { "libwrap",        A_LIBWRAP,        1, libwrap_parser          },
+#endif
    { NULL,             A_NONE,          -1,  NULL                   }
 } ;
 

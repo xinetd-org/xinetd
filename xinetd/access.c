@@ -246,6 +246,11 @@ access_e access_control( struct service *sp,
       else
          server++;
 
+      if ( scp->sc_libwrap != NULL )
+      {
+         server = SC_LIBWRAP(scp);
+      }
+
       if ( server == NULL )
       {
          msg(deny_severity, func, 

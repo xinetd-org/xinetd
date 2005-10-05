@@ -900,3 +900,5 @@ cvs-devel
 	Updated xconv.pl to understand ":" in inetd.conf files from
 		FreeBSD ports patch.
 	Added howl support for mdns advertising.
+	Added a libwrap service attribute to specify the service name
+		to check access via libwrap.

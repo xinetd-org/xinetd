@@ -154,6 +154,9 @@ struct service_config
    boolean_e            sc_mdns;
    void                *mdns_state;
 #endif
+#ifdef LIBWRAP
+   char                *sc_libwrap;
+#endif
 } ;
 
 #define SCP( p ) ((struct service_config *)(p))
@@ -214,6 +217,7 @@ struct service_config
 #define SC_MDNS_NAME( scp )      (scp)->sc_mdns_name
 #define SC_MDNS( scp )           (scp)->sc_mdns
 #define SC_PER_SOURCE( scp )     (scp)->sc_per_source
+#define SC_LIBWRAP( scp )        (scp)->sc_libwrap
 /*
  * Field set macros
  */

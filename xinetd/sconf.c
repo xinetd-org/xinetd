@@ -73,6 +73,9 @@ void sc_free( struct service_config *scp )
    COND_FREE( SC_MDNS_NAME(scp) );
    xinetd_mdns_svc_free(scp);
 #endif
+#ifdef LIBWRAP
+   COND_FREE( SC_LIBWRAP(scp) );
+#endif
    COND_FREE( SC_NAME(scp) ) ;
    COND_FREE( SC_ID(scp) ) ;
    COND_FREE( SC_PROTONAME(scp) ) ;
@@ -356,6 +359,13 @@ void sc_dump( struct service_config *scp,
 	    Sprint( fd, " (NULL)");
          Sputchar( fd, '\n' ) ;
       } 
+
+#ifdef LIBWRAP
+      if ( SC_LIBWRAP(scp) != NULL )
+      {
+         tabprint( fd, tab_level + 1, "Libwrap = %s\n", SC_LIBWRAP(scp) );
+      }
+#endif
 
       if ( SC_REDIR_ADDR(scp) != NULL ) 
       {

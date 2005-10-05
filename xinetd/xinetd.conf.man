@@ -228,6 +228,13 @@ determines the program to execute for this service.
 determines the arguments passed to the server. In contrast to \fBinetd\fP,
 the server name should \fInot\fP be included in \fIserver_args\fP.
 .TP
++.B libwrap
+overrides the service name passed to libwrap (which defaults to the
+server name, the first server_args component with NAMEINARGS, the id
+for internal services and the service name for redirected services).
+This attribute is only valid if xinetd has been configured with the libwrap
+option.
+.TP
 .B only_from
 determines the remote hosts to which the particular
 service is available.

@@ -1484,3 +1484,21 @@ status_e umask_parser( pset_h values,
    return( OK );
 }
 
+#ifdef LIBWRAP
+status_e libwrap_parser( pset_h values,
+                         struct service_config *scp,
+                         enum assign_op op )
+{
+   char *libwrap = (char *) pset_pointer( values, 0 ) ;
+   const char *func = "libwrap_parser" ;
+
+   SC_LIBWRAP(scp) = new_string( libwrap ) ;
+   if ( SC_LIBWRAP(scp) == NULL )
+   {
+      out_of_memory( func ) ;
+      return( FAILED ) ;
+   }
+   return( OK ) ;
+}
+#endif
+
