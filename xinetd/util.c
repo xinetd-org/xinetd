@@ -292,6 +292,41 @@ int parse_int(const char *str, int base, int term, int *res)
 	return -1;
 }
 
+int parse_uint(const char *str, int base, int term, unsigned int *res)
+{
+	char *endptr;
+	unsigned long strtol_res;
+
+/* SUSv2 says:
+ * "Because 0, LONG_MIN and LONG_MAX are returned on error and are also
+ * valid returns on success, an application wishing to check for error
+ * situations should set errno to 0, then call strtol(), then check errno." */
+	errno = 0;
+	strtol_res = strtoul(str, (char **)&endptr, base);
+
+	if (errno == 0 && *str != NUL) {
+		/* Special case: -1 means allow trailing whitespace */
+		if (term == -1) {
+			while (*endptr != NUL && isspace(*endptr))
+				endptr++;
+			term = NUL;
+		}
+
+		if (*endptr == term) {
+			*res = strtol_res;
+			return 0;
+		}
+	}
+
+	*res = 0;
+	return -1;
+}
+
+int parse_ubase10(const char *str, unsigned int *res)
+{
+	return parse_uint(str, 10, -1, res);
+}
+
 int parse_base10(const char *str, int *res)
 {
 	return parse_int(str, 10, -1, res);

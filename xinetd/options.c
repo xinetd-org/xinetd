@@ -41,6 +41,7 @@ static void usage(void);
 int opt_recognize( int argc, char *argv[] )
 {
    int arg, arg_1 ;
+   unsigned int uarg_1;
 
    program_name = strrchr( argv[ 0 ], '/' ) ;
    program_name = ( program_name == NULL ) ? argv[ 0 ] : program_name + 1 ;
@@ -76,9 +77,9 @@ int opt_recognize( int argc, char *argv[] )
          {
             if ( ++arg == argc )
                usage() ;
-            if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
+            if ( parse_uint( argv[ arg ], 10, NUL, &uarg_1 ) || uarg_1 < 0 )
                usage() ;
-            ps.ros.process_limit = arg_1 ;
+            ps.ros.process_limit = uarg_1 ;
          }
          else if ( strcmp( &argv[ arg ][ 1 ], "pidfile" ) == 0 ) {
             if( ++arg ==argc )
@@ -94,9 +95,9 @@ int opt_recognize( int argc, char *argv[] )
          else if ( strcmp( &argv[ arg ][ 1 ], "logprocs" ) == 0 ) {
             if ( ++arg == argc )
                usage() ;
-            if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
+            if ( parse_uint( argv[ arg ], 10, NUL, &uarg_1 ) || uarg_1 < 0 )
                usage() ;
-            logprocs_option_arg = arg_1 ;
+            logprocs_option_arg = uarg_1 ;
             logprocs_option = 1 ;
          }
          else if ( strcmp( &argv[ arg ][ 1 ], "shutdownprocs" ) == 0 ) 

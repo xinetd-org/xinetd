@@ -281,7 +281,7 @@ status_e user_parser( pset_h values,
    if (parse_all_digits(user) == TRUE)
    {   /* We will assume the number is a valid user. This is a workaround
           for some Solaris systems that have problems doing getgr*. */
-      if (parse_base10(user, (int *)&SC_UID(scp)))
+      if (parse_ubase10(user, (unsigned int *)&SC_UID(scp)))
       {
          parsemsg( LOG_ERR, func, "Error parsing user as a number: %s", user ) ;
          return( FAILED ) ;
@@ -316,7 +316,7 @@ status_e group_parser( pset_h values,
    if (parse_all_digits(group_ptr) == TRUE)
    {   /* We will assume the number is a valid group. This is a workaround
           for some Solaris systems that have problems doing getgr*. */
-      if (parse_base10(group_ptr, (int *)&SC_GID(scp)))
+      if (parse_ubase10(group_ptr, (unsigned int *)&SC_GID(scp)))
       {
          parsemsg( LOG_ERR, func, "Error parsing group as a number: %s", group_ptr ) ;
          return( FAILED ) ;
@@ -549,19 +549,19 @@ status_e cps_parser( pset_h values,
 {
    char *cps = (char *) pset_pointer(values, 0);
    char *waittime = (char *) pset_pointer(values, 1);
-   int waittime_int, conn_max;
+   unsigned int waittime_int, conn_max;
 
    if( cps == NULL || waittime == NULL ) {
       parsemsg(LOG_ERR, "cps_parser", "NULL options specified in cps");
       return( FAILED );
    }
-   if( parse_base10(cps, &conn_max) ) {
+   if( parse_ubase10(cps, &conn_max) ) {
       parsemsg(LOG_ERR, "cps_parser", "cps argument not a number");
       SC_TIME_CONN_MAX(scp) = 0;
       SC_TIME_WAIT(scp) = 0;
       return( FAILED );
    }
-   if( parse_base10(waittime, &waittime_int) ) {
+   if( parse_ubase10(waittime, &waittime_int) ) {
       parsemsg(LOG_ERR, "cps_parser", "cps time argument not a number");
       SC_TIME_CONN_MAX(scp) = 0;
       SC_TIME_WAIT(scp) = 0;
@@ -783,7 +783,7 @@ status_e enabled_parser( pset_h values,
  */
 static int get_limit( char *limit_str, rlim_t *res )
 {
-   int limit_int;
+   unsigned int limit_int;
    int multiplier;
    char *p;
 
@@ -805,7 +805,7 @@ static int get_limit( char *limit_str, rlim_t *res )
    } else
       multiplier = 1;
 
-   if (parse_base10(limit_str, &limit_int)) {
+   if (parse_ubase10(limit_str, &limit_int)) {
       *res = 0;
       return -1;
    }
@@ -1362,14 +1362,14 @@ status_e rlim_cpu_parser( pset_h values,
                           enum assign_op op )
 {
    char *cpu_str = (char *) pset_pointer( values, 0 ) ;
-   int cpu_int;
+   unsigned int cpu_int;
    const char *func = "rlim_cpu_parser" ;
 
    if ( EQ( cpu_str, "UNLIMITED" ) )
       SC_RLIM_CPU(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
-      if ( parse_base10(cpu_str, &cpu_int) || cpu_int < 0 )
+      if ( parse_ubase10(cpu_str, &cpu_int) || cpu_int < 0 )
       {
          parsemsg( LOG_ERR, func,
             "CPU limit is invalid: %s", cpu_str ) ;
