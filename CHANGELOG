@@ -902,3 +902,4 @@ cvs-devel
 	Added howl support for mdns advertising.
 	Added a libwrap service attribute to specify the service name
 		to check access via libwrap.
+	Make some type cleanups to fix some warnings.

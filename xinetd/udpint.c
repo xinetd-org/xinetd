@@ -254,7 +254,7 @@ static void send_data( int sd, char *buf, int len, union xsockaddr *addr )
 
 static status_e get_incoming_packet( struct intercept_s *ip, packet_s *pp )
 {
-   int from_len = 0;
+   socklen_t from_len = 0;
    const char *func = "get_incoming_packet" ;
 
    if( SC_IPV4( SVC_CONF( SERVER_SERVICE( INT_SERVER( ip ) ) ) ) )

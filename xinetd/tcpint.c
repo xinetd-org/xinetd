@@ -74,7 +74,7 @@ void si_exit(void)
    struct intercept_s *ip = &stream_intercept_state ;
    
    if ( SIP( ip->int_priv )->accepted_connections == 0 )
-      (void) accept( INT_REMOTE( ip ), SA( NULL ), INT_NULL ) ;
+      (void) accept( INT_REMOTE( ip ), SA( NULL ), NULL ) ;
    int_exit( ip ) ;
 }
 
@@ -195,7 +195,7 @@ static status_e handle_io( psi_h iter,
 static void connection_request( struct intercept_s *ip, channel_s **chpp )
 {
    union xsockaddr      csin ;
-   int                  sin_len = 0;
+   socklen_t            sin_len = 0;
    channel_s           *chp ;
    int                  sd ;
    bool_int             addr_checked ;

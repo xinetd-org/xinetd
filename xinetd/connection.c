@@ -35,7 +35,7 @@
 static status_e get_connection( struct service *sp, connection_s *cp )
 {
    struct service_config *scp = SVC_CONF( sp );
-   int sin_len;
+   socklen_t sin_len;
    const char *func = "get_connection" ;
    int on = 1;
 

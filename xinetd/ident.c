@@ -66,7 +66,7 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    volatile unsigned   local_port;
    volatile unsigned   remote_port;
    int                 sd ;
-   int                 sin_len ;
+   socklen_t           sin_len ;
    char               *p ;
    const char         *func = "log_remote_user" ;
 
