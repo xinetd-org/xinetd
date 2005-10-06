@@ -52,7 +52,6 @@ static void dgram_daytime(const struct server *) ;
 static void stream_chargen(const struct server *) ;
 static void dgram_chargen(const struct server *) ;
 static void tcpmux_handler(const struct server *) ;
-static int bad_port_check(const union xsockaddr *, const char *);
 
 /*
  * SG - This is the call sequence to get to a built-in service
@@ -164,25 +163,6 @@ static void stream_echo( const struct server *serp )
       Sclose(descriptor);
 }
 
-/* For internal UDP services, make sure we don't respond to our ports
- * on other servers and to low ports of other services (such as DNS).
- * This can cause looping.
- */
-static int bad_port_check( const union xsockaddr *sa, const char *func )
-{
-   uint16_t port = 0;
-
-   port = ntohs( xaddrport( sa ) );
-
-   if ( port < 1024 ) {
-      msg(LOG_WARNING, func,
-         "Possible Denial of Service attack from %s %d", xaddrname(sa), port);
-      return (-1);
-   }
-
-   return (0);
-}
-
 static void dgram_echo( const struct server *serp )
 {
    char            buf[ DATAGRAM_SIZE ] ;
@@ -199,7 +179,6 @@ static void dgram_echo( const struct server *serp )
 
    cc = recvfrom( descriptor, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) ;
    if ( cc != -1 ) {
-      if( bad_port_check(&lsin, func) != 0 ) return;
       (void) sendto( descriptor, buf, cc, 0, SA( &lsin ), sizeof( lsin ) ) ;
    }
 }
@@ -324,8 +303,6 @@ static void dgram_daytime( const struct server *serp )
             SA( &lsin ), &sin_len ) == -1 )
       return ;
 
-   if( bad_port_check(&lsin, func) != 0 ) return;
-
    daytime_protocol( time_buf, &buflen ) ;
    
    (void) sendto( descriptor, time_buf, buflen, 0, SA(&lsin), sizeof( lsin ) ) ;
@@ -390,7 +367,6 @@ static void dgram_time( const struct server *serp )
 
    if ( recvfrom( fd, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) == -1 )
       return ;
-   if( bad_port_check(&lsin, func) != 0 ) return;
 
    time_protocol( time_buf ) ;
    (void) sendto( fd, (char *) time_buf, 4, 0, SA( &lsin ), sin_len ) ;
@@ -501,8 +477,6 @@ static void dgram_chargen( const struct server *serp )
 #if BUFFER_SIZE < LINE_LENGTH+2
    bad_variable = 1 ;      /* this will cause a compilation error */
 #endif
-
-   if( bad_port_check(&lsin, func) != 0 ) return;
 
    for ( p = buf ; left > 2 ; left -= len, p += len )
    {

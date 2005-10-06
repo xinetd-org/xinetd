@@ -905,3 +905,5 @@ cvs-devel
 	Make some type cleanups to fix some warnings.
 	Parse things as unsigned instead of signed where it makes sense.
 		Based on a patch from Tony Ernst.
+	Remove the <1024 port check for UDP builtin services.
+		This check has been rather antiquated for years.
