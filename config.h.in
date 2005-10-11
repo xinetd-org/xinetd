@@ -124,7 +124,7 @@
 #undef rlim_t
 
 /* Versioning Information */
-#define XINETD_VERSION "xinetd Version 2.3.pre14-cvs"
+#define XINETD_VERSION "xinetd Version 2.3.14"
 #define MISC_VERSION   "MISC Version 1.2.2"
 #define PSET_VERSION   "PSET Version 1.2.0"
 #define SIO_VERSION    "SIO Version 1.6.2"

@@ -1,7 +1,7 @@
 
 Summary:	xinetd -- A better inetd.
 Name:		xinetd
-Version:	2.3.pre14-cvs
+Version:	2.3.14
 Release:	1
 License:	BSD
 Vendor:		xinetd.org (Rob Braun)

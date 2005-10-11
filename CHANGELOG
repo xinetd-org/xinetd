@@ -887,7 +887,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 		directory. -Steve Grubb
 	Allow group & user to be specified by numeric value. -Steve Grubb
 
-cvs-devel
+2.3.14
 	Applied patch from Art Haas for gcc 3.5 compat.
 	Flush the descriptor after writing a banner. -Jay Fenlason
 	Don't assume char is signed in the udp drain() function -Don Provan
