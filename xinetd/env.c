@@ -53,7 +53,7 @@ status_e setup_environ( struct service_config *scp, struct service_config *def )
 
          if ( dep->env_type == NO_ENV &&
                   make_env_from_vars( dep, std_env,
-                                 SC_ENV_VAR_DEFS(def) ) == FAILED )
+                                 SC_PASS_ENV_VARS(def) ) == FAILED )
             return( FAILED ) ;
 
          if ( ! SC_SPECIFIED( scp, A_ENV ) )
