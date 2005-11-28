@@ -200,7 +200,7 @@ static status_e activate_rpc( struct service *sp )
       return( FAILED ) ;
    }
    
-   if( tsin.sa.sa_family == AF_INET ) 
+   if( tsin.sa.sa_family == AF_INET )
       SC_SET_PORT( scp, ntohs( tsin.sa_in.sin_port ) ) ;
    else if( tsin.sa.sa_family == AF_INET6 )
       SC_SET_PORT( scp, ntohs( tsin.sa_in6.sin6_port ) ) ;
@@ -300,6 +300,17 @@ static status_e activate_normal( struct service *sp )
       msg( LOG_ERR, func, "bind failed (%m). service = %s", sid ) ;
       return( FAILED ) ;
    }
+
+#ifdef IN_MULTICAST
+   if( SC_IPV4(scp) && IN_MULTICAST(tsin.sa_in.sin_addr.s_addr) ) {
+      struct ip_mreq mreq;
+      mreq.imr_multiaddr.s_addr = tsin.sa_in.sin_addr.s_addr;
+      mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+      setsockopt(sd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+      if ( debug.on )
+         msg( LOG_DEBUG, func, "Adding multicast membership." );
+   }
+#endif
 
    return( OK ) ;
 }

@@ -907,3 +907,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 		Based on a patch from Tony Ernst.
 	Remove the <1024 port check for UDP builtin services.
 		This check has been rather antiquated for years.
+
+devel
+	If the address we're binding to is a multicast address, do the
+		multicast join.
