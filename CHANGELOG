@@ -911,3 +911,5 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 devel
 	If the address we're binding to is a multicast address, do the
 		multicast join.
+	Merge the Fedora patch to turn off libwrap processing on tcp
+		rpc services. Patch xinetd-2.3.12-tcp_rpc.patch.

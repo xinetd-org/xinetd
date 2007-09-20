@@ -123,6 +123,8 @@ This disables internal calling of the tcpwrap library to determine access
 to the service.  This may be needed in order to use libwrap functionality
 not available to long-running processes such as xinetd; in this case,
 the tcpd program can be called explicitly (see also the NAMEINARGS flag).
+For RPC services using TCP transport, this flag is automatically turned on,
+because xinetd cannot get remote host address information for the rpc port.
 .TP
 .B SENSOR
 This replaces the service with a sensor that detects accesses to the 
@@ -1221,6 +1223,10 @@ If the
 flag is not used,
 access control on the address of the remote host is not performed when
 \fIwait\fP is \fIyes\fP and \fIsocket_type\fP is \fIstream\fP.
+.LP
+The NOLIBWRAP flag is automatically turned on for RPC services whose
+\fIsocket_type\fP is \fIstream\fP because xinetd cannot determine the
+address of the remote host.
 .LP
 If the 
 .B INTERCEPT

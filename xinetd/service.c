@@ -176,6 +176,9 @@ static status_e activate_rpc( struct service *sp )
    else
       memset( &tsin, 0, sizeof(tsin));
 
+   if ( SC_PROTOVAL ( scp ) == IPPROTO_TCP ) {
+      M_SET ( scp->sc_xflags, SF_NOLIBWRAP );
+   }
    if( SC_IPV4( scp ) ) {
       tsin.sa_in.sin_family = AF_INET ;
       sin_len = sizeof(struct sockaddr_in);
