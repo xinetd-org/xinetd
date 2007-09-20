@@ -48,7 +48,7 @@ int main(int argc, char *argv[] )
 {
 	char *s ;
 	int uses_tcpd ;
-	char *daemon_dirpath = "" ;
+	char *daemon_dirpath = NULL ;
 
 	if ( argc != 1 && argc != 3 )
 	{
