@@ -58,7 +58,8 @@ void redir_handler( struct server *serp )
    struct service *sp = SERVER_SERVICE( serp );
    struct service_config *scp = SVC_CONF( sp );
    int RedirDescrip = SERVER_FD( serp );
-   int maxfd, num_read, num_wrote=0, ret=0;
+   int maxfd;
+   ssize_t num_read, num_wrote=0, ret=0;
    unsigned int sin_len = 0;
    unsigned long bytes_in = 0, bytes_out = 0;
    int no_to_nagle = 1;
@@ -156,7 +157,7 @@ void redir_handler( struct server *serp )
             do {
                num_read = read(RedirDescrip,
                   buff, sizeof(buff));
-               if (num_read == -1 && errno == EINTR)
+               if (num_read == (ssize_t)-1 && errno == EINTR)
                   continue;
                if (num_read <= 0)
                   goto REDIROUT;

@@ -51,7 +51,7 @@ void process_sensor( const struct service *sp, const union xsockaddr *addr)
    {
       if ( pset_count( global_no_access ) < MAX_GLOBAL_NO_ACCESS)
       {
-         int item_matched = addrlist_match( global_no_access, SA(addr) );
+         int item_matched = addrlist_match( global_no_access, CSA(addr) );
 
 	 if ( item_matched == 0)
 	 {   /* no match...adding to the list   */
@@ -142,7 +142,7 @@ status_e check_sensor( const union xsockaddr *addr)
 
    if ( (global_no_access) && pset_count( global_no_access ) )
    {
-      if (addrlist_match( global_no_access, SA(addr)))
+      if (addrlist_match( global_no_access, CSA(addr)))
          return FAILED;
    }
    return OK;

@@ -143,7 +143,7 @@ static int get_server_socket( struct intercept_s *ip )
       int_fail( ip, "bind" ) ;
    
    size = sizeof( *sinp ) ;
-   if ( getsockname( sd, SA( sinp ), &size ) == -1 )
+   if ( getsockname( sd, (struct sockaddr *)( sinp ), &size ) == -1 )
       int_fail( ip, "getsockname" ) ;
    
    if ( debug.on )

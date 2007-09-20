@@ -198,7 +198,8 @@ void no_control_tty(void)
  */
 status_e write_buf( int fd, const char *buf, int len )
 {
-   int cc, i ;
+   int i ;
+   ssize_t cc;
 
    for ( i = 0 ; len > 0 ; i += cc, len -= cc )
    {
@@ -234,7 +235,7 @@ void tabprint( int fd, int tab_level, const char *fmt, ...)
 void drain( int sd )
 {
    char buf[ 256 ] ; /* This size is arbitrarily chosen */
-   int ret ;
+   ssize_t ret ;
    int old_val ;
 
    /* Put in non-blocking mode so we don't hang. */

@@ -267,7 +267,7 @@ static char *verify_line( char *line,
 static char *get_line( int sd, char *buf, unsigned bufsize )
 {
    int     size ;
-   int     cc ;
+   ssize_t     cc ;
    char   *p ;
    char   *s ;
    const char *func = "get_line" ;
@@ -275,7 +275,7 @@ static char *get_line( int sd, char *buf, unsigned bufsize )
    for ( p = buf, size = bufsize ; size > 0 ; p += cc, size -= cc )
    {
       cc = read( sd, p, size ) ;
-      if ( cc == -1 ) {
+      if ( cc == (ssize_t)-1 ) {
          if ( errno == EINTR )
          {
             cc = 0 ;

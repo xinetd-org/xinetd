@@ -402,7 +402,7 @@ static void general_handler( int sig )
  */
 static void my_handler( int sig )
 {
-   int ret_val;
+   ssize_t ret_val;
    int saved_errno = errno;
 #if NSIG < 256
    unsigned char sig_byte;
@@ -412,13 +412,13 @@ static void my_handler( int sig )
    do
    {
       ret_val = write(signals_pending[1], &sig_byte, 1);
-   } while (ret_val == -1 && errno == EINTR);
+   } while (ret_val == (ssize_t)-1 && errno == EINTR);
 #else
    if (signals_pending[1] < 0) return;
    do
    {
       ret_val = write(signals_pending[1], &sig, sizeof(int));
-   } while (ret_val == -1 && errno == EINTR);
+   } while (ret_val == (ssize_t)-1 && errno == EINTR);
 #endif
    errno = saved_errno;
 }
@@ -470,12 +470,12 @@ void check_pipe(void)
 #endif
 
    while( --i >= 0 ) {
-      int ret_val;
+      ssize_t ret_val;
       do
       {
          ret_val = read(signals_pending[0], &sig, sizeof(sig));
-      } while (ret_val == -1 && errno == EINTR);
-      if (ret_val != sizeof(sig) ) {
+      } while (ret_val == (ssize_t)-1 && errno == EINTR);
+      if (ret_val != (ssize_t)sizeof(sig) ) {
          msg(LOG_ERR, func, "Error retrieving pending signal: %m");
          return;
       }

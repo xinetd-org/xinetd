@@ -559,7 +559,7 @@ int __sio_writef( __sio_od_t *odp, int fd )
    {
       int cc ;
 
-      cc = write( fd, odp->start, b_in_buffer ) ;
+      cc = write( fd, odp->start, (size_t)b_in_buffer ) ;
       if ( cc == b_in_buffer )
       {
          odp->start = odp->nextb = odp->buf ;
@@ -599,9 +599,9 @@ int __sio_writef( __sio_od_t *odp, int fd )
  *       If it does not return SIO_ERR, it sets start, nextb, end
  *         If it returns SIO_ERR, it does not change anything
  */
-static int __sio_readf( __sio_id_t *idp, int fd )
+static ssize_t __sio_readf( __sio_id_t *idp, int fd )
 {
-   int cc ;
+   ssize_t cc ;
 
    /*
     * First check for a tied fd and flush the stream if necessary
@@ -634,7 +634,7 @@ static int __sio_readf( __sio_id_t *idp, int fd )
          {
             if ( __sio_switch( idp, fd ) == FAILURE )
                return( SIO_ERR ) ;
-            cc = -1 ;
+            cc = (ssize_t)-1 ;
          }
       }
       else
@@ -679,8 +679,8 @@ static int __sio_readf( __sio_id_t *idp, int fd )
 
    for ( ;; )
    {
-      cc = read( fd, idp->buf, (int) idp->buffer_size ) ;
-      if ( cc == -1 )
+      cc = read( fd, idp->buf, idp->buffer_size ) ;
+      if ( cc == (ssize_t)-1 )
          if ( errno == EINTR )
             continue ;
          else
@@ -705,9 +705,9 @@ static int __sio_readf( __sio_id_t *idp, int fd )
  *    auxiliary buffer)
  *      Also, if successful, idp->nextb is set to idp->buf, idp->end is modified.
  */
-int __sio_extend_buffer( __sio_id_t *idp, int fd, int b_left )
+ssize_t __sio_extend_buffer( __sio_id_t *idp, int fd, size_t b_left )
 {
-   int b_read ;
+   ssize_t b_read ;
 
    /*
     * copy to auxiliary buffer
@@ -733,17 +733,17 @@ int __sio_extend_buffer( __sio_id_t *idp, int fd, int b_left )
  *
  * Return value: the number of bytes read.
  */
-int __sio_more( __sio_id_t *idp, int fd )
+ssize_t __sio_more( __sio_id_t *idp, int fd )
 {
    int b_left = &idp->buf[ idp->buffer_size ] - idp->end ;
-   int cc ;
+   ssize_t cc ;
 
    if ( b_left <= 0 )
       return( 0 ) ;
    
    for ( ;; )
    {
-      cc = read( fd, idp->end, b_left ) ;
+      cc = read( fd, idp->end, (size_t)b_left ) ;
       if ( cc >= 0 )
       {
          idp->end += cc ;

@@ -1375,7 +1375,7 @@ status_e rlim_cpu_parser( pset_h values,
       SC_RLIM_CPU(scp) = (rlim_t)RLIM_INFINITY ;
    else
    {
-      if ( parse_ull(cpu_str, 10, -1, &cpu_int) || cpu_int < 0 )
+      if ( parse_ull(cpu_str, 10, -1, &cpu_int) < 0 )
       {
          parsemsg( LOG_ERR, func,
             "CPU limit is invalid: %s", cpu_str ) ;

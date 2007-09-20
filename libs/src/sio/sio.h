@@ -12,6 +12,8 @@
 #define __SIO_H
 
 #include <errno.h>
+#include <string.h>
+#include <unistd.h>
 #include <stdarg.h>
 
 /*
@@ -56,7 +58,7 @@ struct __sio_input_descriptor
 	 *		buffer is right below buf and is of the same size.
 	 */
 	char *buf ;
-	unsigned buffer_size ;
+	size_t buffer_size ;
 
 	char *start ;                 /* start of valid buffer contents   	*/
 	char *end ;                   /* end of valid buffer contents + 1 	*/
@@ -163,15 +165,15 @@ char *Srdline ( int fd ) ;
 /*
  * The Write functions
  */
-int Swrite ( int fd, const char *buf, unsigned int nbytes );
-int Sprint ( int fd, const char *format, ... )
+ssize_t Swrite ( int fd, const char *buf, size_t );
+ssize_t Sprint ( int fd, const char *format, ... )
 #ifdef __GNUC__
 	__attribute__ ((format (printf, 2, 3)));
 #else
 	;
 #endif
 int Sputchar( int fd, char c );
-int Sprintv ( int fd, const char *format, va_list ap )
+ssize_t Sprintv ( int fd, const char *format, va_list ap )
 #ifdef __GNUC__
 	__attribute__ ((format (printf, 2, 0)));
 #else
@@ -186,7 +188,7 @@ int Sflush ( int fd ) ;
 int Sclose ( int fd ) ;
 int Sbuftype ( int fd, int type ) ;
 int Smorefds ( int ) ;
-int __sio_converter( __sio_od_t *, int , const char *, va_list );
+ssize_t __sio_converter( __sio_od_t *, int , const char *, va_list );
 int sio_setup(int fd, __sio_descriptor_t **dp, unsigned int type );
 
 #ifdef __GNUC__

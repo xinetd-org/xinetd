@@ -178,7 +178,7 @@ int addrlist_match( const pset_h addr_list,
       { /* NUMERIC or NET addresses */ 
          if( (addr->sa_family == AF_INET) && (cap->version == 4) ) 
 	 {
-            const struct sockaddr_in *inp = SAIN(addr);
+            const struct sockaddr_in *inp = CSAIN(addr);
             if( ( ntohl(inp->sin_addr.s_addr) & cap->m.mask ) == 
 			    ( cap->a.addr & cap->m.mask ) ) 
                return (u+1) ;
@@ -186,11 +186,11 @@ int addrlist_match( const pset_h addr_list,
 	 else if( (addr->sa_family == AF_INET6) && (cap->version == 6)) 
 	 {
             if (cap->addr_type == NUMERIC_ADDR) {
-	       if (IN6_ARE_ADDR_EQUAL(&SAIN6(addr)->sin6_addr, &cap->a.addr6))
+	       if (IN6_ARE_ADDR_EQUAL(&CSAIN6(addr)->sin6_addr, &cap->a.addr6))
                   return( u+1 );
             }
             else {  /* NET_ADDR */ 
-               if ( xmatch( (const char *)SAIN6(addr)->sin6_addr.s6_addr, 
+               if ( xmatch( (const char *)CSAIN6(addr)->sin6_addr.s6_addr, 
 	                (const char *)&(cap->m.mask6), 
 			(const char *)&(cap->a.addr6), 16) == TRUE )
                   return( u+1 );
@@ -201,11 +201,11 @@ int addrlist_match( const pset_h addr_list,
 	     * If it's a mapped address, and a v4 address is specified, see
              * if the mapped address matches the v4 equivalent.
              */
-            if( IN6_IS_ADDR_V4MAPPED( &SAIN6(addr)->sin6_addr ) ) 
+            if( IN6_IS_ADDR_V4MAPPED( &CSAIN6(addr)->sin6_addr ) ) 
 	    {
-               uint32_t *tmp_addr = 
-                          (uint32_t *)&SAIN6(addr)->sin6_addr.s6_addr[12];
-               if( (ntohl(*tmp_addr) & cap->m.mask)
+               uint32_t tmp_addr;
+               memcpy(&tmp_addr, &CSAIN6(addr)->sin6_addr.s6_addr[12], sizeof(tmp_addr));
+               if( (ntohl(tmp_addr) & cap->m.mask)
 			       == ( cap->a.addr & cap->m.mask ) )
                   return (u+1);
             }

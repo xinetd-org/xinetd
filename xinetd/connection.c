@@ -96,13 +96,15 @@ static status_e get_connection( struct service *sp, connection_s *cp )
       if ( SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM )
       {
          char t_ch ;
+	 ssize_t val;
 
          /*
           * This trick is done to get the remote address.
           * select(2) guaranteed that we won't block on the recvfrom
           */
-         if ( recvfrom( SVC_FD( sp ), &t_ch, 1, MSG_PEEK,
-                              &cp->co_remote_address.sa, &sin_len ) == -1 )
+	 val = recvfrom( SVC_FD( sp ), &t_ch, 1, MSG_PEEK,
+                              &cp->co_remote_address.sa, &sin_len );
+         if ( val == (ssize_t)-1 )
          {
             msg( LOG_ERR, func, "service %s, recvfrom: %m", SVC_ID( sp ) ) ;
             return( FAILED ) ;

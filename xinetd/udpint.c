@@ -226,7 +226,7 @@ static void send_data( int sd, char *buf, int len, union xsockaddr *addr )
 {
    char   *p ;
    int   left ;
-   int   cc ;
+   ssize_t   cc ;
    const char   *func = "send_data" ;
 
    for ( p = buf, left = len ; left > 0 ; left -= cc, p+= cc )
@@ -236,7 +236,7 @@ static void send_data( int sd, char *buf, int len, union xsockaddr *addr )
       else
          cc = sendto( sd, p, left, 0, SA( addr ), sizeof( *addr ) ) ;
 
-      if ( cc == -1 ) {
+      if ( cc == (ssize_t)-1 ) {
          if ( errno == EINTR )
          {
             cc = 0 ;
@@ -264,12 +264,12 @@ static status_e get_incoming_packet( struct intercept_s *ip, packet_s *pp )
 
    for ( ;; )
    {
-      int cc ;
+      ssize_t cc ;
 
       from_len = sizeof( pp->from ) ;
       cc = recvfrom( INT_REMOTE( ip ), pp->data, pp->size,
                                     0, SA( &pp->from ), &from_len ) ;
-      if ( cc == -1 )
+      if ( cc == (ssize_t)-1 )
       {
          if ( errno != EINTR )
          {
@@ -306,14 +306,14 @@ static status_e get_incoming_packet( struct intercept_s *ip, packet_s *pp )
 static status_e udp_local_to_remote( channel_s *chp )
 {
    char   buf[ MAX_DATAGRAM_SIZE ] ;
-   int    cc ;
+   ssize_t    cc ;
    const char   *func = "udp_local_to_remote" ;
 
    for ( ;; )
    {
       cc = recv( chp->ch_local_socket, buf, sizeof( buf ), 0 ) ;
    
-      if ( cc == -1 )
+      if ( cc == (ssize_t)-1 )
       {
          if ( errno != EINTR ) 
          {

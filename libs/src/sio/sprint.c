@@ -18,7 +18,7 @@ typedef long long 			wide_int ;
 typedef unsigned long long 		u_wide_int ;
 typedef int 				bool_int ;
 
-static char *conv_10( wide_int num, bool_int is_unsigned, bool_int *is_negative, char *buf_end, int *len );
+static char *conv_10( wide_int num, bool_int is_unsigned, bool_int *is_negative, char *buf_end, ssize_t *len );
 
 #define S_NULL_LEN 			6
 static char S_NULL[S_NULL_LEN+1] = "(null)";
@@ -69,7 +69,7 @@ static char S_NULL[S_NULL_LEN+1] = "(null)";
 	}							\
 	if ( __SIO_MUST_FLUSH( *odp, c ) && fd >= 0 )		\
 	{							\
-		int b_in_buffer = sp - odp->start ;		\
+		ssize_t b_in_buffer = sp - odp->start ;		\
 								\
 		odp->nextb = sp ;				\
 		if ( __sio_writef( odp, fd ) != b_in_buffer )	\
@@ -122,11 +122,11 @@ static char S_NULL[S_NULL_LEN+1] = "(null)";
  *     - all floating point arguments are passed as doubles
  */
 /* VARARGS2 */
-int Sprint( int fd, const char *fmt, ...) 
+ssize_t Sprint( int fd, const char *fmt, ...) 
 {
 	__sio_descriptor_t *dp ;
 	__sio_od_t *odp ;
-	int cc ;
+	ssize_t cc ;
 	va_list ap ;
 
 	if( sio_setup( fd, &dp, __SIO_OUTPUT_STREAM ) == SIO_ERR )
@@ -143,7 +143,7 @@ int Sprint( int fd, const char *fmt, ...)
 /*
  * This is the equivalent of vfprintf for SIO
  */
-int Sprintv( int fd, const char *fmt, va_list ap)
+ssize_t Sprintv( int fd, const char *fmt, va_list ap)
 {
 	__sio_descriptor_t *dp ;
 	__sio_od_t *odp ;
@@ -162,7 +162,7 @@ int Sprintv( int fd, const char *fmt, va_list ap)
  * in buf).
  */
 static char *conv_fp( char format, double num, boolean_e add_dp, 
-   int precision, bool_int *is_negative, char buf[], int *len )
+   int precision, bool_int *is_negative, char buf[], ssize_t *len )
 	/* always add decimal point if YES */
 {
 	char *s = buf ;
@@ -220,7 +220,7 @@ static char *conv_fp( char format, double num, boolean_e add_dp,
 	if ( format != 'f' )
 	{
 		char temp[ EXPONENT_LENGTH ] ;		/* for exponent conversion */
-		int t_len ;
+		ssize_t t_len ;
 		bool_int exponent_is_negative ;
 
 		*s++ = format ;		/* either e or E */
@@ -261,7 +261,7 @@ static char *conv_fp( char format, double num, boolean_e add_dp,
  * which is a pointer to the END of the buffer + 1 (i.e. if the buffer
  * is declared as buf[ 100 ], buf_end should be &buf[ 100 ])
  */
-static char *conv_p2( u_wide_int num, int nbits, char format, char *buf_end, int *len )
+static char *conv_p2( u_wide_int num, int nbits, char format, char *buf_end, ssize_t *len )
 {
 	int mask = ( 1 << nbits ) - 1 ;
 	char *p = buf_end ;
@@ -292,7 +292,7 @@ static char *conv_p2( u_wide_int num, int nbits, char format, char *buf_end, int
  * which is a pointer to the END of the buffer + 1 (i.e. if the buffer
  * is declared as buf[ 100 ], buf_end should be &buf[ 100 ])
  */
-static char *conv_10( wide_int num, bool_int is_unsigned, bool_int *is_negative, char *buf_end, int *len )
+static char *conv_10( wide_int num, bool_int is_unsigned, bool_int *is_negative, char *buf_end, ssize_t *len )
 {
 	char *p = buf_end ;
 	u_wide_int magnitude ;
@@ -346,16 +346,16 @@ static char *conv_10( wide_int num, bool_int is_unsigned, bool_int *is_negative,
  * Do format conversion placing the output in odp.
  * Note: we do not support %n for security reasons.
  */
-int __sio_converter( __sio_od_t *odp, int fd, const char *fmt, va_list ap )
+ssize_t __sio_converter( __sio_od_t *odp, int fd, const char *fmt, va_list ap )
 {
 	char *sp = NULL;
 	char *bep = NULL;
-	int cc = 0 ;
-	int i ;
+	ssize_t cc = 0 ;
+	size_t i ;
 
 	char *s = NULL;
 	char *q = NULL;
-	int s_len ;
+	ssize_t s_len ;
 
 	int min_width = 0 ;
 	int precision = 0 ;
@@ -666,7 +666,9 @@ int __sio_converter( __sio_od_t *odp, int fd, const char *fmt, va_list ap )
 						&num_buf[ NUM_BUF_SIZE ], &s_len ) ;
 					else
 					{
-						s = "%p" ;
+						char_buf[ 0 ] = '%' ;
+						char_buf[ 1 ] = 'p' ;
+						s = char_buf ;
 						s_len = 2 ;
 					}
 					pad_char = ' ' ;

@@ -78,7 +78,7 @@ int opt_recognize( int argc, char *argv[] )
          {
             if ( ++arg == argc )
                usage() ;
-            if ( parse_ull( argv[ arg ], 10, NUL, &ullarg_1 ) || ullarg_1 < 0 )
+            if ( parse_ull( argv[ arg ], 10, NUL, &ullarg_1 ) < 0 )
                usage() ;
             ps.ros.process_limit = (rlim_t)ullarg_1 ;
             if( ps.ros.process_limit != ullarg_1 )
@@ -98,7 +98,7 @@ int opt_recognize( int argc, char *argv[] )
          else if ( strcmp( &argv[ arg ][ 1 ], "logprocs" ) == 0 ) {
             if ( ++arg == argc )
                usage() ;
-            if ( parse_uint( argv[ arg ], 10, NUL, &uarg_1 ) || uarg_1 < 0 )
+            if ( parse_uint( argv[ arg ], 10, NUL, &uarg_1 ) < 0 )
                usage() ;
             logprocs_option_arg = uarg_1 ;
             logprocs_option = 1 ;

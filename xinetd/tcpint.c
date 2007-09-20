@@ -273,7 +273,7 @@ static void connection_request( struct intercept_s *ip, channel_s **chpp )
 static stream_status_e tcp_local_to_remote( channel_s *chp )
 {
    char  buf[ DATAGRAM_SIZE ] ;
-   int   rcc, wcc ;
+   ssize_t   rcc, wcc ;
    char *p ;
    int   left ;
    const char *func = "tcp_local_to_remote" ;
@@ -283,7 +283,7 @@ static stream_status_e tcp_local_to_remote( channel_s *chp )
       rcc = recv( chp->ch_local_socket, buf, sizeof( buf ), 0 ) ;
       if ( rcc == 0 )
          return( S_SERVER_ERR ) ;
-      else if ( rcc == -1 )
+      else if ( rcc == (ssize_t)-1 )
       {
          if ( errno != EINTR )
          {
@@ -300,7 +300,7 @@ static stream_status_e tcp_local_to_remote( channel_s *chp )
       wcc = send( chp->ch_remote_socket, p, left, 0 ) ;
       if ( wcc == 0 )
          return( S_CLIENT_ERR ) ;
-      else if ( wcc == -1 )
+      else if ( wcc == (ssize_t)-1 )
       {
          if ( errno == EINTR )
             wcc = 0 ;
@@ -326,7 +326,7 @@ static stream_status_e tcp_local_to_remote( channel_s *chp )
 static stream_status_e tcp_remote_to_local( channel_s *chp )
 {
    char  buf[ DATAGRAM_SIZE ] ;
-   int   rcc, wcc ;
+   ssize_t   rcc, wcc ;
    int   left ;
    char *p ;
    const char *func = "tcp_remote_to_local" ;
@@ -336,7 +336,7 @@ static stream_status_e tcp_remote_to_local( channel_s *chp )
       rcc = recv( chp->ch_remote_socket, buf, sizeof( buf ), 0 ) ;
       if ( rcc == 0 )
          return( S_CLIENT_ERR ) ;
-      else if ( rcc == -1 )
+      else if ( rcc == (ssize_t)-1 )
       {
          if ( errno != EINTR )
          {
@@ -353,7 +353,7 @@ static stream_status_e tcp_remote_to_local( channel_s *chp )
       wcc = send( chp->ch_local_socket, p, left, 0 ) ;
       if ( wcc == 0 ) {
          return( S_SERVER_ERR ) ;
-      } else if ( wcc == -1 ) {
+      } else if ( wcc == (ssize_t)-1 ) {
          if ( errno == EINTR ) {
             rcc = 0 ;
          } else {

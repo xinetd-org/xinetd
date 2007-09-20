@@ -53,6 +53,9 @@ union xsockaddr {
 #define SA( p )               ( (struct sockaddr *) (p) )
 #define SAIN( p )             ( (struct sockaddr_in *) (p) )
 #define SAIN6( p )            ( (struct sockaddr_in6 *) (p) )
+#define CSA( p )              ( (const struct sockaddr *) (p) )
+#define CSAIN( p )            ( (const struct sockaddr_in *) (p) )
+#define CSAIN6( p )           ( (const struct sockaddr_in6 *) (p) )
 #define NEW( type )           (type *) malloc( sizeof( type ) )
 #define FREE( p )             (void) free( (char *)(p) )
 

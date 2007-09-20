@@ -145,10 +145,10 @@ static status_e remote_address_check(const struct service *sp,
     * entry in the supplied list. It is not a true/false answer.
     */
    if ( SC_NO_ACCESS( SVC_CONF(sp) ) != NULL )
-      na_matched = addrlist_match( SC_NO_ACCESS( SVC_CONF(sp) ), SA(sinp));
+      na_matched = addrlist_match( SC_NO_ACCESS( SVC_CONF(sp) ), CSA(sinp));
 
    if ( SC_ONLY_FROM( SVC_CONF(sp) ) != NULL )
-      of_matched = addrlist_match( SC_ONLY_FROM( SVC_CONF(sp) ), SA(sinp));
+      of_matched = addrlist_match( SC_ONLY_FROM( SVC_CONF(sp) ), CSA(sinp));
 
    /*
     * Check if the specified address is in both lists

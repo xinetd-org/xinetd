@@ -129,7 +129,7 @@ const builtin_s *builtin_lookup( const struct builtin_service services[],
 static void stream_echo( const struct server *serp )
 {
    char   buf[ BUFFER_SIZE ] ;
-   int    cc ;
+   ssize_t    cc ;
    int    descriptor = SERVER_FD( serp ) ;
    struct service *svc = SERVER_SERVICE( serp ) ;;
 
@@ -149,7 +149,7 @@ static void stream_echo( const struct server *serp )
       cc = read( descriptor, buf, sizeof( buf ) ) ;
       if ( cc == 0 )
          break ;
-      if ( cc == -1 ) {
+      if ( cc == (ssize_t)-1 ) {
          if ( errno == EINTR )
             continue ;
          else
@@ -167,26 +167,25 @@ static void dgram_echo( const struct server *serp )
 {
    char            buf[ DATAGRAM_SIZE ] ;
    union xsockaddr lsin;
-   int             cc ;
+   ssize_t             cc ;
    socklen_t       sin_len = 0;
    int             descriptor = SERVER_FD( serp ) ;
-   const char     *func = "dgram_echo";
 
    if( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) )
       sin_len = sizeof( struct sockaddr_in );
    else if( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) )
       sin_len = sizeof( struct sockaddr_in6 );
 
-   cc = recvfrom( descriptor, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) ;
-   if ( cc != -1 ) {
-      (void) sendto( descriptor, buf, cc, 0, SA( &lsin ), sizeof( lsin ) ) ;
+   cc = recvfrom( descriptor, buf, sizeof( buf ), 0, (struct sockaddr *)( &lsin ), &sin_len ) ;
+   if ( cc != (ssize_t)-1 ) {
+      (void) sendto( descriptor, buf, (size_t)cc, 0, SA( &lsin ), sizeof( lsin ) ) ;
    }
 }
 
 static void stream_discard( const struct server *serp )
 {
    char  buf[ BUFFER_SIZE ] ;
-   int   cc ;
+   ssize_t   cc ;
    int    descriptor = SERVER_FD( serp ) ;
    struct service *svc = SERVER_SERVICE( serp ) ;;
 
@@ -204,7 +203,7 @@ static void stream_discard( const struct server *serp )
    for ( ;; )
    {
       cc = read( descriptor, buf, sizeof( buf ) ) ;
-      if ( (cc == 0) || ((cc == -1) && (errno != EINTR)) )
+      if ( (cc == 0) || ((cc == (ssize_t)-1) && (errno != EINTR)) )
          break ;
    }
    if( SVC_WAITS( svc ) ) /* Service forks, so close it */
@@ -257,7 +256,7 @@ static void daytime_protocol( char *buf, unsigned int *buflen )
    if ( cc >= 0 ) { 
       *buflen = cc ;
       size -= cc ;
-      cc = strftime( &buf[ *buflen ], size, " %Z\r\n", tmp ) ;
+      cc = strftime( &buf[ *buflen ], (size_t)size, " %Z\r\n", tmp ) ;
       *buflen += cc ;
    }
 #endif
@@ -280,7 +279,7 @@ static void stream_daytime( const struct server *serp )
       }
    }
    daytime_protocol( time_buf, &buflen ) ;
-   (void) write_buf( descriptor, time_buf, buflen ) ;
+   (void) write_buf( descriptor, time_buf, (int)buflen ) ;
    Sclose(descriptor);
 }
 
@@ -292,15 +291,16 @@ static void dgram_daytime( const struct server *serp )
    socklen_t       sin_len     = 0 ;
    unsigned int    buflen      = sizeof( time_buf ) ;
    int             descriptor  = SERVER_FD( serp ) ;
-   const char     *func       = "dgram_daytime";
+   ssize_t         val;
 
    if ( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in );
    else if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in6 );
 
-   if ( recvfrom( descriptor, time_buf, sizeof( time_buf ), 0,
-            SA( &lsin ), &sin_len ) == -1 )
+   val = recvfrom( descriptor, time_buf, sizeof( time_buf ), 0,
+            (struct sockaddr *)( &lsin ), &sin_len );
+   if ( val == (ssize_t)-1 )
       return ;
 
    daytime_protocol( time_buf, &buflen ) ;
@@ -358,14 +358,15 @@ static void dgram_time( const struct server *serp )
    union xsockaddr lsin ;
    socklen_t       sin_len = 0 ;
    int             fd      = SERVER_FD( serp ) ;
-   const char     *func    = "dgram_daytime";
+   ssize_t         val;
 
    if ( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in );
    else if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in6 );
 
-   if ( recvfrom( fd, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) == -1 )
+   val = recvfrom( fd, buf, sizeof( buf ), 0, (struct sockaddr *)( &lsin ), &sin_len );
+   if ( val == (ssize_t)-1 )
       return ;
 
    time_protocol( time_buf ) ;
@@ -464,14 +465,15 @@ static void dgram_chargen( const struct server *serp )
    socklen_t       sin_len = 0 ;
    int             fd      = SERVER_FD( serp ) ;
    unsigned int    left    = sizeof( buf ) ;
-   const char     *func    = "dgram_chargen";
+   ssize_t         val;
 
    if ( SC_IPV4( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in );
    else if ( SC_IPV6( SVC_CONF( SERVER_SERVICE( serp ) ) ) ) 
       sin_len = sizeof( struct sockaddr_in6 );
 
-   if ( recvfrom( fd, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) == -1 )
+   val = recvfrom( fd, buf, (size_t)sizeof( buf ), 0, (struct sockaddr *)( &lsin ), &sin_len );
+   if ( val == (ssize_t)-1 )
       return ;
 
 #if BUFFER_SIZE < LINE_LENGTH+2
@@ -484,7 +486,7 @@ static void dgram_chargen( const struct server *serp )
       if ( generate_line( p, len ) == NULL )
          break ;
    }
-   (void) sendto( fd, buf, p-buf, 0, SA( &lsin ), sin_len ) ;
+   (void) sendto( fd, buf, (size_t)(p-buf), 0, SA( &lsin ), sin_len ) ;
 }
 
 

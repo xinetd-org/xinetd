@@ -166,7 +166,7 @@ char *str_component( str_h handle )
 			HANDLE_ERROR( hp->flags, NULL, hp->errnop, STR_ENOMEM,
 				"STR str_component: malloc failed" ) ;
 		}
-		strncpy( retval, start, len )[ len ] = '\0' ;
+		strncpy( retval, start, (size_t)len )[ len ] = '\0' ;
 	}
 	else
 	{

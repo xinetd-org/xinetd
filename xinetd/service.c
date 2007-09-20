@@ -621,7 +621,7 @@ static int banner_always( const struct service *sp, const connection_s *cp )
    /* print the banner regardless of access control */
    if ( SC_BANNER(scp) != NULL ) {
       char tmpbuf[TMPSIZE];
-      int retval;
+      ssize_t retval;
       int bannerfd = open(SC_BANNER(scp), O_RDONLY);
 
       if( bannerfd < 0 ) {
@@ -631,7 +631,7 @@ static int banner_always( const struct service *sp, const connection_s *cp )
       }
 
       while( (retval = read(bannerfd, tmpbuf, sizeof(tmpbuf))) ) {
-         if (retval == -1)
+         if (retval == (ssize_t)-1)
          {
             if (errno == EINTR)
                continue;

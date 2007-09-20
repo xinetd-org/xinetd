@@ -28,17 +28,17 @@
 /*
  * Stream write call: arguments same as those of write(2)
  */
-int Swrite( int fd, const char *addr, unsigned int nbytes )
+ssize_t Swrite( int fd, const char *addr, size_t nbytes )
 {
 	__sio_descriptor_t *dp ;
 	__sio_od_t *odp ;
-	unsigned int b_transferred ;
-	unsigned int b_avail ;
-	int total_b_transferred ;
-	int b_written ;
-	int b_in_buffer ;
+	size_t b_transferred ;
+	size_t b_avail ;
+	ssize_t total_b_transferred ;
+	ssize_t b_written ;
+	ssize_t b_in_buffer ;
 
-	if ( nbytes > INT_MAX )
+	if ( nbytes > SSIZE_MAX )
 		return( SIO_ERR );
 	if( sio_setup( fd, &dp, __SIO_OUTPUT_STREAM ) == SIO_ERR )
 		return( SIO_ERR );
@@ -62,7 +62,7 @@ int Swrite( int fd, const char *addr, unsigned int nbytes )
 	b_in_buffer = odp->buf_end - odp->start ;
 	b_written = __sio_writef( odp, fd ) ;
 	if ( b_written != b_in_buffer )
-		return( (b_written >= (int)nbytes) ? (int)nbytes : b_written ) ;
+		return( (b_written >= (ssize_t)nbytes) ? (ssize_t)nbytes : b_written ) ;
 	
 	total_b_transferred = b_transferred ;
 	addr += b_transferred ;
@@ -83,7 +83,7 @@ int Swrite( int fd, const char *addr, unsigned int nbytes )
 		 * the buffer is full
 		 */
 		b_written = __sio_writef( odp, fd ) ;
-		if ( b_written != (int)odp->buffer_size )
+		if ( b_written != (ssize_t)odp->buffer_size )
 		{
 			if ( b_written != SIO_ERR )
 			{
@@ -157,8 +157,8 @@ char *Srdline( int fd )
 	__sio_id_t *idp ;
 	char *cp ;
 	char *line_start ;
-	int b_left ;
-	int extension ;
+	size_t b_left ;
+	ssize_t extension ;
 
 	if( sio_setup( fd, &dp, __SIO_INPUT_STREAM ) == SIO_ERR )
 		return( NULL );
@@ -196,7 +196,7 @@ char *Srdline( int fd )
 			ASSERT( idp->start <= idp->nextb && idp->nextb <= idp->end ) ;
 
 			line_start = idp->start ;
-			cp = sio_memscan( idp->nextb, extension, '\n' ) ;
+			cp = sio_memscan( idp->nextb, (size_t)extension, '\n' ) ;
 			if ( cp != NULL )
 				idp->nextb = cp + 1 ;
 			else
@@ -206,7 +206,7 @@ char *Srdline( int fd )
 					extension = __sio_more( idp, fd ) ;
 					if ( extension > 0 )
 					{
-						cp = sio_memscan( idp->nextb, extension, '\n' ) ;
+						cp = sio_memscan( idp->nextb, (size_t)extension, '\n' ) ;
 						if ( cp == NULL )
 							continue ;
 						idp->nextb = cp + 1 ;
@@ -361,7 +361,7 @@ int Sbuftype( int fd, int type )
 
 #ifndef sio_memscan
 
-static char *sio_memscan( const char *from, int how_many, char ch )
+static char *sio_memscan( const char *from, size_t how_many, char ch )
 {
    char *p ;
    char *last = from + how_many ;
@@ -377,7 +377,7 @@ static char *sio_memscan( const char *from, int how_many, char ch )
 
 #ifdef NEED_MEMCOPY
 
-void __sio_memcopy( const char *from, char *to, int nbytes )
+void __sio_memcopy( const char *from, char *to, size_t nbytes )
 {
    while ( nbytes-- )
       *to++ = *from++ ;

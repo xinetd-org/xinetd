@@ -918,3 +918,16 @@ devel
 	Merge the Fedora patch to fix getpeercon() for labeled networking
 		in MLS environments.  
 		Patch xinetd-2.3.14-contextconf.patch r1.1
+	Merge the Fedora patch for int->ssize_t. 
+		Patch xinetd-2.3.14-ssize_t.patch r1.1
+		Some modifications to this patch were necessary.
+	Change compiler flags, -Wconversion generates excessive and
+		unnecessary warnings with gcc, particularly all
+		cases of ntohs(uint16_t).
+		http://gcc.gnu.org/bugzilla/show_bug.cgi?id=6614
+		Additionally add -Wno-unused to prevent unnecessary
+		warnings regarding unused function parameters when
+		the function is a callback conforming to a standard
+		interface.
+	Change version number to 2.3.15devel, indicating an interim
+		developmental source snapshot.

@@ -40,8 +40,8 @@ static int xtimer_init( void )
 
 static int xtimer_compfunc( const void *_a, const void *_b )
 {
-	xtime_h **a = (xtime_h **)_a;
-	xtime_h **b = (xtime_h **)_b;
+	xtime_h * const *a = (xtime_h * const *)_a;
+	xtime_h * const *b = (xtime_h * const *)_b;
 	return ((*a)->when - (*b)->when);
 }
 

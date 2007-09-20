@@ -32,8 +32,8 @@
 
 static int compfunc( const void *_a, const void *_b )
 {
-   char **a = (char **)_a;
-   char **b = (char **)_b;
+   const char * const *a = (const char * const *)_a;
+   const char * const *b = (const char * const *)_b;
 
    if( a == NULL || a[0] == NULL )
       return -1;

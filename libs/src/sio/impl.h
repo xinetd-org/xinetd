@@ -142,9 +142,9 @@ static char *itoa( num )
  * Internal functions that are visible
  */
 int __sio_writef( __sio_od_t *odp, int fd ) ;
-int __sio_extend_buffer( __sio_id_t *idp, int fd, int b_left ) ;
+ssize_t __sio_extend_buffer( __sio_id_t *idp, int fd, size_t b_left ) ;
 int __sio_init( __sio_descriptor_t *dp, int fd, enum __sio_stream stream_type );
-int __sio_more( __sio_id_t *idp, int fd ) ;
+ssize_t __sio_more( __sio_id_t *idp, int fd ) ;
 sio_status_e __sio_switch( __sio_id_t *idp, int fd ) ;
 
 
