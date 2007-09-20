@@ -47,6 +47,7 @@ const struct name_value service_flags[] =
       { "SENSOR",                     SF_SENSOR              },
       { "IPv4",                       SF_IPV4                },
       { "IPv6",                       SF_IPV6                },
+      { "LABELED",                    SF_LABELED             },
       { CHAR_NULL,                    0                      }
    } ;
 

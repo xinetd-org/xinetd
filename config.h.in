@@ -112,6 +112,7 @@
 /* Options */
 #undef HAVE_LIBWRAP
 #undef LIBWRAP
+#undef LABELED_NET
 
 #undef HAVE_LOADAVG
 

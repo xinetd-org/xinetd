@@ -697,6 +697,35 @@ static status_e check_entry( struct service_config *scp,
          return( FAILED ) ;
    }
 
+#ifdef LABELED_NET
+      if (SC_LABELED_NET(scp)) {
+         if ( SC_IS_INTERNAL( scp ) ) {
+            msg( LOG_ERR, func,
+               "Internal services cannot support labeled networking: %s",
+               SC_ID(scp) ) ;
+            return( FAILED ) ;
+         }
+         if ( SC_SOCKET_TYPE(scp) != SOCK_STREAM ) {
+            msg( LOG_ERR, func,
+               "Non-stream socket types cannot support labeled networking: %s",
+               SC_ID(scp) ) ;
+            return( FAILED ) ;
+         }
+         if ( SC_WAITS( scp ) ) {
+            msg( LOG_ERR, func,
+               "Tcp wait services cannot support labeled networking: %s",
+               SC_ID(scp) ) ;
+            return( FAILED ) ;
+         }
+         if ( SC_REDIR_ADDR( scp ) != NULL) {
+            msg( LOG_ERR, func,
+               "Redirected services cannot support labeled networking: %s",
+               SC_ID(scp) ) ;
+            return( FAILED ) ;
+         }
+      }
+#endif
+
    if ( SC_IS_MUXCLIENT( scp ) ) 
    {
 	   if ( !SC_IS_UNLISTED( scp ) )

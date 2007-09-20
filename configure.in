@@ -289,6 +289,34 @@ AC_ARG_WITH(libwrap,
 	AC_MSG_RESULT(no)
 )
 
+AC_MSG_CHECKING(whether to use labeled-networking)
+AC_ARG_WITH(labeled-networking,
+[  --with-labeled-networking[=PATH]   Compile in labeled networking support.],
+[ case "$withval" in
+	no)
+		AC_MSG_RESULT(no)
+		;;
+	yes)
+		AC_MSG_RESULT(yes)
+		AC_CHECK_LIB(selinux, setexeccon, [
+			AC_DEFINE(LABELED_NET)
+			LABELLIBS="-lselinux" ])
+		LIBS="$LABELLIBS $LIBS"
+		;;
+	*)
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(LABELED_NET)
+		if test -d "$withval"; then
+			LABELLIBS="-L$withval -lselinux"
+		else
+			LABELLIBS="$withval"
+		fi
+		LIBS="$LABELLIBS $LIBS"
+		;;
+	esac ],
+	AC_MSG_RESULT(no)
+)
+
 AC_FUNC_MMAP
 
 AC_CHECK_FUNCS(isatty)

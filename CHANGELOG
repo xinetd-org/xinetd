@@ -913,3 +913,8 @@ devel
 		multicast join.
 	Merge the Fedora patch to turn off libwrap processing on tcp
 		rpc services. Patch xinetd-2.3.12-tcp_rpc.patch.
+	Merge the Fedora patch to add labeled networking.
+		Patch xinetd-2.3.14-label.patch r1.4.
+	Merge the Fedora patch to fix getpeercon() for labeled networking
+		in MLS environments.  
+		Patch xinetd-2.3.14-contextconf.patch r1.1

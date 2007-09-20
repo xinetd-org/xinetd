@@ -31,6 +31,11 @@
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
 #endif
+#ifdef LABELED_NET
+#include <selinux/selinux.h>
+#include <selinux/flask.h>
+#include <selinux/context.h>
+#endif
 
 #include "str.h"
 #include "child.h"
@@ -43,6 +48,12 @@
 #include "signals.h"
 #include "options.h"
 #include "redirect.h"
+
+/* Local declarations */
+#ifdef LABELED_NET
+static int set_context_from_socket( const struct service_config *scp, int fd );
+#endif
+
 
 /*
  * This function is running in the new process
@@ -140,6 +151,20 @@ void exec_server( const struct server *serp )
       rl.rlim_cur = SC_RLIM_STACK( scp );
       rl.rlim_max = SC_RLIM_STACK( scp );
       (void) setrlimit( RLIMIT_STACK, &rl );
+   }
+#endif
+
+   /*
+      Set the context if the option was given
+   */
+#ifdef LABELED_NET
+   if (SC_LABELED_NET(scp))
+   {
+      if (set_context_from_socket( scp, descriptor ) < 0) {
+         msg( LOG_ERR, func,
+             "Changing process context failed for %s", SC_ID( scp )) ;
+         _exit( 1 ) ;
+      }
    }
 #endif
 
@@ -461,3 +486,83 @@ void child_exit(void)
    }
 }
 
+#ifdef LABELED_NET
+static int set_context( security_context_t cntx )
+{
+   const char *func = "set_context" ;
+
+   int retval = setexeccon(cntx);
+
+   if (debug.on)
+   {
+      security_context_t current_exec_context;
+      if ( getexeccon( &current_exec_context ) == 0 ) {
+
+         msg( LOG_DEBUG, func, 
+	   "current security exec context now: %s", 
+	   current_exec_context ? current_exec_context : "unknown" );
+
+         freecon( current_exec_context );
+      } 
+      else
+         msg( LOG_DEBUG, func, "Error calling getexeccon: %m" );
+   }
+
+   return retval;
+}
+
+static int set_context_from_socket( const struct service_config *scp, int fd )
+{
+   security_context_t curr_context = NULL;
+   security_context_t peer_context = NULL;
+   security_context_t exec_context = NULL;
+   context_t bcon = NULL;
+   context_t pcon = NULL;
+   security_context_t new_context = NULL;
+   security_context_t new_exec_context = NULL;
+   int retval = -1;
+   const char *exepath = NULL;
+
+   if (getcon(&curr_context) < 0)
+     goto fail;
+   
+   if (getpeercon(fd, &peer_context) < 0)
+     goto fail;
+
+   exepath = SC_SERVER_ARGV( scp )[0];
+   if (getfilecon(exepath, &exec_context) < 0)
+     goto fail;
+
+   if (!(bcon = context_new(curr_context)))
+     goto fail;
+
+   if (!(pcon = context_new(peer_context)))
+     goto fail;
+
+   if (!context_range_get(pcon))
+     goto fail;
+   
+   if (context_range_set(bcon, context_range_get(pcon)))
+     goto fail;
+
+   if (!(new_context = context_str(bcon)))
+     goto fail;
+   
+   if (security_compute_create(new_context, exec_context, SECCLASS_PROCESS,
+                               &new_exec_context) < 0)
+     goto fail;
+
+   retval = set_context(new_exec_context);
+
+   freecon(new_exec_context);
+
+ fail:
+   context_free(pcon);
+   context_free(bcon);
+   freecon(exec_context);   
+   freecon(peer_context);
+   freecon(curr_context);
+
+   return retval;
+}
+#endif

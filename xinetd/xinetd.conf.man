@@ -145,6 +145,9 @@ Sets the service to be an IPv4 service (AF_INET).
 .B IPv6
 Sets the service to be an IPv6 service (AF_INET6), if IPv6 is available on the system.
 .TP
+.B LABELED
+The LABELED flag will tell xinetd to change the child processes SE Linux context to match that of the incoming connection as it starts the service. This only works for external tcp non-waiting servers and is an error if applied to an internal, udp, or tcp-wait server.
+.TP
 .B REUSE
 The REUSE flag is deprecated.  All services now implicitly use the REUSE flag.
 .RE
