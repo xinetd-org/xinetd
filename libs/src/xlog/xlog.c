@@ -216,6 +216,7 @@ int xlog_control( xlog_h pxlog, xlog_cmd_e cmd, ... )
 		
 		case XLOG_CALLBACK:
 			xp->xl_callback = va_arg( ap, voidfunc ) ;
+			xp->xl_callback_arg = va_arg( ap, void * );
 			break ;
 			
 		case XLOG_GETFLAG:
