@@ -556,17 +556,16 @@ static void tcpmux_handler( const struct server *serp )
          /*  Found the pointer. Validate its type.
           */
          scp = SVC_CONF( sp );
-/*
-         if ( ! SVC_IS_MUXCLIENT( sp ) )
+
+         if ( ! SVC_IS_MUXCLIENT( sp ) && ! SVC_IS_MUXPLUSCLIENT( sp ) )
          {
             if ( debug.on )
             {
                msg(LOG_DEBUG, "tcpmux_handler", "Non-tcpmux service name: %s.",
                    svc_name);
             }
-            exit(0);
+            continue;
          }
-*/
 
          /*  Send the accept string if we're a PLUS (+) client.
           */
@@ -593,6 +592,19 @@ static void tcpmux_handler( const struct server *serp )
          msg(LOG_DEBUG, "tcpmux_handler", "Service name %s not found.",
              svc_name);
       }
+
+      /*  If a service was not found, we should say so. */
+      if ( Swrite( descriptor, TCPMUX_NOT_FOUND, sizeof( TCPMUX_NOT_FOUND ) ) !=
+           sizeof ( TCPMUX_NOT_FOUND ) )
+      {
+         msg(LOG_ERR, "tcpmux_handler", "Not found write failed for %s.",
+             svc_name);
+         exit(0);
+      }
+       
+      /*  Flush and exit, nothing to do */
+      Sflush( descriptor );
+      Sclose( descriptor );
       exit(0);
    }
 

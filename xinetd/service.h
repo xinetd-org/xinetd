@@ -92,6 +92,7 @@ struct service
 #define SVC_IS_TCPMUX( sp )      ( SC_IS_TCPMUX( SVC_CONF ( sp ) ) )
 
 #define TCPMUX_ACK "+Go\r\n"
+#define TCPMUX_NOT_FOUND "-Service name not found\r\n"
 /*
  * Predicate checking macros
  */

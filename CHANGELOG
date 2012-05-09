@@ -931,3 +931,4 @@ devel
 		interface.
 	Change version number to 2.3.15devel, indicating an interim
 		developmental source snapshot.
+	Merge patch from RedHat regarding CVE-2012-0862
