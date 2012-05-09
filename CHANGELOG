@@ -908,7 +908,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 	Remove the <1024 port check for UDP builtin services.
 		This check has been rather antiquated for years.
 
-devel
+2.3.15
 	If the address we're binding to is a multicast address, do the
 		multicast join.
 	Merge the Fedora patch to turn off libwrap processing on tcp
@@ -931,4 +931,4 @@ devel
 		interface.
 	Change version number to 2.3.15devel, indicating an interim
 		developmental source snapshot.
-	Merge patch from RedHat regarding CVE-2012-0862
+	Merge patch from Thomas Swan regarding CVE-2012-0862
