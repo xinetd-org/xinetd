@@ -219,7 +219,7 @@ static char *next_word( const char *description )
 	return( word ) ;
 }
 
-static char *make_string_cat( register unsigned count, ... )
+static char *make_string_cat( const unsigned count, ... )
 {
    va_list ap ;
    register unsigned i ;
@@ -268,7 +268,7 @@ static char *make_string_cat( register unsigned count, ... )
    return newstring ;
 }
 
-static char *make_pathname( register unsigned count, ... )
+static char *make_pathname( const unsigned count, ... )
 {
    va_list ap ;
    register unsigned i ;
