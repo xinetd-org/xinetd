@@ -662,7 +662,7 @@ static status_e parse_entry( entry_e entry_type,
    char               *line ;
    char               *attr_name ;
    enum assign_op      op ;
-   const char         *func = "get_attributes" ;
+   const char         *func = "parse_entry" ;
 
    if ( ! attr_values && ( attr_values = pset_create( 10, 10 ) ) == NULL )
    {
