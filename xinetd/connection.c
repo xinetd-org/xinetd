@@ -165,12 +165,14 @@ connection_s *conn_new( struct service *sp )
  */
 void conn_free( connection_s *cp, int release_mem )
 {
-   struct service *sp = cp->co_sp ;
+   struct service *sp ;
 
    if( cp == NULL )
       return;
       if( debug.on )
          msg( LOG_INFO, "conn_free", "freeing connection") ;
+
+   sp = cp->co_sp ;
 
    if( (SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM) && (SVC_IS_ACTIVE( sp )) )
       drain( cp->co_descriptor ) ;
