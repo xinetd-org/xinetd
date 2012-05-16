@@ -892,7 +892,7 @@ status_e cnf_get( struct configuration *confp )
 {
    int config_fd ;
    struct service_config *scp ;
-   const char *func = "get_configuration" ;
+   const char *func = "cnf_get" ;
 
    if ( cnf_init( confp, &config_fd, &iter ) == FAILED )
       return( FAILED ) ;
