@@ -190,7 +190,7 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
       nvp = nv_find_value( service_types, "RPC" );
       if ( nvp == NULL )
       {
-         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", name ) ;
+         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", SC_NAME(scp) ) ;
          pset_destroy(args);
          sc_free(scp);
          return -1;
@@ -281,7 +281,7 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
       nvp = nv_find_value( service_types, "INTERNAL" );
       if ( nvp == NULL )
       {
-         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", name ) ;
+         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", SC_NAME(scp) ) ;
          pset_destroy(args);
          sc_free(scp);
          return -1;
@@ -359,7 +359,7 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
       nvp = nv_find_value( service_flags, "REUSE" );
       if ( nvp == NULL )
       {
-         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", name ) ;
+         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", SC_NAME(scp) ) ;
          pset_destroy(args);
          sc_free(scp);
          return -1;
@@ -370,7 +370,7 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
       nvp = nv_find_value( service_flags, "NOLIBWRAP" );
       if ( nvp == NULL )
       {
-         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", name ) ;
+         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", SC_NAME(scp) ) ;
          pset_destroy(args);
          sc_free(scp);
          return -1;
@@ -381,7 +381,7 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
       nvp = nv_find_value( service_flags, "NAMEINARGS" );
       if ( nvp == NULL )
       {
-         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", name ) ;
+         parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", SC_NAME(scp) ) ;
          pset_destroy(args);
          sc_free(scp);
          return (-1);

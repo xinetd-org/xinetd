@@ -108,7 +108,7 @@ static void si_mux(void)
       n_ready = int_select( mask_max+1, &read_mask ) ;
 
       if ( n_ready == -1 )
-         return ;
+         goto free_iter ;
       
       if ( FD_ISSET( INT_REMOTE( ip ), &read_mask ) )
       {
@@ -136,9 +136,9 @@ static void si_mux(void)
                                                          chp->ch_local_socket ) ;
 #endif
             if ( handle_io( iter, chp, &socket_mask, tcp_local_to_remote ) == FAILED )
-               return ;
+               goto free_iter ;
             if ( --n_ready == 0 )
-               break ;
+               goto free_iter ;
          }
 
          if ( FD_ISSET( chp->ch_remote_socket, &read_mask ) )
@@ -149,12 +149,15 @@ static void si_mux(void)
 #endif
             if ( handle_io( iter, chp,
                         &socket_mask, tcp_remote_to_local ) == FAILED )
-               return ;
+               goto free_iter ;
             if ( --n_ready == 0 )
-               break ;
+               goto free_iter ;
          }
       }
    }
+free_iter:
+   psi_destroy( iter ) ;
+   return ;
 }
 
 
