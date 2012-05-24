@@ -183,7 +183,8 @@ void conn_free( connection_s *cp, int release_mem )
    }
    cp->co_sp = NULL;
 
-   CONN_CLOSE( cp ) ;
+   if ( CONN_DESCRIPTOR( cp ) > 0 )
+      CONN_CLOSE( cp ) ;
 
    CLEAR( *cp ) ;
    if (release_mem) {

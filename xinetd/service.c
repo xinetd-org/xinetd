@@ -908,7 +908,10 @@ void close_all_svc_descriptors(void)
    /* Have to close all other descriptors here */
    iter = psi_create( SERVICES( ps ) ) ;
    if ( iter == NULL )
+   {
         out_of_memory( "close_all_svc_descriptors" ) ;
+        exit( 1 );
+   }
 
    for ( osp = SP( psi_start( iter ) ) ; osp ; osp = SP( psi_next( iter ) ) )
         (void) Sclose( SVC_FD( osp ) ) ;

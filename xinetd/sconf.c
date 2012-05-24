@@ -153,6 +153,11 @@ struct service_config *sc_make_special( const char *service_name,
    if ( SC_ID(scp) == NULL )
    {
       out_of_memory( func ) ;
+      /*
+       * Since we're returning instead of exiting, it's probably a good idea to
+       * free scp
+       */
+      sc_free( scp );
       return( NULL ) ;
    }
    SC_SPECIFY( scp, A_ID ) ;
