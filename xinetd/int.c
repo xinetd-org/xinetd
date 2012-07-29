@@ -109,7 +109,8 @@ static int get_server_socket( struct intercept_s *ip )
    struct service *sp = SERVER_SERVICE( INT_SERVER( ip ) ) ;
    union xsockaddr *sinp = INT_LOCALADDR( ip ) ;
    int sd ;
-   socklen_t size ;
+   socklen_t size = AF_UNIX ;
+
    const char *func = "get_server_socket" ;
 
    if( SC_IPV6(SVC_CONF(sp)) ) {
