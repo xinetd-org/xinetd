@@ -2,19 +2,19 @@
 .SH NAME
 itox \- converts inetd.conf style configuration files to xinetd.conf
 .SH SYNOPSIS
-itox [-daemon_dir <dir_name>]
+itox [\-daemon_dir <dir_name>]
 .SH DESCRIPTION
 .B itox
 takes on its standard input inetd.conf style entries and dumps to
 standard output the corresponding xinetd.conf style entries.
 .SH OPTIONS
 .TP
-.I -daemon_dir <dir_name>
+.I \-daemon_dir <dir_name>
 If you use tcpd, this option specifies the directory where all the daemons are.
 You must specify this option if you use tcpd and the daemon file names are not
 absolute.
 .SH EXAMPLES
-itox -daemon_dir /usr/sbin < inetd.conf > xinetd.conf
+itox \-daemon_dir /usr/sbin < inetd.conf > xinetd.conf
 .SH AUTHOR
 xinetd and itox were written by Panagiotis Tsirigotis.
 .sp
