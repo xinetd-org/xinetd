@@ -38,6 +38,7 @@ struct read_only_state
    int         cc_interval ;          /* # of seconds the cc gets invoked.   */
    const char *pid_file ;             /* where the pidfile is located        */
    const char *config_file ;
+   const char *interface ;
    int         is_superuser ;
    char      **Argv ;
    int         Argc ;

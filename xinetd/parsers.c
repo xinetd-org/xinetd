@@ -199,6 +199,17 @@ status_e rpc_number_parser( pset_h values,
    return( OK ) ;
 }
 
+status_e interface_parser( pset_h values, 
+                          struct service_config *scp, 
+                           enum assign_op op ) 
+{
+	char * device = (char *) pset_pointer( values, 0 ) ;
+	SC_BIND_DEVICE( scp ) = new_string( device );	
+	
+	// TODO: Check that the device actually exists
+	
+	return ( OK ) ;
+}
 
 status_e protocol_parser( pset_h values, 
                           struct service_config *scp, 

@@ -248,6 +248,15 @@ static status_e service_fill( struct service_config *scp,
          M_SET(SC_XFLAGS(scp), SF_IPV4);
    }
 
+   if ( ! SC_BIND_DEVICE(scp) ) {
+	   if ( ps.ros.interface ) {
+		   SC_BIND_DEVICE(scp) = new_string( ps.ros.interface );
+	   }
+	   else if ( SC_BIND_DEVICE(def) ) {
+			SC_BIND_DEVICE(scp) = new_string( SC_BIND_DEVICE(scp) );
+	   }
+   }
+   
    if (SC_ORIG_BIND_ADDR(scp))
    {
       /*

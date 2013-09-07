@@ -249,6 +249,10 @@ static status_e activate_normal( struct service *sp )
    int                     v6on           = 0;
 #endif
 
+   if ( SC_BIND_DEVICE( scp ) )
+      if( setsockopt(SVC_FD(sp), SOL_SOCKET, SO_BINDTODEVICE, scp->sc_bind_device, strlen( scp->sc_bind_device ) ) )
+	     msg( LOG_WARNING, func, "service %s, setsockopt SO_BINDTODEVICE: %m", SVC_ID(sp));
+   
    if( SC_BIND_ADDR(scp) != NULL )
       memcpy(&tsin, SC_BIND_ADDR(scp), sin_len);
    else

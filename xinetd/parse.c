@@ -47,6 +47,7 @@ static const struct attribute service_attributes[] =
 {
    { "socket_type",    A_SOCKET_TYPE,    1,  socket_type_parser     },
    { "protocol",       A_PROTOCOL,       1,  protocol_parser        },
+   { "interface",      A_DEVICE,         1,  interface_parser       },
    { "wait",           A_WAIT,           1,  wait_parser            },
    { "user",           A_USER,           1,  user_parser            },
    { "group",          A_GROUP,          1,  group_parser           },

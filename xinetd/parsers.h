@@ -12,6 +12,7 @@
 #include "parse.h"
 
 status_e socket_type_parser(pset_h, struct service_config *, enum assign_op) ;
+status_e interface_parser(pset_h, struct service_config *, enum assign_op);
 status_e protocol_parser(pset_h, struct service_config *, enum assign_op) ;
 status_e wait_parser(pset_h, struct service_config *, enum assign_op) ;
 status_e user_parser(pset_h, struct service_config *, enum assign_op) ;

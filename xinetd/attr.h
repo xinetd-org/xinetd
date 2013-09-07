@@ -61,6 +61,7 @@
 #define A_DISABLED         43
 #define A_MDNS             44
 #define A_LIBWRAP          45
+#define A_DEVICE           46
 
 /*
  * SERVICE_ATTRIBUTES is the number of service attributes and also

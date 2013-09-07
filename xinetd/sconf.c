@@ -81,6 +81,7 @@ void sc_free( struct service_config *scp )
    COND_FREE( SC_PROTONAME(scp) ) ;
    COND_FREE( SC_SERVER(scp) ) ;
    COND_FREE( (char *)SC_REDIR_ADDR(scp) ) ;
+   COND_FREE( (char *)SC_BIND_DEVICE(scp) ) ;
    COND_FREE( (char *)SC_BIND_ADDR(scp) ) ;
    COND_FREE( (char *)SC_ORIG_BIND_ADDR(scp) ) ;
    COND_FREE( (char *)SC_BANNER(scp) ) ;
@@ -300,7 +301,7 @@ void sc_dump( struct service_config *scp,
       
    if ( SC_SPECIFIED( scp, A_GROUP ) )
       tabprint( fd, tab_level+1, "group = %d\n", SC_GID(scp) ) ;
-      
+   
    if ( SC_SPECIFIED( scp, A_GROUPS ) )
    {
       if (SC_GROUPS(scp) == 1)
@@ -323,6 +324,9 @@ void sc_dump( struct service_config *scp,
       tabprint( fd, tab_level+1, "PER_SOURCE = %d\n", 
          SC_PER_SOURCE(scp) );
 
+   if ( SC_BIND_DEVICE(scp) )
+	  tabprint( fd, tab_level+1, "Interface = %s\n", SC_BIND_DEVICE(scp) ) ;
+      
    if ( SC_SPECIFIED( scp, A_BIND ) ) {
 	   if (  SC_BIND_ADDR(scp) ) {
 		  char bindname[NI_MAXHOST];
@@ -521,6 +525,14 @@ bool_int sc_different_confs( struct service_config *scp1,
       if ( ! SAME_NONRPC( scp1, scp2 ) )
          return( TRUE ) ;
    }
+   
+   if ( SC_BIND_DEVICE(scp1) && ! SC_BIND_DEVICE(scp2) ||
+		 ! SC_BIND_DEVICE(scp1 ) && SC_BIND_DEVICE(scp2) ||
+		   SC_BIND_DEVICE(scp1) && SC_BIND_DEVICE(scp2) && strcmp( SC_BIND_DEVICE(scp1), SC_BIND_DEVICE(scp2) ) ) 
+   {
+      return TRUE;
+   }
+   
    return( FALSE ) ;
 }
 

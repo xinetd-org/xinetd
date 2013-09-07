@@ -126,6 +126,7 @@ struct service_config
    struct environment   sc_environment ;
    const builtin_s     *sc_builtin ;
    union xsockaddr     *sc_redir_addr ;
+   char                *sc_bind_device ;
    char                *sc_orig_bind_addr ; /* used only when dual stack */
    union xsockaddr     *sc_bind_addr ;
    boolean_e            sc_v6only;
@@ -201,6 +202,7 @@ struct service_config
 #define SC_DISABLED( scp )       (scp)->sc_disabled
 #define SC_BUILTIN( scp )        (scp)->sc_builtin
 #define SC_REDIR_ADDR( scp )     (scp)->sc_redir_addr
+#define SC_BIND_DEVICE( scp )    (scp)->sc_bind_device
 #define SC_ORIG_BIND_ADDR( scp ) (scp)->sc_orig_bind_addr
 #define SC_BIND_ADDR( scp )      (scp)->sc_bind_addr
 #define SC_BANNER( scp )         (scp)->sc_banner

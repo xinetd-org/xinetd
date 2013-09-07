@@ -58,6 +58,12 @@ int opt_recognize( int argc, char *argv[] )
                usage() ;
             ps.ros.config_file = argv[ arg ];
          }
+         else if ( strcmp( &argv[ arg ][ 1 ], "interface" ) == 0 ) 
+         {
+            if ( ++arg == argc )
+               usage() ;
+            ps.ros.interface = new_string( argv[ arg ] );
+         }
          else if ( strcmp( &argv[ arg ][ 1 ], "filelog" ) == 0 ) 
          {
             if ( ++arg == argc )
@@ -144,7 +150,7 @@ int opt_recognize( int argc, char *argv[] )
 
 static void usage(void)
 {
-   Sprint( 2, "Usage: %s [-d] [-f config_file] [-filelog filename] [-syslog facility] [-reuse] [-limit proc_limit] [-pidfile filename] [-logprocs limit] [-shutdownprocs limit] [-cc interval]\n", program_name ) ;
+   Sprint( 2, "Usage: %s [-d] [-f config_file] [-filelog filename] [-syslog facility] [-reuse] [-limit proc_limit] [-pidfile filename] [-logprocs limit] [-shutdownprocs limit] [-cc interval] [-interface device]\n", program_name ) ;
    exit( 1 ) ;
 }
 
