@@ -489,6 +489,64 @@ static void dgram_chargen( const struct server *serp )
    (void) sendto( fd, buf, (size_t)(p-buf), 0, SA( &lsin ), sin_len ) ;
 }
 
+/*  Handle a help request for the tcpmux service.
+ *  It's helpful to remember here that we are now a child of the original
+ *  xinetd process and were called after the first line of input was
+ *  read from the tcpmux_server routine.
+ *  Serp still points to an actual tcpmux 'server', or at least the
+ *   service pointer of serp is valid. 
+ */
+
+static void tcpmux_help( const struct server *serp )
+{
+   char      buff[ BUFFER_SIZE ] ;
+   int       cc ;
+   int       descriptor = SERVER_FD( serp ) ;
+   const     struct service *svc = SERVER_SERVICE( serp ) ;
+   unsigned  u;
+   struct    service *sp = NULL;
+   struct    server server, *nserp;
+   struct    service_config *scp = NULL;
+
+   /*  Search the services for the a match on name.
+    */
+   for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )
+   {
+      sp = SP( pset_pointer( SERVICES( ps ), u ) ) ;
+
+      if ( ! SVC_IS_MUXCLIENT( sp ) )
+      {
+         if ( debug.on )
+         {
+            msg( LOG_DEBUG, "tcpmux_handler",
+                     "help skipping non-tcpmux service: %s.",
+                     SC_NAME( SVC_CONF ( sp ) ) );
+            continue;
+         }
+      }
+      
+      /* only list tcpmux services with the TCPMUXHELP flag
+        */
+      if ( ! SVC_MUXHELP( sp ) )
+      {
+            msg( LOG_DEBUG, "tcpmux_handler", "help skipping unpublished service: %s.", SC_NAME( SVC_CONF ( sp ) ) );
+            continue;
+      }
+  
+      msg( LOG_DEBUG, "tcpmux_handler", "help listing: %s",
+      SC_NAME( SVC_CONF( sp ) ) );
+
+      strncpy( buff, SC_NAME( SVC_CONF( sp ) ), BUFFER_SIZE - 2 );
+      strcat( buff, TCPMUX_CRLF );
+      if ( Swrite( descriptor, buff, strlen( buff ) ) != strlen( buff ) )
+      {
+         msg(LOG_ERR, "tcpmux_handler", "write failed for help.");
+         exit(0);
+      }
+
+      continue;
+   }
+}
 
 /*  Handle a request for a tcpmux service. 
  *  It's helpful to remember here that we are now a child of the original
@@ -544,9 +602,19 @@ static void tcpmux_handler( const struct server *serp )
           cc, svc_name);
    }
 
+   /*  RFC 1078: help is a reserved service name
+    */
+   if ( strcasecmp( svc_name, "help" ) == 0 )
+   {
+      msg(LOG_DEBUG, "tcpmux_handler", "help requested");
+      tcpmux_help( serp );
+      Sflush( descriptor );
+      Sclose( descriptor );
+      exit(0);
+   }
+
    /*  Search the services for the a match on name.
     */
-
    for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )
    {
       sp = SP( pset_pointer( SERVICES( ps ), u ) ) ;
@@ -557,7 +625,7 @@ static void tcpmux_handler( const struct server *serp )
           */
          scp = SVC_CONF( sp );
 
-         if ( ! SVC_IS_MUXCLIENT( sp ) && ! SVC_IS_MUXPLUSCLIENT( sp ) )
+         if ( ! SVC_IS_MUXCLIENT( sp ) )
          {
             if ( debug.on )
             {
@@ -569,7 +637,6 @@ static void tcpmux_handler( const struct server *serp )
 
          /*  Send the accept string if we're a PLUS (+) client.
           */
-
          if ( SVC_IS_MUXPLUSCLIENT( sp ) )
          {
             if ( Swrite( descriptor, TCPMUX_ACK, sizeof( TCPMUX_ACK ) ) !=
@@ -585,6 +652,17 @@ static void tcpmux_handler( const struct server *serp )
       continue;  /*  Keep looking */
    }
 
+   /* Stop processing and shutdown if help was requested
+    */
+   if ( strcasecmp( svc_name, "help" ) == 0 )
+   {
+      Sflush( descriptor );
+      Sclose( descriptor );
+      exit(0);
+   }
+
+   /* We were unable to find a matching service
+    */
    if ( u >= pset_count( SERVICES( ps ) ) )
    {
       if ( debug.on )
