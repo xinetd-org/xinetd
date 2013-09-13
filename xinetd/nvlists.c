@@ -48,6 +48,7 @@ const struct name_value service_flags[] =
       { "IPv4",                       SF_IPV4                },
       { "IPv6",                       SF_IPV6                },
       { "LABELED",                    SF_LABELED             },
+      { "MUXHELP",                    SF_TCPMUXHELP          },
       { CHAR_NULL,                    0                      }
    } ;
 
