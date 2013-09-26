@@ -559,6 +559,7 @@ static void tcpmux_help( const struct server *serp )
 static void tcpmux_handler( const struct server *serp )
 {
    char      svc_name[ BUFFER_SIZE ] ;
+   char      svc_buff[ 2 ] ;
    int       cc ;
    int       descriptor = SERVER_FD( serp ) ;
    const     struct service *svc = SERVER_SERVICE( serp ) ;
@@ -571,22 +572,33 @@ static void tcpmux_handler( const struct server *serp )
 
    /*  Read in the name of the service in the format "svc_name\r\n".
     *
-    *  XXX: should loop on partial reads (could probably use Sread() if
-    *  it wasn't thrown out of xinetd source code a few revisions back).
+    *  Scan for the first \r\n, one byte at time.  It's the only way.
     */
-   do
+   memset( &svc_buff[0], 0, sizeof( svc_buff ) );
+   memset( &svc_name[0], 0, sizeof( svc_name ) );
+   while(1)
    {
-      cc = read( descriptor, svc_name, sizeof( svc_name ) ) ;
-   } while (cc == -1 && errno == EINTR);
+      cc = read( descriptor, svc_buff, 1 );
+      if ( -1 == cc )
+      {
+         if (errno == EINTR)
+            continue;
+         break;
+      }
+      strcat( svc_name, svc_buff );
+      if ( strlen( svc_name ) > 2 && svc_name[strlen( svc_name )-2] == '\r' && svc_name[strlen( svc_name )-1] == '\n' )
+         break;
+      if ( strlen( svc_name ) >= ( BUFFER_SIZE-1) )
+         break;
+   }
 
-   if ( cc <= 0 )
+   if ( 2 > strlen( svc_name ) )
    {
       msg(LOG_ERR, "tcpmux_handler", "read failed");
       exit(0);
    }
 
-   if ( ( cc <= 2 ) ||
-        ( ( svc_name[cc - 1] != '\n' ) || ( svc_name[cc - 2] != '\r' ) ) )
+   if ( svc_name[strlen( svc_name ) - 1] != '\n' || svc_name[strlen( svc_name ) - 2] != '\r' )
    {
       if ( debug.on )
          msg(LOG_DEBUG, "tcpmux_handler", "Invalid service name format.");
@@ -594,7 +606,7 @@ static void tcpmux_handler( const struct server *serp )
       exit(0);
    }
 
-   svc_name[cc - 2] = '\0';  /*  Remove \r\n for compare */
+   svc_name[strlen( svc_name ) - 2] = '\0';  /*  Remove \r\n for compare */
 
    if ( debug.on )
    {
