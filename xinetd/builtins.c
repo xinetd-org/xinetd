@@ -574,8 +574,8 @@ static void tcpmux_handler( const struct server *serp )
     *
     *  Scan for the first \r\n, one byte at time.  It's the only way.
     */
-   memset( &svc_buff[0], 0, sizeof( svc_buff ) );
-   memset( &svc_name[0], 0, sizeof( svc_name ) );
+   memset( &svc_buff[0], '\0', sizeof( svc_buff ) );
+   memset( &svc_name[0], '\0', sizeof( svc_name ) );
    while(1)
    {
       cc = read( descriptor, svc_buff, 1 );
