@@ -87,12 +87,14 @@ struct service
 #define SVC_IS_SUSPENDED( sp )   ( (sp)->svc_state == SVC_SUSPENDED )
 #define SVC_IS_AVAILABLE( sp )   ( SVC_IS_ACTIVE(sp) || SVC_IS_SUSPENDED(sp) )
 #define SVC_IS_DISABLED( sp )    ( (sp)->svc_state == SVC_DISABLED )
-#define SVC_IS_MUXCLIENT( sp )   ( SC_IS_MUXCLIENT( SVC_CONF ( sp ) ) )
+#define SVC_IS_MUXCLIENT( sp )   ( SC_IS_MUXCLIENT( SVC_CONF ( sp ) ) || SC_IS_MUXPLUSCLIENT( SVC_CONF ( sp ) ) )
 #define SVC_IS_MUXPLUSCLIENT(sp) ( SC_IS_MUXPLUSCLIENT( SVC_CONF ( sp ) ) )
 #define SVC_IS_TCPMUX( sp )      ( SC_IS_TCPMUX( SVC_CONF ( sp ) ) )
+#define SVC_MUXHELP(sp)          ( SC_MUXHELP( SVC_CONF ( sp ) ) )
 
 #define TCPMUX_ACK "+Go\r\n"
 #define TCPMUX_NOT_FOUND "-Service name not found\r\n"
+#define TCPMUX_CRLF "\r\n"
 /*
  * Predicate checking macros
  */

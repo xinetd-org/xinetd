@@ -59,6 +59,7 @@
 #define SF_IPV4         10
 #define SF_IPV6         11
 #define SF_LABELED      12
+#define SF_TCPMUXHELP   13
 
 /*
  * Values for log options
@@ -241,6 +242,7 @@ struct service_config
 #define SC_IPV4( scp )            M_IS_SET( (scp)->sc_xflags, SF_IPV4 )
 #define SC_IPV6( scp )            M_IS_SET( (scp)->sc_xflags, SF_IPV6 )
 #define SC_LABELED_NET( scp )     M_IS_SET( (scp)->sc_xflags, SF_LABELED )
+#define SC_MUXHELP( scp )         M_IS_SET( (scp)->sc_xflags, SF_TCPMUXHELP )
 
 #define SC_IS_RPC( scp )         ( M_IS_SET( (scp)->sc_type, ST_RPC ) )
 #define SC_IS_INTERNAL( scp )    ( M_IS_SET( (scp)->sc_type, ST_INTERNAL ) )
