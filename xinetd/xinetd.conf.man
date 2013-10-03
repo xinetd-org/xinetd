@@ -4,7 +4,7 @@
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
-.TH XINETD.CONF 5 "14 June 2001"
+.TH XINETD.CONF 5 "12 September 2013"
 .\" *************************** NAME *********************************
 .SH NAME
 xinetd.conf \- Extended Internet Services Daemon configuration file
@@ -147,6 +147,9 @@ Sets the service to be an IPv6 service (AF_INET6), if IPv6 is available on the s
 .TP
 .B LABELED
 The LABELED flag will tell xinetd to change the child processes SE Linux context to match that of the incoming connection as it starts the service. This only works for external tcp non-waiting servers and is an error if applied to an internal, udp, or tcp-wait server.
+.TP
+.B PUBLISH
+The PUBLISH flag will tell xinetd to list the service when the help command is issued to the TCPMUX server.  Only TCPMUX services with the PUBLISH flag will be listed when the help command is issued to the internal TCPMUX server.
 .TP
 .B REUSE
 The REUSE flag is deprecated.  All services now implicitly use the REUSE flag.
@@ -777,12 +780,14 @@ have no limitation in the number of
 .\" *********************** TCPMUX Services ****************************
 .SH "TCPMUX Services"
 .LP
-\fBxinetd\fP supports TCPMUX services that conform to RFC 1078. These services 
-may not have a well-known port associated with them, and can be accessed via 
-the TCPMUX well-known port.
+\fBxinetd\fP supports TCPMUX services that conform to RFC 1078. These
+services may not have a well-known port associated with them, and can
+be accessed via the TCPMUX well-known port.  \fBxinetd\fP implements
+the TCPMUX \fIhelp\fP command which will list only TCPMUX services 
+which also contain the \fBPUBLISH\fP flag.
 .LP
 For each service that is to be accessed via TCPMUX, a service entry in
-\fB/etc/xinetd.conf\fP or in a configuration file in an \fBincludedir\fP 
+\fB/etc/xinetd.conf\fP or in a configuration file in an \fBincludedir\fP
 directory must exist.
 .LP
 The \fIservice_name\fP field (as defined above for each service in any 
@@ -798,6 +803,11 @@ type is \fBTCPMUXPLUS\fP, \fBxinetd\fP will handle the initial protocol
 handshake (as defined in RFC 1078) with the calling process before initiating
 the service. If the type is \fBTCPMUX\fP, the server that is started is
 responsible for performing the handshake.
+.LP
+The \fIflag\fP field should also include \fBPUBLISH\fP if the service
+is to be listed when the help command is issued the TCPMUX server.
+The default is not listing the service name when the help command
+is given.
 .LP
 The \fItype\fP field should also include \fBUNLISTED\fP if the service is
 not listed in a standard system file
@@ -836,6 +846,34 @@ service myorg_server
 }
 .fi
 .RE
+.PD .1v
+.RS
+.nf
+
+# this service is listed when help is called via tcpmux
+service myorg_server
+{
+.RS
+.IP disable 20
+= no
+.IP type
+= TCPMUX
+.IP socket_type
+.IP flags
+= PUBLISH
+= stream
+.IP protocol
+= tcp
+.IP wait
+= no
+.IP user
+= root
+.IP server
+= /usr/etc/my_server_exec
+.RE
+}
+.fi
+.RE
 .PD
 .LP
 Besides a service entry for each service that can be accessed
@@ -846,13 +884,13 @@ sample:
 .RS
 .nf
 
-service tcpmux
+service tcpmux-server
 {
 .RS
 .IP type 20
 = INTERNAL
 .IP id
-= tcpmux
+= tcpmux-server
 .IP socket_type
 = stream
 .IP protocol
