@@ -11,7 +11,7 @@ AC_CACHE_VAL(xinetd_cv_type_$1,
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
