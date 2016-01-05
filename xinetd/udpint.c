@@ -210,7 +210,7 @@ static void udp_remote_to_local( struct intercept_s *ip, channel_s **chpp )
    if ( debug.on )
       msg( LOG_DEBUG, "udp_remote_to_local",
                "sending %d bytes to server on port %d",
-                     packet.size, ntohs( INT_LOCALADDR( ip )->sin_port ) ) ;
+                     packet.size, ntohs( INT_LOCALADDR( ip )->sa_in.sin_port ) ) ;
 #endif
 
    send_data( chp->ch_local_socket,
