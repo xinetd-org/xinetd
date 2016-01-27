@@ -155,7 +155,7 @@ causes an internal state dump (the default dump file is
 \fI/var/run/xinetd.dump\fP;
 to change the filename, edit \fIconfig.h\fP and recompile).
 .TP
-.B SIGIOT
+.B SIGABRT
 causes an internal consistency check to verify that the data structures
 used by the program have not been corrupted.
 When the check is completed
