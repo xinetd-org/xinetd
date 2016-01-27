@@ -175,6 +175,10 @@ default configuration file
 .B /var/run/xinetd.dump
 default dump file
 .PD
+.\" *********************** ENVIRONMENT ****************************
+.SH "ENVIRONMENT"
+.B REMOTE_HOST
+Contains the IP address of the client.
 .\" *********************** SEE ALSO ****************************
 .SH "SEE ALSO"
 .I "inetd(8),"
