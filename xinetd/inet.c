@@ -23,6 +23,10 @@
 #include "parsesup.h"
 #include "nvlists.h"
 
+extern int inetd_ipv6;
+
+static psi_h iter ;
+
 static int get_next_inet_entry( int fd, pset_h sconfs, 
                           struct service_config *defaults);
 
@@ -32,12 +36,15 @@ void parse_inet_conf_file( int fd, struct configuration *confp )
    struct service_config *default_config = CNF_DEFAULTS( confp );
    
    line_count = 0;
+   iter = psi_create (sconfs);
 
    for( ;; )
    {   
       if (get_next_inet_entry(fd, sconfs, default_config) == -2)
          break;
    }
+
+   psi_destroy(iter);
 }
 
 static int get_next_inet_entry( int fd, pset_h sconfs, 
@@ -46,7 +53,7 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
    char *p;
    str_h strp;
    char *line = next_line(fd);
-   struct service_config *scp;
+   struct service_config *scp, *tmp;
    unsigned u, i;
    const char *func = "get_next_inet_entry";
    char *name = NULL, *rpcvers = NULL, *rpcproto = NULL;
@@ -355,6 +362,21 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
          }
          SC_SERVER_ARGV(scp)[u] = p;
       }
+
+      /* Set the IPv6 flag if we were passed the -inetd_ipv6 option */
+      if ( inetd_ipv6 )
+      {
+         nvp = nv_find_value( service_flags, "IPv6" );
+         if ( nvp == NULL )
+         {
+            parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", name ) ;
+            pset_destroy(args);
+            sc_free(scp);
+            return -1;
+         }
+         M_SET(SC_XFLAGS(scp), nvp->value);
+      }
+
       /* Set the reuse flag, as this is the default for inetd */
       nvp = nv_find_value( service_flags, "REUSE" );
       if ( nvp == NULL )
@@ -405,7 +427,16 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
    SC_SPECIFY( scp, A_SOCKET_TYPE );
    SC_SPECIFY( scp, A_WAIT );
 
-   if( ! pset_add(sconfs, scp) )
+   for ( tmp = SCP( psi_start( iter ) ) ; tmp ; tmp = SCP( psi_next(iter)) ){
+      if (EQ(SC_ID(scp), SC_ID(tmp))) {
+         parsemsg(LOG_DEBUG, func, "removing duplicate service %s", SC_NAME(scp));
+         sc_free(scp);
+         scp = NULL;
+         break;
+      }
+   }
+
+   if( scp && ! pset_add(sconfs, scp) )
    {
       out_of_memory( func );
       pset_destroy(args);
@@ -414,7 +445,9 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
    }
 
    pset_destroy(args);
-   parsemsg( LOG_DEBUG, func, "added service %s", SC_NAME(scp));
+   if (scp) {
+      parsemsg( LOG_DEBUG, func, "added service %s", SC_NAME(scp));
+   }
    return 0;
 }
 

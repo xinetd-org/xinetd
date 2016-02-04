@@ -7640,7 +7640,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
@@ -7686,7 +7686,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
@@ -7732,7 +7732,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
@@ -7778,7 +7778,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
@@ -7824,7 +7824,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
@@ -7870,7 +7870,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
@@ -7916,7 +7916,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_RLIM_T
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #if HAVE_STDINT_H
