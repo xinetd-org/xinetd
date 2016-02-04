@@ -106,6 +106,12 @@ This option causes xinetd to read /etc/inetd.conf in addition to the
 standard xinetd config files.  /etc/inetd.conf is read after the
 standard xinetd config files.
 .TP
+.BI \-inetd_ipv6
+This option causes xinetd to bind to IPv6 (AF_INET6) addresses for
+inetd compatibility lines (see previous option).  This only affects
+how /etc/inetd.conf is interpreted and thus only has any effect if
+the \-inetd_compat option is also used.
+.TP
 .BI \-cc " interval"
 This option instructs
 .B xinetd

@@ -23,6 +23,8 @@
 #include "parsesup.h"
 #include "nvlists.h"
 
+extern int inetd_ipv6;
+
 static int get_next_inet_entry( int fd, pset_h sconfs, 
                           struct service_config *defaults);
 
@@ -355,6 +357,21 @@ static int get_next_inet_entry( int fd, pset_h sconfs,
          }
          SC_SERVER_ARGV(scp)[u] = p;
       }
+
+      /* Set the IPv6 flag if we were passed the -inetd_ipv6 option */
+      if ( inetd_ipv6 )
+      {
+         nvp = nv_find_value( service_flags, "IPv6" );
+         if ( nvp == NULL )
+         {
+            parsemsg( LOG_WARNING, func, "inetd.conf - Bad foo %s", name ) ;
+            pset_destroy(args);
+            sc_free(scp);
+            return -1;
+         }
+         M_SET(SC_XFLAGS(scp), nvp->value);
+      }
+
       /* Set the reuse flag, as this is the default for inetd */
       nvp = nv_find_value( service_flags, "REUSE" );
       if ( nvp == NULL )

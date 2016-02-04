@@ -30,6 +30,7 @@ int logprocs_option ;
 unsigned logprocs_option_arg ;
 int stayalive_option=0;
 char *program_name ;
+int inetd_ipv6 = 0 ;
 int inetd_compat = 0 ;
 int dont_fork = 0;
 
@@ -128,6 +129,8 @@ int opt_recognize( int argc, char *argv[] )
             fprintf(stderr, "\n");
             exit(0);
          }
+         else if ( strcmp ( &argv[ arg ][ 1 ], "inetd_ipv6" ) == 0 )
+            inetd_ipv6 = 1;
          else if ( strcmp ( &argv[ arg ][ 1 ], "inetd_compat" ) == 0 )
             inetd_compat = 1;
       }

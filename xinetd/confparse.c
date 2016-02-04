@@ -40,6 +40,7 @@
 #include "inet.h"
 #include "main.h"
 
+extern int inetd_ipv6;
 extern int inetd_compat;
 
 /*
