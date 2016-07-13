@@ -168,7 +168,8 @@ void exec_server( const struct server *serp )
    }
 #endif
 
-   (void) Sclose( descriptor ) ;
+   if ( descriptor > MAX_PASS_FD )
+      (void) Sclose( descriptor ) ;
 
 #ifndef solaris
 #if !defined(HAVE_SETSID)
