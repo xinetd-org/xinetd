@@ -383,6 +383,12 @@ void child_process( struct server *serp )
             msg( LOG_ERR, func, "Error adding REMOTE_HOST variable for %s: %m", SC_NAME(scp) );
             _exit( 1 ) ;
          }
+
+         strx_sprint(buff, sizeof(buff)-1, "REMOTE_PORT=%d", ntohs(cp->co_remote_address.sa_in.sin_port));
+         if( env_addstr(SC_ENV(scp)->env_handle, buff) != ENV_OK ) {
+            msg( LOG_ERR, func, "Error adding REMOTE_PORT variable for %s: %m", SC_NAME(scp) );
+            _exit( 1 ) ;
+         }
 #endif
          exec_server( serp ) ;
       }
