@@ -339,7 +339,9 @@ void init_daemon( int argc, char *argv[] )
 
    init_common( argc, argv ) ;
 
-   if ( ! debug.on && !dont_fork )
+   if ( !debug.on && !dont_fork ) 
+      become_daemon() ;
+   if ( debug.on && syslog_option ) //Enable debug mode in systemd
       become_daemon() ;
    create_pidfile();
    

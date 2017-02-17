@@ -51,6 +51,11 @@ servers.
 .BR \-d
 Enables debug mode. This produces a lot of debugging output, and it
 makes it possible to use a debugger on \fBxinetd\fP.
+To run debug mode in systemd, use
+.B \-syslog
+option along with
+.B \-d
+to write debug info into syslog and monitored by \fBjournald\fP.
 .TP
 .BI \-syslog " syslog_facility"
 This option enables syslog logging of \fBxinetd\fP-produced messages
@@ -61,8 +66,8 @@ The following facility names are supported:
 .I user,
 .I "local[0-7]"
 (check \fIsyslog.conf(5)\fP for their meanings).
-This option is ineffective in debug mode since all relevant messages are sent
-to the terminal.
+This option can be used when running in debug mode so log info will be
+written into syslog and monitored by journald.
 .TP
 .BI \-filelog " logfile"
 \fBxinetd\fP-produced messages will be placed in the specified file.
