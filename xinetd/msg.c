@@ -39,6 +39,20 @@ static const struct name_value priorities[] =
 
 #define DEFAULT_SYSLOG_LEVEL         LOG_INFO
 
+int find_syslog_facility(bool_int *facility_error)
+{
+   int facility = DEFAULT_SYSLOG_FACILITY ;
+   const struct name_value *nvp ;
+
+   nvp = nv_find_value( syslog_facilities, syslog_option_arg ) ;
+   if ( nvp != NULL )
+      facility = nvp->value ;
+   else
+      *facility_error = TRUE ;
+
+   return facility ;
+}
+
 const char *msg_init(void)
 {
    xlog_h      xh ;
@@ -49,9 +63,19 @@ const char *msg_init(void)
 
    if ( debug.on )
    {
-      type_of_xlog = XLOG_FILELOG ;
-      xh = xlog_create( type_of_xlog, program_name, XLOG_NOFLAGS,
-                                 "/dev/tty", O_APPEND + O_WRONLY, 0 ) ;
+      if ( syslog_option ) //Enable syslog in debug mode
+      {
+         int facility = find_syslog_facility(&facility_error) ;
+         type_of_xlog = XLOG_SYSLOG ;
+         xh = xlog_create( type_of_xlog, program_name, XLOG_NOFLAGS,
+                                       facility, DEFAULT_SYSLOG_LEVEL ) ;
+      }
+      else
+      {
+         type_of_xlog = XLOG_FILELOG ;
+         xh = xlog_create( type_of_xlog, program_name, XLOG_NOFLAGS,
+                                    "/dev/tty", O_APPEND + O_WRONLY, 0 ) ;
+      }
       debug.fd = -1 ;
    }
    else
@@ -67,15 +91,9 @@ const char *msg_init(void)
       {
          int facility = DEFAULT_SYSLOG_FACILITY ;
          
-         if ( syslog_option )
+         if ( syslog_option ) //manually assign syslog facility according to option flag
          {
-            const struct name_value *nvp ;
-
-            nvp = nv_find_value( syslog_facilities, syslog_option_arg ) ;
-            if ( nvp != NULL )
-               facility = nvp->value ;
-            else
-               facility_error = TRUE ;
+            facility = find_syslog_facility(&facility_error) ;
          }
 
          type_of_xlog = XLOG_SYSLOG ;
@@ -122,7 +140,6 @@ const char *msg_init(void)
       msg( LOG_ERR, func, "Bad syslog facility: %s", syslog_option_arg ) ;
    return( CHAR_NULL ) ;
 }
-
 
 void msg_suspend(void)
 {
