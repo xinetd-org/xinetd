@@ -235,6 +235,8 @@ static status_e activate_rpc( struct service *sp )
 
 #endif   /* ! NO_RPC */
 
+#define MAX_BIND_ATTEMPTS 10
+
 static status_e activate_normal( struct service *sp )
 {
    union xsockaddr         tsin;
@@ -245,9 +247,20 @@ static status_e activate_normal( struct service *sp )
    const char             *func           = "activate_normal" ;
    unsigned int            sin_len        = sizeof(tsin);
    int                     on             = 1;
+   int                     retries        = MAX_BIND_ATTEMPTS;
+   useconds_t              bind_retry_delay= 0;
+   char                   *brd_str        = NULL;
 #ifdef IPV6_V6ONLY
    int                     v6on           = 0;
 #endif
+
+   brd_str = getenv("XINETD_BIND_DELAY");
+   if (brd_str) {
+      bind_retry_delay = atoi(brd_str);
+      if (bind_retry_delay < 0 || bind_retry_delay > 500000) {
+         bind_retry_delay = 0;
+      }
+   }
 
    if( SC_BIND_ADDR(scp) != NULL )
       memcpy(&tsin, SC_BIND_ADDR(scp), sin_len);
@@ -298,10 +311,18 @@ static status_e activate_normal( struct service *sp )
               "setsockopt SO_KEEPALIVE failed (%m). service = %s", sid ) ;
    }
 
-   if ( bind( sd, &tsin.sa, sin_len ) == -1 )
+   while ( bind( sd, &tsin.sa, sin_len ) == -1 )
    {
       msg( LOG_ERR, func, "bind failed (%m). service = %s", sid ) ;
-      return( FAILED ) ;
+      if (retries-- > 0) {
+         msg( LOG_NOTICE, func,
+              "bind retry attempt %i", MAX_BIND_ATTEMPTS - retries);
+         if (bind_retry_delay) {
+            usleep(bind_retry_delay);
+         }
+      } else {
+         return( FAILED ) ;
+      }
    }
 
 #ifdef IN_MULTICAST
