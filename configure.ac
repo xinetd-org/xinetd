@@ -89,6 +89,7 @@ AC_CHECK_FUNCS(setsid)
 AC_CHECK_FUNCS(strftime)
 AC_CHECK_LIB(c, crypt, [:], [AC_CHECK_LIB(crypt, crypt, [LIBS="-lcrypt $LIBS" AC_DEFINE(HAVE_LIBCRYPT, 1, "") ], []) ])
 AC_CHECK_LIB(m, log10, [ LIBS="-lm $LIBS" ], [])
+AC_CHECK_LIB(crypt, main)
 
 # ========
 # Addrinfo
@@ -191,113 +192,18 @@ AC_ARG_WITH([howl],
 AS_IF([test x"$with_howl" != "xno"], [
     PKG_CHECK_MODULES([HOWL],[howl], [
         AC_DEFINE(HAVE_HOWL, 1, "")
-	AC_DEFINE(HAVE_MDNS, 1, "")
+        AC_DEFINE(HAVE_MDNS, 1, "")
     ],[])
 ])
 
-case "$target_os" in
-solaris*)
-	AC_DEFINE(N0_SIGLIST, 1, "")
-	AC_DEFINE(solaris, 1, "")
-
-	AC_MSG_CHECKING(whether to compile in loadavg)
-	AC_ARG_WITH(loadavg,
-	[  --with-loadavg[=PATH]   Compile in loadavg support.],
-	[ case "$withval" in
-		no)
-			AC_MSG_RESULT(no)
-			;;
-		yes)
-			AC_MSG_RESULT(yes)
-			AC_CHECK_LIB(kstat, main)
-			AC_CHECK_HEADER(kstat.h, [AC_DEFINE(HAVE_KSTAT_H, 1, "")])
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-		*)
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-	esac ], AC_MSG_RESULT(no) )
-	;;
-osf*)
-	LDFLAGS=-oldstyle_liblookup
-	AC_MSG_CHECKING(whether to compile in loadavg)
-	AC_ARG_WITH(loadavg,,
-	[ case "$withval" in
-		no)
-			AC_MSG_RESULT(no)
-			;;
-		yes)
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-		*)
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-	esac ], AC_MSG_RESULT(no))
-	;;
-linux*|freebsd*)
-	AC_CHECK_LIB(crypt, main)
-
-	AC_MSG_CHECKING(whether to compile in loadavg)
-	AC_ARG_WITH(loadavg,,
-	[ case "$withval" in
-		no)
-			AC_MSG_RESULT(no)
-			;;
-		yes)
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-		*)
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-	esac ], AC_MSG_RESULT(no))
-	;;
-darwin* | "Mac OS"*)
-	ac_cv_prog_RANLIB="ranlib"
-	# AC_CHECK_FUNCS doesn't look in the proper header file...
-	AC_DEFINE(HAVE_ISATTY, 1, "")
-	CFLAGS="$CFLAGS -no-cpp-precomp"
-	AC_MSG_CHECKING(whether to compile in loadavg)
-	AC_ARG_WITH(loadavg,,
-	[ case "$withval" in
-		no)
-			AC_MSG_RESULT(no)
-			;;
-		yes)
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-		*)
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG, 1, "")
-			;;
-	esac ], AC_MSG_RESULT(no))
-	;;
-*bsdi*)
-       AC_MSG_CHECKING(whether to compile in loadavg)
-       AC_ARG_WITH(loadavg,,
-       [ case "$withval" in
-               no)
-                       AC_MSG_RESULT(no)
-                       ;;
-               yes)
-                       AC_MSG_RESULT(yes)
-                       AC_DEFINE(bsdi, 1, "")
-                       AC_DEFINE(HAVE_LOADAVG, 1, "")
-                       ;;
-               *)
-                       AC_MSG_RESULT(yes)
-                       AC_DEFINE(bsdi, 1, "")
-                       AC_DEFINE(HAVE_LOADAVG, 1, "")
-                       ;;
-       esac ], AC_MSG_RESULT(no))
-       ;;
-esac
-
+AC_ARG_WITH([loadavg],
+    [AS_HELP_STRING([--without-loadavg], [Do not use loadavg for balancing])],
+    [with_loadavg="$withval"],
+    [with_loadavg=yes]
+)
+AS_IF([test x"$with_loadavg" != "xno"], [
+    AC_DEFINE(HAVE_LOADAVG, 1, "")
+])
 
 AC_MSG_CHECKING(whether to use libwrap)
 AC_ARG_WITH(libwrap,
@@ -385,5 +291,6 @@ Build configuration:
 	debug:              ${enable_debug}
 	werror:             ${enable_werror}
 	howl:               ${with_howl}
+	loadavg:            ${with_loadavg}
 ==============================================================================
 ])
