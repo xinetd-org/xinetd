@@ -108,12 +108,12 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    memcpy( &sin_bind, &sin_local, sizeof(sin_bind) ) ;
    local_port = 0;
    remote_port = 0;
-   if( sin_remote.sa.sa_family == AF_INET ) {
+   if( sin_remote.sa.sa_family == AF_INET6 ) {
       local_port = ntohs( sin_local.sa_in6.sin6_port ) ;
       remote_port = ntohs( sin_remote.sa_in6.sin6_port ) ;
       sin_contact.sa_in6.sin6_port = htons( IDENTITY_SERVICE_PORT ) ;
       sin_bind.sa_in.sin_port = 0 ;
-   } else if( sin_remote.sa.sa_family == AF_INET6 ) {
+   } else if( sin_remote.sa.sa_family == AF_INET ) {
       local_port = ntohs( sin_local.sa_in.sin_port ) ;
       remote_port = ntohs( sin_remote.sa_in.sin_port ) ;
       sin_contact.sa_in.sin_port = htons( IDENTITY_SERVICE_PORT ) ;
