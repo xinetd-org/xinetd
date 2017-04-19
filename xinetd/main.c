@@ -37,7 +37,7 @@ static void find_bad_fd(void) ;
  */
 struct program_state ps ;
 struct debug debug ;
-char program_version[] = XINETD_VERSION ;
+char program_version[] = VERSION ;
 int signals_pending[2] = {-1, -1} ;
 
 /*
@@ -87,7 +87,7 @@ int main( int argc, char *argv[] )
    "no "
 #endif
    "options compiled in."
-   , XINETD_VERSION );
+   , VERSION );
 
    msg( LOG_NOTICE, func, "Started working: %d available service%s",
       ps.rws.available_services,
