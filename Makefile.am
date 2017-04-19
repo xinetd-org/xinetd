@@ -48,7 +48,6 @@ xinetd_SOURCES = \
 	src/internals.c \
 	src/internals.h \
 	src/int.h \
-	src/itox.c \
 	src/log.c \
 	src/logctl.c \
 	src/logctl.h \
