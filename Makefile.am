@@ -5,7 +5,7 @@ EXTRA_DIST = \
 	README.md \
 	CHANGELOG
 
-AM_CFLAGS = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/misc \
 	-I$(top_srcdir)/src/portable \
@@ -76,6 +76,8 @@ itox_LDADD = \
 bin_SCRIPTS = src/xconv.pl
 
 sbin_PROGRAMS = xinetd
+xinetd_CFLAGS = \
+	$(HOWL_CFLAGS)
 xinetd_SOURCES = \
 	src/access.c \
 	src/access.h \
@@ -167,7 +169,8 @@ xinetd_LDADD = \
 	libpset.la \
 	libsio.la \
 	libstr.la \
-	libxlog.la
+	libxlog.la \
+	$(HOWL_LIBS)
 
 distclean-local:
 	rm -rf *.cache *~

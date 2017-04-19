@@ -184,21 +184,16 @@ AS_IF([test x"$GCC" = xyes], [
 ])
 
 AC_ARG_WITH([howl],
-    [AS_HELP_STRING([--with-howl=PATH], [Compile in howl support.  
-                          PATH is the prefix where howl is installed,
-                          and is not optional.])],
-   [ OLDCFLAGS=$CFLAGS; CFLAGS="-I$withval/include/howl/ $CFLAGS"; 
-     OLDLDFLAGS=$LDFLAGS; LDFLAGS="-L$withval/lib/ $LDFLAGS"; 
-     OLDCPPFLAGS=$CPPFLAGS; CPPFLAGS="-I$withval/include/howl/ $CPPFLAGS";
-     AC_CHECK_HEADER($withval/include/howl/howl.h, 
-        [AC_DEFINE(HAVE_HOWL, 1, "") AC_DEFINE(HAVE_MDNS, 1, "")], 
-        [CFLAGS=$OLDCFLAGS; LDFLAGS=$OLDLDFLAGS; CPPFLAGS=$OLDCPPFLAGS;]) 
-     AC_CHECK_LIB(howl, sw_discovery_publish, [LIBS="-lhowl $LIBS"], [
-        OLDLIBS=$LIBS; LIBS="-lpthread $LIBS"; 
-        AC_CHECK_LIB(howl, main, [LIBS="-lhowl $LIBS"],
-           [LIBS=$OLDLIBS]) 
-     ])
-   ])
+    [AS_HELP_STRING([--with-howl], [Build with howl support.])],
+    [with_howl="$withval"],
+    [with_howl=no]
+)
+AS_IF([test x"$with_howl" != "xno"], [
+    PKG_CHECK_MODULES([HOWL],[howl], [
+        AC_DEFINE(HAVE_HOWL, 1, "")
+	AC_DEFINE(HAVE_MDNS, 1, "")
+    ],[])
+])
 
 case "$target_os" in
 solaris*)
@@ -389,5 +384,6 @@ AC_MSG_NOTICE([
 Build configuration:
 	debug:              ${enable_debug}
 	werror:             ${enable_werror}
+	howl:               ${with_howl}
 ==============================================================================
 ])
