@@ -34,7 +34,7 @@ double xgetloadavg(void)
 
    if( fscanf(fd, "%lf", &ret) != 1 ) {
       perror("fscanf");
-      return -1;
+      ret = -1;
    }
 
    fclose(fd);
