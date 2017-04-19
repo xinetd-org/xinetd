@@ -27,6 +27,8 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+AC_PROG_LIBTOOL
+PKG_PROG_PKG_CONFIG([0.20])
 
 # ======================================
 # Check for various headers and settings
