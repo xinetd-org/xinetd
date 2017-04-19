@@ -20,34 +20,34 @@ AC_CHECK_FUNCS(ecvt, ,
 AC_CHECK_FUNCS(gcvt, ,
    AC_CHECK_LIB(m, gcvt))
 
-AC_CHECK_FUNC(strerror, [AC_DEFINE(HAVE_STRERROR)])
-AC_CHECK_FUNC(strcasecmp, [AC_DEFINE(HAVE_STRCASECMP)])
+AC_CHECK_FUNC(strerror, [AC_DEFINE(HAVE_STRERROR, 1, "")])
+AC_CHECK_FUNC(strcasecmp, [AC_DEFINE(HAVE_STRCASECMP, 1, "")])
 AC_CHECK_FUNC(socket, ,
    AC_CHECK_LIB(socket, socket, ,
       AC_CHECK_LIB(nsl, socket)))
 AC_CHECK_FUNC(inet_aton, ,
 	AC_CHECK_LIB(nsl, inet_aton, ,
 		AC_CHECK_LIB(socket, inet_aton, ,
-			AC_CHECK_LIB(resolv, inet_aton, ,[AC_DEFINE(NO_INET_ATON)]))))
-AC_CHECK_FUNC(setenv,[AC_DEFINE(HAVE_SETENV)])
-AC_CHECK_FUNC(strsignal, [AC_DEFINE(HAVE_STRSIGNAL)])
-AC_CHECK_LIB(c, sys_siglist, [AC_DEFINE(HAVE_SYS_SIGLIST)])
-AC_CHECK_FUNC(gai_strerror,[AC_DEFINE(HAVE_GAI_STRERROR)])
-AC_CHECK_FUNC(freeaddrinfo,[AC_DEFINE(HAVE_FREEADDRINFO)])
-AC_CHECK_FUNC(getaddrinfo,[AC_DEFINE(HAVE_GETADDRINFO)])
+			AC_CHECK_LIB(resolv, inet_aton, ,[AC_DEFINE(NO_INET_ATON, 1, "")]))))
+AC_CHECK_FUNC(setenv,[AC_DEFINE(HAVE_SETENV, 1, "")])
+AC_CHECK_FUNC(strsignal, [AC_DEFINE(HAVE_STRSIGNAL, 1, "")])
+AC_CHECK_LIB(c, sys_siglist, [AC_DEFINE(HAVE_SYS_SIGLIST, 1, "")])
+AC_CHECK_FUNC(gai_strerror,[AC_DEFINE(HAVE_GAI_STRERROR, 1, "")])
+AC_CHECK_FUNC(freeaddrinfo,[AC_DEFINE(HAVE_FREEADDRINFO, 1, "")])
+AC_CHECK_FUNC(getaddrinfo,[AC_DEFINE(HAVE_GETADDRINFO, 1, "")])
 
 AC_CHECK_HEADERS(sys/types.h sys/termios.h termios.h sys/ioctl.h sys/select.h rpc/rpc.h rpc/rpcent.h sys/file.h ftw.h machine/reg.h netdb.h)
-AC_CHECK_HEADER(sys/resource.h, [AC_DEFINE(HAVE_SYS_RESOURCE_H)])
-AC_CHECK_HEADER(arpa/inet.h, [AC_DEFINE(HAVE_ARPA_INET_H)])
-AC_CHECK_HEADER(grp.h, [AC_DEFINE(HAVE_GRP_H)])
-AC_CHECK_HEADER(rpc/pmap_clnt.h, [AC_DEFINE(HAVE_RPC_PMAP_CLNT_H)])
-AC_CHECK_HEADER(sys/socket.h, [AC_DEFINE(HAVE_SYS_SOCKET_H)])
-AC_CHECK_HEADER(sys/signal.h, [AC_DEFINE(HAVE_SYS_SIGNAL_H)])
-AC_CHECK_HEADER(crypt.h, [AC_DEFINE(HAVE_CRYPT_H)])
-AC_CHECK_HEADER(stdint.h, [AC_DEFINE(HAVE_STDINT_H)])
-AC_CHECK_HEADER(stdbool.h, [AC_DEFINE(HAVE_STDBOOL_H)])
-AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H)])
-AC_CHECK_HEADER(DNSServiceDiscovery/DNSServiceDiscovery.h, [AC_DEFINE(HAVE_DNSREGISTRATION) AC_DEFINE(HAVE_MDNS)])
+AC_CHECK_HEADER(sys/resource.h, [AC_DEFINE(HAVE_SYS_RESOURCE_H, 1, "")])
+AC_CHECK_HEADER(arpa/inet.h, [AC_DEFINE(HAVE_ARPA_INET_H, 1, "")])
+AC_CHECK_HEADER(grp.h, [AC_DEFINE(HAVE_GRP_H, 1, "")])
+AC_CHECK_HEADER(rpc/pmap_clnt.h, [AC_DEFINE(HAVE_RPC_PMAP_CLNT_H, 1, "")])
+AC_CHECK_HEADER(sys/socket.h, [AC_DEFINE(HAVE_SYS_SOCKET_H, 1, "")])
+AC_CHECK_HEADER(sys/signal.h, [AC_DEFINE(HAVE_SYS_SIGNAL_H, 1, "")])
+AC_CHECK_HEADER(crypt.h, [AC_DEFINE(HAVE_CRYPT_H, 1, "")])
+AC_CHECK_HEADER(stdint.h, [AC_DEFINE(HAVE_STDINT_H, 1, "")])
+AC_CHECK_HEADER(stdbool.h, [AC_DEFINE(HAVE_STDBOOL_H, 1, "")])
+AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H, 1, "")])
+AC_CHECK_HEADER(DNSServiceDiscovery/DNSServiceDiscovery.h, [AC_DEFINE(HAVE_DNSREGISTRATION, 1, "") AC_DEFINE(HAVE_MDNS, 1, "")])
 
 AC_ARG_WITH(howl, [  --with-howl=PATH        Compile in howl support.  
                           PATH is the prefix where howl is installed,
@@ -56,7 +56,7 @@ AC_ARG_WITH(howl, [  --with-howl=PATH        Compile in howl support.
      OLDLDFLAGS=$LDFLAGS; LDFLAGS="-L$withval/lib/ $LDFLAGS"; 
      OLDCPPFLAGS=$CPPFLAGS; CPPFLAGS="-I$withval/include/howl/ $CPPFLAGS";
      AC_CHECK_HEADER($withval/include/howl/howl.h, 
-        [AC_DEFINE(HAVE_HOWL) AC_DEFINE(HAVE_MDNS)], 
+        [AC_DEFINE(HAVE_HOWL, 1, "") AC_DEFINE(HAVE_MDNS, 1, "")], 
         [CFLAGS=$OLDCFLAGS; LDFLAGS=$OLDLDFLAGS; CPPFLAGS=$OLDCPPFLAGS;]) 
      AC_CHECK_LIB(howl, sw_discovery_publish, [LIBS="-lhowl $LIBS"], [
         OLDLIBS=$LIBS; LIBS="-lpthread $LIBS"; 
@@ -88,7 +88,7 @@ AC_CACHE_CHECK([for struct addrinfo], ac_cv_have_struct_addrinfo, [
         )
 ])
 if test "x$ac_cv_have_struct_addrinfo" = "xyes" ; then
-        AC_DEFINE(HAVE_STRUCT_ADDRINFO)
+        AC_DEFINE(HAVE_STRUCT_ADDRINFO, 1, "")
 fi
 
 AC_CACHE_CHECK([for struct in6_addr], ac_cv_have_struct_in6_addr, [
@@ -103,7 +103,7 @@ AC_CACHE_CHECK([for struct in6_addr], ac_cv_have_struct_in6_addr, [
         )
 ])
 if test "x$ac_cv_have_struct_in6_addr" = "xyes" ; then
-        AC_DEFINE(HAVE_STRUCT_IN6_ADDR)
+        AC_DEFINE(HAVE_STRUCT_IN6_ADDR, 1, "")
 fi
 
 AC_CACHE_CHECK([for struct sockaddr_in6], ac_cv_have_struct_sockaddr_in6, [
@@ -118,7 +118,7 @@ AC_CACHE_CHECK([for struct sockaddr_in6], ac_cv_have_struct_sockaddr_in6, [
         )
 ])
 if test "x$ac_cv_have_struct_sockaddr_in6" = "xyes" ; then
-        AC_DEFINE(HAVE_STRUCT_SOCKADDR_IN6)
+        AC_DEFINE(HAVE_STRUCT_SOCKADDR_IN6, 1, "")
 fi
 
 AC_CACHE_CHECK([for struct sockaddr_storage], ac_cv_have_struct_sockaddr_storage, [
@@ -133,15 +133,15 @@ AC_CACHE_CHECK([for struct sockaddr_storage], ac_cv_have_struct_sockaddr_storage
         )
 ])
 if test "x$ac_cv_have_struct_sockaddr_storage" = "xyes" ; then
-        AC_DEFINE(HAVE_STRUCT_SOCKADDR_STORAGE)
+        AC_DEFINE(HAVE_STRUCT_SOCKADDR_STORAGE, 1, "")
 fi
 
 
 case "$target_os" in
 
 solaris*)
-	AC_DEFINE(N0_SIGLIST)
-	AC_DEFINE(solaris)
+	AC_DEFINE(N0_SIGLIST, 1, "")
+	AC_DEFINE(solaris, 1, "")
 
 	AC_MSG_CHECKING(whether to compile in loadavg)
 	AC_ARG_WITH(loadavg,
@@ -153,12 +153,12 @@ solaris*)
 		yes)
 			AC_MSG_RESULT(yes)
 			AC_CHECK_LIB(kstat, main)
-			AC_CHECK_HEADER(kstat.h, [AC_DEFINE(HAVE_KSTAT_H)])
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_CHECK_HEADER(kstat.h, [AC_DEFINE(HAVE_KSTAT_H, 1, "")])
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 		*)
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 	esac ], AC_MSG_RESULT(no) )
 	;;
@@ -172,11 +172,11 @@ osf*)
 			;;
 		yes)
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 		*)
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 	esac ], AC_MSG_RESULT(no))
 	;;
@@ -191,18 +191,18 @@ linux*|freebsd*)
 			;;
 		yes)
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 		*)
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 	esac ], AC_MSG_RESULT(no))
 	;;
 darwin* | "Mac OS"*)
 	ac_cv_prog_RANLIB="ranlib"
 	# AC_CHECK_FUNCS doesn't look in the proper header file...
-	AC_DEFINE(HAVE_ISATTY)
+	AC_DEFINE(HAVE_ISATTY, 1, "")
 	CFLAGS="$CFLAGS -no-cpp-precomp"
 	AC_MSG_CHECKING(whether to compile in loadavg)
 	AC_ARG_WITH(loadavg,,
@@ -212,11 +212,11 @@ darwin* | "Mac OS"*)
 			;;
 		yes)
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 		*)
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_LOADAVG)
+			AC_DEFINE(HAVE_LOADAVG, 1, "")
 			;;
 	esac ], AC_MSG_RESULT(no))
 	;;
@@ -229,13 +229,13 @@ darwin* | "Mac OS"*)
                        ;;
                yes)
                        AC_MSG_RESULT(yes)
-                       AC_DEFINE(bsdi)
-                       AC_DEFINE(HAVE_LOADAVG)
+                       AC_DEFINE(bsdi, 1, "")
+                       AC_DEFINE(HAVE_LOADAVG, 1, "")
                        ;;
                *)
                        AC_MSG_RESULT(yes)
-                       AC_DEFINE(bsdi)
-                       AC_DEFINE(HAVE_LOADAVG)
+                       AC_DEFINE(bsdi, 1, "")
+                       AC_DEFINE(HAVE_LOADAVG, 1, "")
                        ;;
        esac ], AC_MSG_RESULT(no))
        ;;
@@ -245,7 +245,7 @@ esac
 AC_CHECK_LIB(c, crypt, [:], [
  AC_CHECK_LIB(crypt, crypt, [
   LIBS="-lcrypt $LIBS"
-  AC_DEFINE(HAVE_LIBCRYPT) ], []) ])
+  AC_DEFINE(HAVE_LIBCRYPT, 1, "") ], []) ])
 
 AC_CHECK_LIB(m, log10, [ LIBS="-lm $LIBS" ], [])
 
@@ -263,16 +263,16 @@ AC_ARG_WITH(libwrap,
 	yes)
 		AC_MSG_RESULT(yes)
 		AC_CHECK_LIB(wrap, request_init, [
-			AC_DEFINE(LIBWRAP)
+			AC_DEFINE(LIBWRAP, 1, "")
 			WRAPLIBS="-lwrap"
-			AC_DEFINE(HAVE_LIBWRAP) ])
+			AC_DEFINE(HAVE_LIBWRAP, 1, "") ])
 		AC_CHECK_LIB(nsl, yp_get_default_domain, [ 
 			WRAPLIBS="$WRAPLIBS -lnsl" ])
 		LIBS="$WRAPLIBS $LIBS"
 		;;
 	*)
 		AC_MSG_RESULT(yes)
-		AC_DEFINE(LIBWRAP)
+		AC_DEFINE(LIBWRAP, 1, "")
 		if test -d "$withval"; then
 			WRAPLIBS="-L$withval -lwrap"
 		else
@@ -299,13 +299,13 @@ AC_ARG_WITH(labeled-networking,
 	yes)
 		AC_MSG_RESULT(yes)
 		AC_CHECK_LIB(selinux, setexeccon, [
-			AC_DEFINE(LABELED_NET)
+			AC_DEFINE(LABELED_NET, 1, "")
 			LABELLIBS="-lselinux" ])
 		LIBS="$LABELLIBS $LIBS"
 		;;
 	*)
 		AC_MSG_RESULT(yes)
-		AC_DEFINE(LABELED_NET)
+		AC_DEFINE(LABELED_NET, 1, "")
 		if test -d "$withval"; then
 			LABELLIBS="-L$withval -lselinux"
 		else

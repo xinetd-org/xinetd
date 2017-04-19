@@ -22,6 +22,6 @@ AC_CACHE_VAL(xinetd_cv_type_$1,
 #endif], xinetd_cv_type_$1=yes, xinetd_cv_type_$1=no)])dnl
 AC_MSG_RESULT($xinetd_cv_type_$1)
 if test $xinetd_cv_type_$1 = no; then
-   AC_DEFINE($1, $2)
+   AC_DEFINE($1, $2, "")
 fi
 ])
