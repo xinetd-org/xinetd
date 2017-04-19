@@ -376,13 +376,6 @@ AC_CONFIG_HEADERS([config.h])
 # =====================
 AC_CONFIG_FILES([
 Makefile
-libs/src/misc/Makefile
-libs/src/pset/Makefile
-libs/src/sio/Makefile
-libs/src/str/Makefile
-libs/src/xlog/Makefile
-libs/src/portable/Makefile
-xinetd/Makefile
 ])
 AC_OUTPUT
 
