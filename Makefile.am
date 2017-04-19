@@ -14,6 +14,12 @@ AM_CFLAGS = \
 	-I$(top_srcdir)/src/str \
 	-I$(top_srcdir)/src/xlog
 
+bin_PROGRAMS = itox
+itox_SOURCES = \
+	src/itox.c
+
+bin_SCRIPTS = src/xconv.pl
+
 sbin_PROGRAMS = xinetd
 xinetd_SOURCES = \
 	src/access.c \
