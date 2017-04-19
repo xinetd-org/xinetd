@@ -151,10 +151,12 @@ void hard_reconfig( void )
           */
          psi_remove( iter ) ;
          msg( LOG_NOTICE, func, "service %s deactivated", sid ) ;
-         if ( SVC_RELE( osp ) == 0 ) {
+	 /*
+	  * If the refcount is > 0 release also all the members
+	  */
+         if ( SVC_RELE( osp ) > 0 ) {
             svc_release( osp );
-         } else
-            msg( LOG_ERR, func, "Errors deactivating service %s", sid ) ;
+         }
          dropped_services++ ;
       }
    }
