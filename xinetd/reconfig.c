@@ -138,8 +138,8 @@ void hard_reconfig( void )
           *      b. Terminate running servers and cancel retry attempts, in case
           *         of reconfiguration
           */
-         svc_deactivate( osp ) ;
          terminate_servers( osp ) ;
+         svc_deactivate( osp ) ;
          cancel_service_retries( osp ) ;
 
          /*
