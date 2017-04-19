@@ -50,6 +50,7 @@ m4/lt~obsolete.m4
 
 # output binaries
 xinetd
+itox
 
 # tarballs
 *.tar.*

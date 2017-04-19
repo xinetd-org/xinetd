@@ -68,8 +68,10 @@ libxlog_la_SOURCES = \
 	src/xlog/xlog.h
 
 bin_PROGRAMS = itox
-itox_SOURCES = \
-	src/itox.c
+itox_SOURCES = src/itox.c
+itox_LDADD = \
+	libsio.la \
+	libstr.la
 
 bin_SCRIPTS = src/xconv.pl
 
