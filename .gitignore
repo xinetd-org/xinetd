@@ -41,3 +41,6 @@ Makefile.in
 
 # output binaries
 xinetd
+
+# tarballs
+*.tar.*
