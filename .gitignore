@@ -1,6 +1,8 @@
 *.orig
 *.rej
 *.o
+*.lo
+*.la
 *~
 *.swp
 
@@ -33,7 +35,14 @@ Makefile.in
 
 # https://www.gnu.org/software/libtool/
 
+.libs
 /ltmain.sh
+/libtool
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
 
 # http://www.gnu.org/software/texinfo
 
