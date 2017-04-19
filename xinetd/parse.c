@@ -702,6 +702,13 @@ static status_e parse_entry( entry_e entry_type,
          terminate_program();
       }
       pset_clear( attr_values ) ;
+
+      /*
+       * As soon as we realize that the service is disabled
+       * we don't continue parsing its config
+       */
+      if (EQ(attr_name, "disable") && SC_IS_DISABLED(scp))
+         return( FAILED );
    }
 }
 
