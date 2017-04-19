@@ -46,7 +46,7 @@ CC_FLAGS		= $(DEBUG)
 CFLAGS			= @CFLAGS@ $(CPP_FLAGS) $(CC_FLAGS)
 
 INSTALL			= @INSTALL@
-FMODE			= -m 640			# used by install
+FMODE			= -m 644			# used by install
 RANLIB			= @RANLIB@
 
 LIBNAME			= lib$(NAME).a
