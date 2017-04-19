@@ -119,7 +119,7 @@ itox: itox.c
 	$(CC) $(CFLAGS) $(DEBUG) $(SRCDIR)/itox.c -o $@ $(LDFLAGS) $(LIBS)
 
 xinetd: $(OBJS)
-	$(CC) $(CFLAGS) $(DEBUG) -o $@ $(OBJS) $(LDFLAGS) $(LIBS) || rm -f $@
+	$(CC) $(CFLAGS) $(DEBUG) -o $@ -pie $(OBJS) $(LDFLAGS) $(LIBS) || rm -f $@
 
 clean:
 	rm -f $(OBJS) $(NAME) core itox
