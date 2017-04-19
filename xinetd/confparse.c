@@ -245,7 +245,7 @@ static status_e service_fill( struct service_config *scp,
              M_SET(SC_XFLAGS(scp), SF_IPV6);
       }
       else
-         M_SET(SC_XFLAGS(scp), SF_IPV4);
+         M_SET(SC_XFLAGS(scp), SF_IPV6); /*try bind IPv6 by default*/
    }
 
    if (SC_ORIG_BIND_ADDR(scp))
