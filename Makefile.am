@@ -5,6 +5,14 @@ EXTRA_DIST = \
 	README.md \
 	CHANGELOG
 
+AM_CFLAGS = \
+	-I$(top_srcdir)/xinetd \
+	-I$(top_srcdir)/xinetd/misc \
+	-I$(top_srcdir)/xinetd/portable \
+	-I$(top_srcdir)/xinetd/pset \
+	-I$(top_srcdir)/xinetd/sio \
+	-I$(top_srcdir)/xinetd/str \
+	-I$(top_srcdir)/xinetd/xlog
 
 sbin_PROGRAMS = xinetd
 xinetd_SOURCES = \
