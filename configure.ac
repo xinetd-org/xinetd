@@ -15,7 +15,7 @@ m4_define([xinetd_version],[xinetd_version_major.xinetd_version_minor.xinetd_ver
 # =============
 AC_INIT([xinetd],[xinetd_version])
 AC_CONFIG_MACRO_DIR([m4])
-#AM_INIT_AUTOMAKE([1.11 foreign dist-xz dist-bzip2])
+AM_INIT_AUTOMAKE([1.11 foreign dist-xz dist-bzip2])
 AM_SILENT_RULES([yes])
 AC_LANG([C])
 
