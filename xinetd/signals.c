@@ -186,6 +186,8 @@ static status_e handle_signal( int sig )
             return( OK ) ;
          /* FALL THROUGH */
           
+      case SIGCONT:
+         /* FALL THROUGH */
       /*
        * We may receive a SIGPIPE when handling an internal stream 
        * service and the other end closes the connection.
@@ -389,7 +391,11 @@ static void general_handler( int sig )
          break ;
       
       default:
-         msg( LOG_NOTICE, func, "Unexpected signal %s", sig_name( sig ) ) ;
+         /* This will cause a dead lock if the signal happens when the
+          * daemon is writing / logging something. The message is not
+          * important, so comment it out.
+          */
+         // msg( LOG_NOTICE, func, "Unexpected signal %s", sig_name( sig ) ) ;
          if ( debug.on && sig == SIGINT )
             exit( 1 ) ;
    }
