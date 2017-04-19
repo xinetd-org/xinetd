@@ -18,6 +18,7 @@ Makefile
 /config.guess
 /config.h.in
 /config.sub
+/config.log
 /configure
 /configure.scan
 /depcomp
