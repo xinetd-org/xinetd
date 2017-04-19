@@ -97,7 +97,13 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
    }
 
    CLEAR( sin_contact );
-   sin_remote = *CONN_XADDRESS( SERVER_CONNECTION( serp ) ) ;
+
+   sin_len = sizeof( sin_remote );
+   if ( getpeername( SERVER_FD( serp ), &sin_remote.sa, &sin_len ) == -1 )
+   {
+      msg( LOG_ERR, func, "(%d) getpeername: %m", getpid() ) ;
+      return( IDR_ERROR ) ;
+   }
    sin_contact = sin_remote;
    memcpy( &sin_bind, &sin_local, sizeof(sin_bind) ) ;
    local_port = 0;
@@ -127,7 +133,13 @@ idresult_e log_remote_user( const struct server *serp, unsigned timeout )
       msg( LOG_ERR, func, "socket creation: %m" ) ;
       return( IDR_ERROR ) ;
    }
-   if ( bind(sd, &sin_bind.sa, sizeof(sin_bind.sa)) == -1 )
+
+   if ( sin_bind.sa.sa_family == AF_INET )
+      sin_len = sizeof( sin_bind.sa_in ) ;
+   else
+      sin_len = sizeof( sin_bind.sa_in6 ) ;
+
+   if ( bind(sd, &sin_bind.sa, sin_len) == -1 )
    { 
       msg( LOG_ERR, func, "socket bind: %m" ) ;
       (void) Sclose( sd ) ;
