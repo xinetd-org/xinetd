@@ -569,6 +569,12 @@ is implemented, it is more useful to set this limit than rlimit_data,
 rlimit_rss and rlimit_stack. This resource limit is only implemented on
 Linux systems.
 .TP
+.B rlimit_files
+Sets the maximum number of open files that the service may use.
+One parameter is required, which is a positive integer representing
+the number of open file descriptors. Practical limit of this number
+is around 1024000.
+.TP
 .B rlimit_cpu
 Sets the maximum number of CPU seconds that the service may use.
 One parameter is required, which is either a positive integer representing

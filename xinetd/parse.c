@@ -92,6 +92,9 @@ static const struct attribute service_attributes[] =
 #ifdef RLIMIT_DATA
    { "rlimit_data",    A_RLIMIT_DATA,    1,  rlim_data_parser       },
 #endif
+#ifdef RLIMIT_NOFILE
+   { "rlimit_files",   A_RLIMIT_FILES,   1,  rlim_files_parser      },
+#endif
 #ifdef RLIMIT_RSS
    { "rlimit_rss",     A_RLIMIT_RSS,     1,  rlim_rss_parser        },
 #endif

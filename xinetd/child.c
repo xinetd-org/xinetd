@@ -109,6 +109,10 @@ void exec_server( const struct server *serp )
 
 
 #ifdef RLIMIT_NOFILE
+   if ( SC_RLIM_FILES( scp ))
+   {
+      ps.ros.max_descriptors = SC_RLIM_FILES( scp );
+   }
    rl.rlim_max = ps.ros.orig_max_descriptors ;
    rl.rlim_cur = ps.ros.max_descriptors ;
    (void) setrlimit( RLIMIT_NOFILE, &rl ) ;
@@ -226,6 +230,24 @@ static void set_credentials( const struct service_config *scp )
    const char *func = "set_credentials" ;
 
    if ( SC_SPECIFIED( scp, A_GROUP ) || SC_SPECIFIED( scp, A_USER ) ) {
+#ifdef RLIMIT_NOFILE
+       /*
+        * init.c/set_fd_limit changes hard limit for nofile to FD_SETSIZE to
+        * prevent fd_set overflow. This must be restored before setgid/setuid,
+        * because non-root process will be limited to FD_SETSIZE and not
+        * properly inherited
+        *
+        * value of rlim_cur is not important as subsequent code in exec_server
+        * will use proper values
+        *
+        * https://bugzilla.novell.com/show_bug.cgi?id=855685
+        */
+       struct rlimit rl ;
+       rl.rlim_max = ps.ros.orig_max_descriptors ;
+       rl.rlim_cur = ps.ros.max_descriptors ;
+       (void) setrlimit( RLIMIT_NOFILE, &rl ) ;
+#endif
+
       if ( ps.ros.is_superuser )
       {
          gid_t gid = SC_GETGID( scp ) ;
