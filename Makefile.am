@@ -14,6 +14,59 @@ AM_CFLAGS = \
 	-I$(top_srcdir)/src/str \
 	-I$(top_srcdir)/src/xlog
 
+noinst_LTLIBRARIES = \
+	libmisc.la \
+	libportable.la \
+	libpset.la \
+	libsio.la \
+	libstr.la \
+	libxlog.la
+libmisc_la_SOURCES = \
+	src/misc/m_env.c \
+	src/misc/m_env.h \
+	src/misc/misc.c \
+	src/misc/misc.h
+libportable_la_SOURCES = \
+	src/portable/compat.h \
+	src/portable/cvt.c \
+	src/portable/difftime.c \
+	src/portable/fake-getaddrinfo.c \
+	src/portable/fake-getaddrinfo.h \
+	src/portable/fake-getnameinfo.c \
+	src/portable/inet_aton.c \
+	src/portable/inet_ntop.c \
+	src/portable/libportable.h \
+	src/portable/strcasecmp.c \
+	src/portable/strerror.c
+libpset_la_SOURCES = \
+	src/pset/ops.c \
+	src/pset/pset.c \
+	src/pset/pset.h
+libsio_la_SOURCES = \
+	src/sio/impl.h \
+	src/sio/sio.c \
+	src/sio/sioconf.h \
+	src/sio/sio.h \
+	src/sio/siosup.c \
+	src/sio/sprint.c
+libstr_la_SOURCES = \
+	src/str/str.h \
+	src/str/strparse.c \
+	src/str/strparse.h \
+	src/str/strprint.c \
+	src/str/strutil.c
+libxlog_la_SOURCES = \
+	src/xgetloadavg.c \
+	src/xgetloadavg.h \
+	src/xlog/filelog.c \
+	src/xlog/filelog.h \
+	src/xlog/impl.h \
+	src/xlog/slog.c \
+	src/xlog/slog.h \
+	src/xlog/util.c \
+	src/xlog/xlog.c \
+	src/xlog/xlog.h
+
 bin_PROGRAMS = itox
 itox_SOURCES = \
 	src/itox.c
@@ -61,10 +114,6 @@ xinetd_SOURCES = \
 	src/main.c \
 	src/main.h \
 	src/mask.h \
-	src/misc/m_env.c \
-	src/misc/m_env.h \
-	src/misc/misc.c \
-	src/misc/misc.h \
 	src/msg.c \
 	src/msg.h \
 	src/nvlists.c \
@@ -77,20 +126,6 @@ xinetd_SOURCES = \
 	src/parsers.h \
 	src/parsesup.c \
 	src/parsesup.h \
-	src/portable/compat.h \
-	src/portable/cvt.c \
-	src/portable/difftime.c \
-	src/portable/fake-getaddrinfo.c \
-	src/portable/fake-getaddrinfo.h \
-	src/portable/fake-getnameinfo.c \
-	src/portable/inet_aton.c \
-	src/portable/inet_ntop.c \
-	src/portable/libportable.h \
-	src/portable/strcasecmp.c \
-	src/portable/strerror.c \
-	src/pset/ops.c \
-	src/pset/pset.c \
-	src/pset/pset.h \
 	src/reconfig.c \
 	src/reconfig.h \
 	src/redirect.c \
@@ -108,20 +143,9 @@ xinetd_SOURCES = \
 	src/service.h \
 	src/signals.c \
 	src/signals.h \
-	src/sio/impl.h \
-	src/sio/sio.c \
-	src/sio/sioconf.h \
-	src/sio/sio.h \
-	src/sio/siosup.c \
-	src/sio/sprint.c \
 	src/special.c \
 	src/special.h \
 	src/state.h \
-	src/str/str.h \
-	src/str/strparse.c \
-	src/str/strparse.h \
-	src/str/strprint.c \
-	src/str/strutil.c \
 	src/tcpint.c \
 	src/tcpint.h \
 	src/time.c \
@@ -131,20 +155,17 @@ xinetd_SOURCES = \
 	src/util.c \
 	src/util.h \
 	src/xconfig.h \
-	src/xgetloadavg.c \
-	src/xgetloadavg.h \
-	src/xlog/filelog.c \
-	src/xlog/filelog.h \
-	src/xlog/impl.h \
-	src/xlog/slog.c \
-	src/xlog/slog.h \
-	src/xlog/util.c \
-	src/xlog/xlog.c \
-	src/xlog/xlog.h \
 	src/xmdns.c \
 	src/xmdns.h \
 	src/xtimer.c \
 	src/xtimer.h
+xinetd_LDADD = \
+	libmisc.la \
+	libportable.la \
+	libpset.la \
+	libsio.la \
+	libstr.la \
+	libxlog.la
 
 distclean-local:
 	rm -rf *.cache *~
