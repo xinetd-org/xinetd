@@ -436,7 +436,9 @@ static stream_status_e tcp_remote_to_local( channel_s *chp )
          return( S_SERVER_ERR ) ;
       } else if ( wcc == (ssize_t)-1 ) {
          if ( errno == EINTR ) {
+#ifdef DEBUG_TCPINT
             rcc = 0 ;
+#endif
          } else {
             msg( LOG_ERR, func, "send: %m" ) ;
             return( S_SERVER_ERR ) ;
