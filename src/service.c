@@ -66,8 +66,6 @@ static const struct name_value service_states[] =
       { "BAD STATE",          0                        }
    } ;
 
-
-
 /*
  * Allocate a new struct service and initialize it from scp 
  */
@@ -85,6 +83,7 @@ struct service *svc_new( struct service_config *scp )
    CLEAR( *sp ) ;
 
    SVC_CONF(sp) = scp ;
+   sp->svc_pfd_index = -1;
    return( sp ) ;
 }
 
@@ -352,6 +351,24 @@ status_e svc_activate( struct service *sp )
       return( OK );
    }
 
+#ifdef HAVE_POLL
+   if ( ps.rws.descriptors_free <= 0 )
+   {
+     msg(LOG_ERR, func, "Maximum number of services reached") ;
+     return( FAILED ) ;
+   }
+   if ( sp->svc_pfd_index >= 0 )
+   {
+     SVC_POLLFD( sp ) = &ps.rws.pfd_array[sp->svc_pfd_index] ;
+   }
+   else
+   {
+     sp->svc_pfd_index = ps.rws.pfds_last ;
+     SVC_POLLFD( sp ) = &ps.rws.pfd_array[ps.rws.pfds_last++] ;
+   }
+
+#endif /* HAVE_POLL */
+
    if( SC_IPV4( scp ) ) {
       SVC_FD(sp) = socket( AF_INET, 
                            SC_SOCKET_TYPE( scp ), SC_PROTOVAL( scp ) ) ;
@@ -373,12 +390,24 @@ status_e svc_activate( struct service *sp )
 
       msg( LOG_ERR, func,
                   "socket creation failed (%m). service = %s", SC_ID( scp ) ) ;
+#ifdef HAVE_POLL
+      SVC_EVENTS( sp ) = 0;
+      SVC_FD( sp ) = 0;
+#else
+      FD_CLR( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif /* HAVE_POLL */
       return( FAILED ) ;
    }
 
    if ( set_fd_modes( sp ) == FAILED )
    {
       (void) Sclose( SVC_FD(sp) ) ;
+#ifdef HAVE_POLL
+      SVC_EVENTS( sp ) = 0;
+      SVC_FD( sp ) = 0;
+#else
+      FD_CLR( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif /* HAVE_POLL */
       return( FAILED ) ;
    }
 
@@ -392,6 +421,12 @@ status_e svc_activate( struct service *sp )
    if ( status == FAILED )
    {
       (void) Sclose( SVC_FD(sp) ) ;
+#ifdef HAVE_POLL
+      SVC_EVENTS( sp ) = 0;
+      SVC_FD( sp ) = 0;
+#else
+      FD_CLR( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif /* HAVE_POLL */
       return( FAILED ) ;
    }
 
@@ -417,9 +452,14 @@ status_e svc_activate( struct service *sp )
 
    SVC_STATE(sp) = SVC_ACTIVE ;
 
+#ifdef HAVE_POLL
+   SVC_EVENTS( sp ) = POLLIN ;
+#else
    FD_SET( SVC_FD(sp), &ps.rws.socket_mask ) ;
+
    if ( SVC_FD(sp) > ps.rws.mask_max )
       ps.rws.mask_max = SVC_FD(sp) ;
+#endif /* HAVE_POLL */
 
    ps.rws.active_services++ ;
    ps.rws.available_services++ ;
@@ -431,6 +471,11 @@ status_e svc_activate( struct service *sp )
 static void deactivate( const struct service *sp )
 {
    (void) Sclose( SVC_FD( sp ) ) ;
+#ifdef HAVE_POLL
+   SVC_FD( sp ) = 0;
+#else      
+   FD_CLR( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif
 
 #ifdef HAVE_MDNS
    xinetd_mdns_deregister(SVC_CONF(sp));
@@ -469,7 +514,12 @@ void svc_deactivate( struct service *sp )
 
    if ( SVC_IS_ACTIVE( sp ) )
    {
+#ifdef HAVE_POLL
+      SVC_EVENTS( sp ) = 0;
+	  SVC_FD( sp ) = 0;
+#else      
       FD_CLR( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif /* HAVE_POLL */
       ps.rws.active_services-- ;
    }
 
@@ -492,7 +542,15 @@ void svc_suspend( struct service *sp )
       return ;
    }
 
+#ifdef HAVE_POLL
+   /* 
+    * don't reap the pfd from pfd_array, since we must have it allocated for
+    * SVC_FD( sp )
+    */
+   SVC_EVENTS( sp ) = 0;
+#else
    FD_CLR( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif
    ps.rws.active_services-- ;
    if ( debug.on )
       msg( LOG_DEBUG, func, "Suspended service %s", SVC_ID( sp ) ) ;
@@ -508,7 +566,12 @@ void svc_resume( struct service *sp )
 {
    const char *func = "svc_resume" ;
 
+#ifdef HAVE_POLL
+   SVC_EVENTS( sp ) = POLLIN ;
+#else
    FD_SET( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif
+
    ps.rws.active_services++ ;
    if ( debug.on )
       msg( LOG_DEBUG, func, "Resumed service %s", SVC_ID( sp ) ) ;
@@ -939,7 +1002,12 @@ void close_all_svc_descriptors(void)
    }
 
    for ( osp = SP( psi_start( iter ) ) ; osp ; osp = SP( psi_next( iter ) ) )
-        (void) Sclose( SVC_FD( osp ) ) ;
+   {
+#ifdef HAVE_POLL
+        if ( osp && SVC_POLLFD( osp ) )
+#endif
+            (void) Sclose( SVC_FD( osp ) ) ;
+   }
   
    psi_destroy( iter ) ;
 }

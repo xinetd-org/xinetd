@@ -83,7 +83,26 @@ int xinetd_mdns_init(void) {
       ps.rws.mdns_state = NULL;
       return -1;
    }
+#ifdef HAVE_POLL
+   if ( ps.rws.pfds_last >= ps.rws.pfds_allocated )
+   {
+     ps.rws.pfds_allocated += INIT_POLLFDS;
+     struct pollfd *tmp = (struct pollfd *)realloc( ps.rws.pfd_array,
+         ps.rws.pfds_allocated*sizeof(struct pollfd));
+     if ( tmp == NULL )
+     {
+       out_of_memory( func );
+       return -1;
+     }
+     memset(&ps.rws.pfd_array[ps.rws.pfds_last], 0, (ps.rws.pfds_allocated-
+           ps.rws.pfds_last)*sizeof(struct pollfd));
+     ps.rws.pfd_array = tmp;
+   }
+   ps.rws.pfd_array[ ps.rws.pfds_last ].fd = sw_discovery_socket(*(sw_discovery *)ps.rws.mdns_state);
+   ps.rws.pfd_array[ ps.rws.pfds_last++ ].events = POLLIN;
+#else
    FD_SET( sw_discovery_socket(*(sw_discovery *)ps.rws.mdns_state), &ps.rws.socket_mask ) ;
+#endif
    return 0;
 #endif
 }

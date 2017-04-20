@@ -25,6 +25,9 @@
 #include "xtimer.h"
 #include "sensor.h"
 #include "xmdns.h"
+#ifdef HAVE_POLL
+#include "xpoll.h"
+#endif
 
 #ifdef __GNUC__
 __attribute__ ((noreturn))
@@ -116,16 +119,24 @@ static void main_loop(void)
 {
    const char      *func = "main_loop" ;
    struct timeval   tv, *tvptr = NULL;
+#ifdef HAVE_POLL
+   struct pollfd   *signal_pfd;
 
-   FD_SET(signals_pending[0], &ps.rws.socket_mask);
+   ps.rws.pfd_array[ps.rws.pfds_last].fd = signals_pending[0] ;
+   ps.rws.pfd_array[ps.rws.pfds_last].events = POLLIN ;
+   signal_pfd = &ps.rws.pfd_array[ps.rws.pfds_last] ;
+   ps.rws.pfds_last++;
+#else
+   FD_SET(signals_pending[0], &ps.rws.socket_mask) ;
    if ( signals_pending[0] > ps.rws.mask_max )
       ps.rws.mask_max = signals_pending[0] ;
-   if ( signals_pending[1] > ps.rws.mask_max )
-      ps.rws.mask_max = signals_pending[1] ;
+#endif /* HAVE_POLL */
 
    for ( ;; )
    {
+#ifndef HAVE_POLL
       fd_set read_mask ;
+#endif
       int n_active ;
       unsigned u ;
 
@@ -141,9 +152,14 @@ static void main_loop(void)
          tvptr = NULL;
       }
 
+#ifdef HAVE_POLL
+      n_active = poll( ps.rws.pfd_array, ps.rws.pfds_last,
+                       tvptr == NULL ? -1 : tvptr->tv_sec*1000 ) ;
+#else
       read_mask = ps.rws.socket_mask ;
       n_active = select( ps.rws.mask_max+1, &read_mask,
                         FD_SET_NULL, FD_SET_NULL, tvptr ) ;
+#endif
       if ( n_active == -1 )
       {
          if ( errno == EINTR ) {
@@ -162,11 +178,27 @@ static void main_loop(void)
 
       xtimer_poll();
 
-      if( FD_ISSET(signals_pending[0], &read_mask) ) {
+#ifdef HAVE_POLL
+      if ( POLLFD_REVENTS( signal_pfd ) ) 
+      {
+        if ( POLLFD_REVENTS( signal_pfd ) & (POLLERR | POLLHUP | 
+            POLLNVAL) ) 
+          find_bad_fd();
+        else
+        {
+          check_pipe();
+          if ( --n_active == 0 )
+            continue ;
+        }
+      }
+#else
+      if( FD_ISSET(signals_pending[0], &read_mask) ) 
+      {
          check_pipe();
             if ( --n_active == 0 )
                continue ;
       }
+#endif
 
 #ifdef HAVE_MDNS
       if( xinetd_mdns_poll() == 0 )
@@ -183,18 +215,32 @@ static void main_loop(void)
          if ( ! SVC_IS_ACTIVE( sp ) )
             continue ;
 
+#ifdef HAVE_POLL
+         if ( SVC_REVENTS( sp ) )
+         {
+           if ( SVC_REVENTS( sp ) & (POLLERR | POLLHUP | 
+               POLLNVAL) ) 
+             find_bad_fd();
+           else
+           {
+             svc_request( sp ) ;
+             if ( --n_active == 0 )
+               break ;
+           }
+         }
+#else
          if ( FD_ISSET( SVC_FD( sp ), &read_mask ) )
          {
             svc_request( sp ) ;
             if ( --n_active == 0 )
                break ;
          }
+#endif
       }
       if ( n_active > 0 )
          msg( LOG_ERR, func, "%d descriptors still set", n_active ) ;
    }
 }
-
 
 /*
  * This function identifies if any of the fd's in the socket mask
@@ -205,13 +251,29 @@ static void main_loop(void)
 static void find_bad_fd(void)
 {
    int fd ;
+#ifdef HAVE_POLL
+   const char *reason;
+#else
    struct stat st ;
+#endif
    unsigned bad_fd_count = 0 ;
    const char *func = "find_bad_fd" ;
 
+#ifdef HAVE_POLL
+   for ( fd = 0 ; (unsigned)fd < ps.rws.pfds_last ; fd++ )
+      if ( ps.rws.pfd_array[fd].revents & ( POLLHUP|POLLNVAL|POLLERR ) )
+      {
+         if ( ps.rws.pfd_array[fd].revents & POLLHUP )
+            reason = "hung up";
+         else if ( ps.rws.pfd_array[fd].revents & POLLNVAL )
+            reason = "been closed";
+         else if ( ps.rws.pfd_array[fd].revents & POLLERR )
+            reason = "reported error condition";
+#else
    for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
       if ( FD_ISSET( fd, &ps.rws.socket_mask ) && fstat( fd, &st ) == -1 )
       {
+#endif
          int found = FALSE ;
          unsigned u ;
 
@@ -236,7 +298,11 @@ static void find_bad_fd(void)
          }
          if ( ! found )
          {
+#ifdef HAVE_POLL
+            ps.rws.pfd_array[fd].events = 0;
+#else
             FD_CLR( fd, &ps.rws.socket_mask ) ;
+#endif
             msg( LOG_ERR, func,
                "No active service for file descriptor %d\n", fd ) ;
             bad_fd_count++ ;

@@ -295,7 +295,11 @@ void server_end( struct server *serp )
       
       /* Added this for when accepting wait=yes services */
       if( SVC_WAITS( sp ) )
+#ifdef HAVE_POLL
+         SVC_EVENTS( sp ) = POLLIN ;
+#else
          FD_SET( SVC_FD( sp ), &ps.rws.socket_mask ) ;
+#endif /* HAVE_POLL */
 
       svc_postmortem( sp, serp ) ;
       server_release( serp ) ;

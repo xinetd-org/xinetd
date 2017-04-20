@@ -199,6 +199,7 @@ xinetd_SOURCES = \
 	src/xconfig.h \
 	src/xmdns.c \
 	src/xmdns.h \
+	src/xpoll.h \
 	src/xtimer.c \
 	src/xtimer.h
 xinetd_LDADD = \

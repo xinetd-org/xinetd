@@ -53,6 +53,9 @@ void dump_internal_state(void)
    const char *dump_file = DUMP_FILE ;
    time_t current_time ;
    int fd ;
+#ifdef HAVE_POLL
+   int *listed_fds;
+#endif
    unsigned u ;
    const char *func = "dump_internal_state" ;
 
@@ -104,6 +107,41 @@ void dump_internal_state(void)
       server_dump( SERP( pset_pointer( RETRIES( ps ), u ) ), dump_fd ) ;
    Sputchar( dump_fd, '\n' ) ;
 
+#ifdef HAVE_POLL
+   /*
+    * Dump the socket mask
+    */
+   listed_fds = (int *)calloc(sizeof(int),ps.ros.max_descriptors);
+   if (listed_fds != NULL)
+   {
+      Sprint( dump_fd, "Socket mask:" ) ;
+      for ( fd = 0 ; fd < ps.rws.pfds_last ; fd++ )
+      {
+         listed_fds[ps.rws.pfd_array[fd].fd] = 1;
+         Sprint( dump_fd, " %d", ps.rws.pfd_array[fd].fd ) ;
+      }
+      Sputchar( dump_fd, '\n' ) ;
+      Sprint( dump_fd, "pfds_last = %d\n", ps.rws.pfds_last ) ;
+
+      /*
+       * Dump the descriptors that are open and are *not* in the socket list
+       */
+      Sprint( dump_fd, "Open descriptors (not in socket mask):" ) ;
+      for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
+      {
+         struct stat st ;
+
+         if ( !listed_fds[fd] && fstat( fd, &st ) != -1 )
+            Sprint( dump_fd, " %d", fd ) ;
+      }
+
+      Sputchar( dump_fd, '\n' ) ;
+      Sputchar( dump_fd, '\n' ) ;
+      free(listed_fds);
+   }
+   else
+     Sprint( dump_fd, "Could not dump open descriptors, not enough memory!\n" );
+#else /* !HAVE_POLL */
    /*
     * Dump the socket mask
     */
@@ -113,6 +151,7 @@ void dump_internal_state(void)
          Sprint( dump_fd, " %d", fd ) ;
    Sputchar( dump_fd, '\n' ) ;
    Sprint( dump_fd, "mask_max = %d\n", ps.rws.mask_max ) ;
+
 
    /*
     * Dump the descriptors that are open and are *not* in the socket mask
@@ -130,6 +169,7 @@ void dump_internal_state(void)
    }
    Sputchar( dump_fd, '\n' ) ;
    Sputchar( dump_fd, '\n' ) ;
+#endif /* !HAVE_POLL */
 
    Sprint( dump_fd, "active_services = %d\n", ps.rws.active_services ) ;
    Sprint( dump_fd, "available_services = %d\n", ps.rws.available_services ) ;
@@ -162,7 +202,6 @@ enum check_type { PERIODIC, USER_REQUESTED } ;
 static void consistency_check( enum check_type type )
 {
    int         fd ;
-   fd_set      socket_mask_copy ;
    unsigned    u ;
    int         errors ;
    unsigned    total_running_servers        = 0 ;
@@ -171,7 +210,19 @@ static void consistency_check( enum check_type type )
    bool_int    service_count_check_failed   = FALSE ;
    const char  *func                        = "consistency_check" ;
 
+
+#ifdef HAVE_POLL
+  struct pollfd *pfd_array_copy = calloc(sizeof(struct pollfd), ps.rws.pfds_last);
+  if (pfd_array_copy == NULL)
+  {
+     msg( LOG_ERR, func, "Could not run consistency check! Not enough memory!\n" ) ;
+     return;
+  }
+  memcpy(pfd_array_copy, ps.rws.pfd_array, ps.rws.pfds_last*sizeof(struct pollfd));
+#else /* !HAVE_POLL */
+   fd_set      socket_mask_copy ;
    socket_mask_copy = ps.rws.socket_mask ;
+#endif /* HAVE_POLL */
 
    for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )
    {
@@ -184,9 +235,22 @@ static void consistency_check( enum check_type type )
 
       if ( SVC_IS_AVAILABLE( sp ) || SVC_IS_DISABLED ( sp ) )
       {
+
          /*
           * In this case, there may be some servers running
           */
+#ifdef HAVE_POLL
+         if ( pfd_array_copy[ SVC_POLLFD_OFF( sp ) ].events )
+         {
+            if ( SVC_IS_DISABLED( sp ) )
+            {
+               msg( LOG_ERR, func,
+                  "fd of disabled service %s still in socket mask", sid ) ;
+               error_count++ ;
+            }
+            pfd_array_copy[ SVC_POLLFD_OFF( sp ) ].events = 0;
+         }
+#else /* !HAVE_POLL */
          if ( FD_ISSET( SVC_FD( sp ), &socket_mask_copy ) )
          {
             if ( SVC_IS_DISABLED( sp ) )
@@ -197,8 +261,9 @@ static void consistency_check( enum check_type type )
             }
             FD_CLR( SVC_FD( sp ), &socket_mask_copy ) ;
          }
-         error_count += thread_check( sp, running_servers, retry_servers ) ;
+#endif /* HAVE_POLL */
 
+         error_count += thread_check( sp, running_servers, retry_servers ) ;
          errors = service_count_check( sp, running_servers, retry_servers ) ;
          if ( ! errors && ! service_count_check_failed )
          {
@@ -248,6 +313,18 @@ static void consistency_check( enum check_type type )
    /*
     * Check if there are any descriptors set in socket_mask_copy
     */
+#ifdef HAVE_POLL
+   for ( fd = 0 ; fd < ps.rws.pfds_last ; fd++)
+     if ( pfd_array_copy[fd].events && pfd_array_copy[fd].fd != signals_pending[0] && 
+          pfd_array_copy[fd].fd != signals_pending[1] )
+     {
+         msg( LOG_ERR, func,
+            "descriptor %d set in socket mask but there is no service for it",
+               fd ) ;
+         error_count++ ;
+     }
+   free(pfd_array_copy);
+#else /* !HAVE_POLL */
    for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
       if ( FD_ISSET( fd, &socket_mask_copy ) && ((fd != signals_pending[0]) && fd != signals_pending[1]))
       {
@@ -256,6 +333,7 @@ static void consistency_check( enum check_type type )
                fd ) ;
          error_count++ ;
       }
+#endif /* !HAVE_POLL */
 
    if ( error_count != 0 )
       msg( LOG_WARNING, func,
@@ -304,7 +382,6 @@ static unsigned service_count_check( struct service *sp,
 }
 
 
-
 /*
  * If the service is single-threaded:
  *         if the descriptor is set in the socket mask, there must
@@ -317,7 +394,11 @@ static unsigned thread_check( struct service *sp,
                                unsigned retry_servers )
 {
    unsigned error_count = 0 ;
+#ifdef HAVE_POLL
+   struct pollfd *pfd= SVC_POLLFD( sp ) ;
+#else
    int sd = SVC_FD( sp ) ;
+#endif
    char *sid = SVC_ID( sp ) ;
    const char *func = "thread_check" ;
 
@@ -325,13 +406,21 @@ static unsigned thread_check( struct service *sp,
    {
       bool_int has_servers = ( running_servers + retry_servers != 0 ) ;
 
+#ifdef HAVE_POLL
+      if ( has_servers && pfd->events )
+#else
       if ( has_servers && FD_ISSET( sd, &ps.rws.socket_mask ) )
+#endif
       {
          msg( LOG_ERR, func,
 "Active single-threaded service %s: server running, descriptor set", sid ) ;
          error_count++ ;
       }
+#ifdef HAVE_POLL
+      if ( !has_servers && !pfd->events )
+#else
       if ( !has_servers && !FD_ISSET( sd, &ps.rws.socket_mask ) )
+#endif
       {
          msg( LOG_ERR, func,
 "Active single-threaded service %s: no server running, descriptor not set",
@@ -340,7 +429,11 @@ static unsigned thread_check( struct service *sp,
       }
    }
    else
+#ifdef HAVE_POLL
+      if ( ! pfd->events )
+#else
       if ( ! FD_ISSET( sd, &ps.rws.socket_mask ) )
+#endif
       {
          msg( LOG_ERR, func,
             "Active multi-threaded service %s: descriptor not set", sid ) ;

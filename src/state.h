@@ -19,6 +19,9 @@
 #include <sys/resource.h>
 #include "libportable.h"
 #include <sys/select.h>
+#ifdef HAVE_POLL
+#include <poll.h>
+#endif
 
 #include "xlog.h"
 #include "pset.h"
@@ -27,7 +30,6 @@
 
 struct read_only_state
 {
-   rlim_t      orig_max_descriptors ; /* original soft rlimit                */
    rlim_t      max_descriptors ;      /* original hard rlimit or OPEN_MAX    */
    rlim_t      process_limit ;        /* if 0, there is no limit             */
    int         cc_interval ;          /* # of seconds the cc gets invoked.   */
@@ -53,8 +55,15 @@ struct read_write_state
    int              available_services ;   /* # of available services       */
    int              active_services ;      /* services with descriptors set */
                                            /* in socket mask                */
+#ifdef HAVE_POLL 
+   struct pollfd   *pfd_array;             /* array passed to poll(2)       */
+   int              pfds_last;             /* index of last fd in the array */
+   int              pfds_allocated;        /* size of the array             */
+#else
    fd_set           socket_mask ;
    int              mask_max ;
+#endif /* HAVE_POLL */
+
    pset_h           servers ;              /* table of running servers      */
    pset_h           retries ;              /* table of servers to retry     */
    pset_h           services ;             /* table of services             */

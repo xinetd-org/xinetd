@@ -52,14 +52,19 @@ void redir_handler( struct server *serp )
    struct service *sp = SERVER_SERVICE( serp );
    struct service_config *scp = SVC_CONF( sp );
    int RedirDescrip = SERVER_FD( serp );
-   int maxfd;
    ssize_t num_read, num_wrote=0, ret=0;
    unsigned int sin_len = 0;
    unsigned long bytes_in = 0, bytes_out = 0;
    int no_to_nagle = 1;
    int on = 1, v6on;
    char buff[NET_BUFFER];
+#ifdef HAVE_POLL
+   struct pollfd *pfd_array;
+   int            pfds_last = 0;
+#else
    fd_set rdfd, msfd;
+   int maxfd;
+#endif
    struct timeval *timep = NULL;
    const char *func = "redir_handler";
    union xsockaddr serveraddr ;
@@ -135,19 +140,43 @@ void redir_handler( struct server *serp )
          msg(LOG_ERR, func, "setsockopt RedirDescrip failed: %m");
       }
 
+#ifdef HAVE_POLL
+#define REDIR_DESCRIP_INDEX 0
+#define REDIR_SERVER_INDEX 1
+      pfd_array = (struct pollfd *)calloc(sizeof(struct pollfd),MAX_FDS);
+      if (pfd_array == NULL)
+      {
+         msg( LOG_ERR, func, "Cannot allocate memory for file descriptors!\n");
+         exit( 1 );
+      }
+      pfd_array[ REDIR_DESCRIP_INDEX ].fd = RedirDescrip;
+      pfd_array[ REDIR_DESCRIP_INDEX ].events = POLLIN;
+      pfd_array[ REDIR_SERVER_INDEX ].fd = RedirServerFd;
+      pfd_array[ REDIR_SERVER_INDEX ].events = POLLIN;
+      pfds_last += 2;
+#else
       maxfd = (RedirServerFd > RedirDescrip)?RedirServerFd:RedirDescrip;
       FD_ZERO(&msfd);
       FD_SET(RedirDescrip, &msfd);
       FD_SET(RedirServerFd, &msfd);
+#endif
 
       while(1) {
+#ifdef HAVE_POLL
+         if ( poll( pfd_array, pfds_last, -1 ) <= 0 ) {
+#else
          memcpy(&rdfd, &msfd, sizeof(rdfd));
          if (select(maxfd + 1, &rdfd, (fd_set *)0, (fd_set *)0, timep) <= 0) {
+#endif
             /* place for timeout code, currently does not time out */
             break;
          }
 
+#ifdef HAVE_POLL
+         if ( pfd_array[REDIR_DESCRIP_INDEX].revents ) {
+#else
          if (FD_ISSET(RedirDescrip, &rdfd)) {
+#endif
             do {
                num_read = read(RedirDescrip,
                   buff, sizeof(buff));
@@ -173,7 +202,11 @@ void redir_handler( struct server *serp )
             }
          }
 
+#ifdef HAVE_POLL
+         if ( pfd_array[REDIR_SERVER_INDEX].revents ) {
+#else
          if (FD_ISSET(RedirServerFd, &rdfd)) {
+#endif
             do {
                num_read = read(RedirServerFd,
                   buff, sizeof(buff));

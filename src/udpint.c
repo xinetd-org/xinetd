@@ -15,6 +15,9 @@
 #include <syslog.h>
 #include <errno.h>
 #include <sys/select.h>
+#ifdef HAVE_POLL
+#include <poll.h>
+#endif
 
 #include "udpint.h"
 #include "intcommon.h"
@@ -94,34 +97,61 @@ void di_exit(void)
 static void di_mux(void)
 {
    struct intercept_s   *ip = &dgram_intercept_state ;
+#ifdef HAVE_POLL
+   struct pollfd        *pfd_array;
+   int                   pfds_last = 0;
+   int                   pfds_allocated = MAX_FDS;
+#else
    fd_set                     socket_mask ;
    int                        mask_max ;
+#endif
 
+#ifdef HAVE_POLL
+   pfd_array = (struct pollfd *)calloc(sizeof(struct pollfd),MAX_FDS);
+   pfd_array[ pfds_last ].fd = INT_REMOTE( ip );
+   pfd_array[ pfds_last++ ].events = POLLIN | POLLOUT;
+#else
    FD_ZERO( &socket_mask ) ;
    FD_SET( INT_REMOTE( ip ), &socket_mask ) ;
    mask_max = INT_REMOTE( ip ) ;
+#endif
 
    for ( ;; )
    {
       unsigned u ;
       channel_s *chp ;
+#ifndef HAVE_POLL
       fd_set read_mask ;
+#endif
       int n_ready ;
 
+#ifdef HAVE_POLL
+      n_ready = int_poll( pfds_last, pfd_array ) ;
+#else
       read_mask = socket_mask ;
       n_ready = int_select( mask_max+1, &read_mask ) ;
+#endif
 
       if ( n_ready == -1 )
          return ;
       
+#ifdef HAVE_POLL
+      if ( pfd_array[0].revents & ( POLLIN | POLLOUT ) )
+#else
       if ( FD_ISSET( INT_REMOTE( ip ), &read_mask ) )
+#endif
       {
          udp_remote_to_local( ip, &chp ) ;
          if ( chp != NULL )
          {
+#ifdef HAVE_POLL
+            pfd_array[ pfds_last ].fd = chp->ch_local_socket ;
+            pfd_array[ pfds_last++ ].events = POLLIN | POLLOUT ;
+#else
             FD_SET( chp->ch_local_socket, &socket_mask ) ;
             if ( chp->ch_local_socket > mask_max )
                mask_max = chp->ch_local_socket ;
+#endif
          }
          if ( --n_ready == 0 )
             continue ;
@@ -131,7 +161,17 @@ static void di_mux(void)
       {
          chp = CHP( pset_pointer( INT_CONNECTIONS( ip ), u ) ) ;
 
+#ifdef HAVE_POLL
+         int i;
+         /* TODO: detection with O(n)=1 */
+         for (i = 0 ; i < pfds_last ; i++)
+           if (pfd_array[i].fd == chp->ch_local_socket)
+             break;
+         if (pfd_array[i].fd == chp->ch_local_socket &&
+             (pfd_array[i].revents & ( POLLIN | POLLOUT )))
+#else
          if ( FD_ISSET( chp->ch_local_socket, &read_mask ) )
+#endif
          {
             if ( udp_local_to_remote( chp ) == FAILED )
                return ;

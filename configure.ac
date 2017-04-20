@@ -49,7 +49,8 @@ PKG_CHECK_MODULES([TIRPC],[libtirpc], [],[AC_MSG_ERROR([Missing libtirpc librari
 # Check for various headers and settings
 # ======================================
 AC_FUNC_MMAP
-AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H, 1, "Have FreeBSD filio.h")])
+AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE([HAVE_SYS_FILIO_H], [1], ["Have FreeBSD filio.h"])])
+AC_CHECK_FUNC(poll, [AC_DEFINE([HAVE_POLL], [1], ["Have available poll function"])])
 
 # ======
 # Switch

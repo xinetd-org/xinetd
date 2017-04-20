@@ -209,8 +209,13 @@ unsigned cnf_start_services( struct configuration *confp )
    pset_clear( sconfs ) ;
 
    if ( debug.on )
+#ifdef HAVE_POLL
+      msg( LOG_DEBUG, func, "pfds_last = %d, services_started = %d",
+            ps.rws.pfds_last, services_started ) ;
+#else
       msg( LOG_DEBUG, func, "mask_max = %d, services_started = %d",
             ps.rws.mask_max, services_started ) ;
+#endif
          
    return( services_started ) ;
 }

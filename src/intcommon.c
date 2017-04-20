@@ -14,6 +14,9 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
+#ifdef HAVE_POLL
+#include <poll.h>
+#endif
 
 #include "intcommon.h"
 #include "msg.h"
@@ -36,27 +39,38 @@ void int_fail( const struct intercept_s *ip, const char *lsyscall )
 /*
  * Returns either a positive number or -1
  */
+#ifdef HAVE_POLL
+int int_poll( int pfds_last, struct pollfd *pfd_array )
+{
+   const char *func = "int_poll" ;
+#else
 int int_select( int max, fd_set *read_mask )
 {
    const char *func = "int_select" ;
+#endif
 
    for ( ;; )
    {
       int n_ready ;
 
-      n_ready = select( max+1, read_mask,
-                                 FD_SET_NULL, FD_SET_NULL, TIMEVAL_NULL ) ;
+      do {
+#ifdef HAVE_POLL
+         n_ready = poll( pfd_array, pfds_last, -1 );
+#else
+         n_ready = select( max+1, read_mask,
+                           FD_SET_NULL, FD_SET_NULL, TIMEVAL_NULL ) ;
+#endif
+      } while (n_ready == -1 && errno == EINTR);
+
+
       if ( n_ready > 0 )
          return( n_ready ) ;
-      else if ( n_ready == -1 ) {
-         if ( errno == EINTR )
-            continue ;
-         else
-         {
-            msg( LOG_ERR, func, "select: %m" ) ;
-            return( -1 ) ;
-         }
-      }
+#ifdef HAVE_POLL
+      msg( LOG_ERR, func, "poll: %m" ) ;
+#else
+      msg( LOG_ERR, func, "select: %m" ) ;
+#endif
+      return( -1 ) ;
    }
 }
 

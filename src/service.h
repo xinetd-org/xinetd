@@ -17,6 +17,9 @@
 #include "pset.h"
 #include "xlog.h"
 #include "server.h"
+#ifdef HAVE_POLL
+#include "xpoll.h"
+#endif
 
 /*
  * $Id$
@@ -44,8 +47,15 @@ struct service
 {
    state_e                svc_state ;
    int                    svc_ref_count ;   /* # of pters to this struct */
+   int                    svc_pfd_index;    /* index of pfd in pfd_array */
    struct service_config *svc_conf ;    /* service configuration */
+
+#ifdef HAVE_POLL
+   struct pollfd         *svc_pfd ;  /* pointer to the pollfd */
+#else
    int                    svc_fd ;	/* The Listening FD for the service */
+#endif /* HAVE_POLL */
+
    unsigned               svc_running_servers ;
    unsigned               svc_retry_servers ;
    unsigned               svc_attempts ; /* # of attempts to start server */
@@ -70,7 +80,17 @@ struct service
  * Field access macros
  */
 #define SVC_CONF( sp )             ( (sp)->svc_conf )
+
+#ifdef HAVE_POLL
+#define SVC_POLLFD( sp )           ( (sp)->svc_pfd )
+#define SVC_POLLFD_OFF( sp )       ( SVC_POLLFD( sp )-ps.rws.pfd_array )
+#define SVC_EVENTS( sp )           ( POLLFD_EVENTS( SVC_POLLFD( sp ) ) )
+#define SVC_REVENTS( sp )          ( POLLFD_REVENTS( SVC_POLLFD( sp ) ) )
+#define SVC_FD( sp )               ( POLLFD_FD( SVC_POLLFD( sp ) ) )
+#else
 #define SVC_FD( sp )               ( (sp)->svc_fd )
+#endif /* HAVE_POLL */
+
 #define SVC_RUNNING_SERVERS( sp )  (sp)->svc_running_servers
 #define SVC_RETRIES( sp )          (sp)->svc_retry_servers
 #define SVC_LOG( sp )              (sp)->svc_log

@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
-
+#include <malloc.h>
 #include "sio.h"
 #include "init.h"
 #include "defs.h"
@@ -138,7 +138,6 @@ static void set_fd_limit(void)
 {
 #ifdef RLIMIT_NOFILE
    struct rlimit rl ;
-   rlim_t maxfd ;
     
    /*
     * Set the soft file descriptor limit to the hard limit.
@@ -149,25 +148,9 @@ static void set_fd_limit(void)
       exit( 1 ) ;
    }
 
-   maxfd = rl.rlim_max;
    if ( rl.rlim_max == RLIM_INFINITY ) 
-      rl.rlim_max = FD_SETSIZE;
+      rl.rlim_max = MAX_FDS;
 
-   /* XXX: a dumb way to prevent fd_set overflow possibilities; the rest
-    * of xinetd should be changed to use an OpenBSD inetd-like fd_grow(). */
-   if ( rl.rlim_max > FD_SETSIZE )
-      rl.rlim_max = FD_SETSIZE;
-     
-   rl.rlim_cur = rl.rlim_max ;
-   if ( setrlimit( RLIMIT_NOFILE, &rl ) == -1 )
-   {
-      syscall_failed("setrlimit(RLIMIT_NOFILE)");
-      ps.ros.max_descriptors = FD_SETSIZE;
-      ps.ros.orig_max_descriptors = FD_SETSIZE;
-      return ;
-   }
-
-   ps.ros.orig_max_descriptors = maxfd ;
    ps.ros.max_descriptors = rl.rlim_max ;
 #else      /* ! RLIMIT_NOFILE */
    ps.ros.max_descriptors = getdtablesize() ;
@@ -290,15 +273,27 @@ static pset_h new_table( unsigned size )
  */
 static void init_rw_state( void )
 {
+   const char *func = "init_rw_state" ;
    SERVERS( ps ) = new_table( 0 ) ;
    RETRIES( ps ) = new_table( 0 ) ;
    SERVICES( ps ) = new_table( 0 ) ;
 
    ps.rws.descriptors_free = ps.ros.max_descriptors - DESCRIPTORS_RESERVED ;
 
+#ifdef HAVE_POLL
+   ps.rws.pfds_allocated = ps.ros.max_descriptors ;
+   ps.rws.pfd_array = (struct pollfd *) 
+                      malloc( sizeof( struct pollfd ) * ps.rws.pfds_allocated ) ;
+   if ( ps.rws.pfd_array == NULL ) 
+   {
+      out_of_memory(func) ;
+      exit( 1 ) ;
+   }
+   ps.rws.pfds_last = 0 ;
+#else
    FD_ZERO( &ps.rws.socket_mask ) ;
    ps.rws.mask_max = 0 ;
-
+#endif /* HAVE_POLL */
 }
 
 

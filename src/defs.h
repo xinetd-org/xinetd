@@ -114,6 +114,12 @@ union xsockaddr {
 #define LISTEN_BACKLOG               64
 
 /*
+ * constants for limiting ps.rws.fd_list 
+ */
+
+#define MAX_FDS                      4096
+
+/*
  * When explicit values are given for enum's, that is because the structures 
  * that the enum's are in may be initialized by a memory clear operation.
  */

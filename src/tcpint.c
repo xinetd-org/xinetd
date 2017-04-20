@@ -60,7 +60,15 @@ struct intercept_s *si_init( struct server *serp )
    return( ip ) ;
 }
 
+#ifdef HAVE_POLL
+static status_e handle_io( psi_h iter, channel_s *chp,
+                           struct pollfd *pfd_handled,
+                           struct pollfd *pfd_array,
+                           int *pfds_last,
+                           stream_status_e (*iofunc)() );
+#else
 static status_e handle_io( psi_h iter, channel_s *chp, fd_set *maskp, stream_status_e (*iofunc)() );
+#endif
 static stream_status_e tcp_local_to_remote( channel_s *chp );
 static stream_status_e tcp_remote_to_local( channel_s *chp );
 static void connection_request( struct intercept_s *ip, channel_s **chpp );
@@ -79,14 +87,26 @@ void si_exit(void)
 static void si_mux(void)
 {
    struct intercept_s   *ip = &stream_intercept_state ;
+#ifdef HAVE_POLL
+   struct pollfd        *pfd_array;
+   int                   pfds_last = 0;
+   int                   pfds_allocated = MAX_FDS;
+#else
    fd_set                     socket_mask ;
    int                        mask_max ;
+#endif
    psi_h                      iter ;
    const char                *func = "si_mux" ;
 
+#ifdef HAVE_POLL
+   pfd_array = calloc(sizeof(struct pollfd),MAX_FDS);
+   pfd_array[ pfds_last ].fd = INT_REMOTE( ip ) ;
+   pfd_array[ pfds_last++ ].events = POLLIN | POLLOUT;
+#else
    FD_ZERO( &socket_mask ) ;
    FD_SET( INT_REMOTE( ip ), &socket_mask ) ;
    mask_max = INT_REMOTE( ip ) ;
+#endif
 
    iter = psi_create( INT_CONNECTIONS( ip ) ) ;
    if ( iter == NULL )
@@ -98,26 +118,43 @@ static void si_mux(void)
    for ( ;; )
    {
       channel_s *chp ;
+#ifndef HAVE_POLL
       fd_set read_mask ;
+#endif
       int n_ready ;
 
+#ifdef HAVE_POLL
+      n_ready = int_poll( pfds_last, pfd_array ) ;
+#else
       read_mask = socket_mask ;
       n_ready = int_select( mask_max+1, &read_mask ) ;
+#endif
 
       if ( n_ready == -1 )
          goto free_iter ;
-      
+
+#ifdef HAVE_POLL
+      if ( pfd_array[0].revents & ( POLLIN | POLLOUT ) )
+#else
       if ( FD_ISSET( INT_REMOTE( ip ), &read_mask ) )
+#endif
       {
          connection_request( ip, &chp ) ;
          if ( chp != NULL )
          {
+#ifdef HAVE_POLL
+            pfd_array[ pfds_last ].fd = chp->ch_local_socket ;
+            pfd_array[ pfds_last++ ].events = POLLIN | POLLOUT ;
+            pfd_array[ pfds_last ].fd = chp->ch_remote_socket ;
+            pfd_array[ pfds_last++ ].events = POLLIN | POLLOUT ;
+#else
             FD_SET( chp->ch_local_socket, &socket_mask ) ;
             if ( chp->ch_local_socket > mask_max )
                mask_max = chp->ch_local_socket ;
             FD_SET( chp->ch_remote_socket, &socket_mask ) ;
             if ( chp->ch_remote_socket > mask_max )
                mask_max = chp->ch_remote_socket ;
+#endif
          }
          if ( --n_ready == 0 )
             continue ;
@@ -125,28 +162,58 @@ static void si_mux(void)
 
       for ( chp = CHP( psi_start(iter) ) ; chp ; chp = CHP( psi_next(iter) ) )
       {
+#ifdef HAVE_POLL
+         int i;
+         struct pollfd *local_pfd = NULL, *remote_pfd = NULL;
+
+         /* TODO: detection with O(n)=1 */
+         for (i = 0 ; i < pfds_last ; i++ )
+           if (pfd_array[i].fd == chp->ch_local_socket)
+             local_pfd = &pfd_array[i];
+           else if (pfd_array[i] .fd== chp->ch_remote_socket)
+             remote_pfd = &pfd_array[i];
+
+         if ( local_pfd != NULL && 
+              local_pfd->revents & ( POLLIN | POLLOUT) )
+#else
          if ( FD_ISSET( chp->ch_local_socket, &read_mask ) )
+#endif
          {
 #ifdef DEBUG_TCPINT
             if ( debug.on )
                msg( LOG_DEBUG, func, "Input available on local socket %d", 
                                                          chp->ch_local_socket ) ;
 #endif
+#ifdef HAVE_POLL
+            if ( handle_io( iter, chp, local_pfd, pfd_array,
+                    &pfds_last, tcp_local_to_remote ) == FAILED )
+#else
             if ( handle_io( iter, chp, &socket_mask, tcp_local_to_remote ) == FAILED )
-               goto free_iter ;
+#endif
+                goto free_iter ;
             if ( --n_ready == 0 )
                goto free_iter ;
          }
 
+#ifdef HAVE_POLL
+         if ( remote_pfd != NULL && 
+              remote_pfd->revents & ( POLLIN | POLLOUT) )
+#else
          if ( FD_ISSET( chp->ch_remote_socket, &read_mask ) )
+#endif
          {
 #ifdef DEBUG_TCPINT
             msg( LOG_DEBUG, func, "Input available on remote socket %d", 
                                                       chp->ch_remote_socket ) ;
 #endif
+#ifdef HAVE_POLL
+            if ( handle_io( iter, chp, remote_pfd, pfd_array,
+                    &pfds_last, tcp_local_to_remote ) == FAILED )
+#else
             if ( handle_io( iter, chp,
-                        &socket_mask, tcp_remote_to_local ) == FAILED )
-               goto free_iter ;
+                           &socket_mask, tcp_remote_to_local ) == FAILED )
+#endif
+                goto free_iter ;
             if ( --n_ready == 0 )
                goto free_iter ;
          }
@@ -158,10 +225,19 @@ free_iter:
 }
 
 
+#ifdef HAVE_POLL
+static status_e handle_io( psi_h iter, 
+                            channel_s *chp, 
+                            struct pollfd *pfd_handled,
+                            struct pollfd *pfd_array,
+                            int *pfds_last,
+                            stream_status_e (*iofunc)() )
+#else
 static status_e handle_io( psi_h iter, 
                             channel_s *chp, 
                             fd_set *maskp, 
                             stream_status_e (*iofunc)() )
+#endif
 {
    const char *func = "handle_io" ;
 
@@ -178,8 +254,13 @@ static status_e handle_io( psi_h iter,
                   xaddrname( &chp->ch_from ), ntohs(xaddrport( &chp->ch_from )),
                         chp->ch_local_socket, chp->ch_remote_socket ) ;
 
+#ifdef HAVE_POLL
+         if ( pfd_handled != NULL)
+           *pfd_handled = pfd_array[ --( *pfds_last ) ];
+#else
          FD_CLR( chp->ch_local_socket, maskp ) ;
          FD_CLR( chp->ch_remote_socket, maskp ) ;
+#endif
          (void) Sclose( chp->ch_remote_socket ) ;
          (void) Sclose( chp->ch_local_socket ) ;
          psi_remove( iter ) ;
