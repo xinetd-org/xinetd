@@ -66,9 +66,7 @@ noinst_LTLIBRARIES = \
 	libxlog.la
 libmisc_la_SOURCES = \
 	src/misc/m_env.c \
-	src/misc/m_env.h \
-	src/misc/misc.c \
-	src/misc/misc.h
+	src/misc/m_env.h
 libportable_la_SOURCES = \
 	src/portable/cvt.c \
 	src/portable/libportable.h
