@@ -1,3 +1,4 @@
+#include <ctype.h>
 typedef unsigned char u_char;
 
 int
