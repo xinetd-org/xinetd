@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "sio.h"
 #include "init.h"
 #include "defs.h"
