@@ -3,7 +3,8 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = \
 	contrib/ \
 	README.md \
-	CHANGELOG
+	CHANGELOG \
+	$(bin_SCRIPTS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
