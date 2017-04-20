@@ -24,3 +24,5 @@ script:
   - ./configure
   - make
   - make distcheck
+  - ./configure --without-libwrap --without-labeled-networking --without-loadavg
+  - make
