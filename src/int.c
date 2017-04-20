@@ -214,8 +214,10 @@ static status_e wait_child( struct intercept_s *ip )
       }
       else if ( pid == SERVER_PID( INT_SERVER( ip ) ) )
       {
-         if ( PROC_STOPPED( status ) )
+         if ( PROC_STOPPED( status ) ) {
             ret = FAILED;
+            return( ret ) ;
+         }
          SERVER_SET_EXIT_STATUS( INT_SERVER( ip ), status ) ;
          ret = OK;
       }
