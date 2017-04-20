@@ -1,6 +1,6 @@
 # Process this file with autoconf to create configure.
 
-AC_PREREQ([2.65])
+AC_PREREQ([2.69])
 
 # ====================
 # Version informations
@@ -48,6 +48,7 @@ PKG_CHECK_MODULES([TIRPC],[libtirpc], [],[AC_MSG_ERROR([Missing libtirpc librari
 # ======================================
 # Check for various headers and settings
 # ======================================
+AC_CHECK_HEADER_STDBOOL
 AC_FUNC_MMAP
 AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H, 1, "Have FreeBSD filio.h")])
 

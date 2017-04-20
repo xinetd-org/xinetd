@@ -1,0 +1,7 @@
+# see travis-ci.org for details
+
+language: c
+
+compiler:
+  - clang
+  - gcc
