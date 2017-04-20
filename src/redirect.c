@@ -64,8 +64,8 @@ void redir_handler( struct server *serp )
 #else
    fd_set rdfd, msfd;
    int maxfd;
-#endif
    struct timeval *timep = NULL;
+#endif
    const char *func = "redir_handler";
    union xsockaddr serveraddr ;
 
