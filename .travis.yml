@@ -8,6 +8,11 @@ compiler:
   - clang
   - gcc
 
+install:
+  - libtirpc-dev
+  - libwrap0-dev
+  - libselinux-dev
+
 script:
   - sh autogen.sh
   - ./configure
