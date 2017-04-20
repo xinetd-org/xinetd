@@ -81,7 +81,8 @@ bin_SCRIPTS = src/xconv.pl
 sbin_PROGRAMS = xinetd
 xinetd_CFLAGS = \
 	$(HOWL_CFLAGS) \
-	$(HARDEN_CFLAGS)
+	$(HARDEN_CFLAGS) \
+	$(SELINUX_CFLAGS)
 xinetd_SOURCES = \
 	src/access.c \
 	src/access.h \
@@ -175,7 +176,8 @@ xinetd_LDADD = \
 	libstr.la \
 	libxlog.la \
 	$(HOWL_LIBS) \
-	$(WRAP_LIBS)
+	$(WRAP_LIBS) \
+	$(SELINUX_LIBS)
 
 distclean-local:
 	rm -rf *.cache *~

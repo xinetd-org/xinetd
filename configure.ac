@@ -194,7 +194,7 @@ AS_IF([test x"$with_howl" != "xno"], [
     PKG_CHECK_MODULES([HOWL],[howl], [
         AC_DEFINE(HAVE_HOWL, 1, "")
         AC_DEFINE(HAVE_MDNS, 1, "")
-    ],[])
+    ],[AC_MSG_ERROR([Missing how library, probably missing mdns-compat avahi development package])])
 ])
 
 AC_ARG_WITH([loadavg],
@@ -223,33 +223,16 @@ AS_IF([test x"$with_libwrap" != "xno"], [
     AC_SUBST([WRAP_LIBS])
 ])
 
-AC_MSG_CHECKING(whether to use labeled-networking)
-AC_ARG_WITH(labeled-networking,
-[  --with-labeled-networking[=PATH]   Compile in labeled networking support.],
-[ case "$withval" in
-	no)
-		AC_MSG_RESULT(no)
-		;;
-	yes)
-		AC_MSG_RESULT(yes)
-		AC_CHECK_LIB(selinux, setexeccon, [
-			AC_DEFINE(LABELED_NET, 1, "")
-			LABELLIBS="-lselinux" ])
-		LIBS="$LABELLIBS $LIBS"
-		;;
-	*)
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(LABELED_NET, 1, "")
-		if test -d "$withval"; then
-			LABELLIBS="-L$withval -lselinux"
-		else
-			LABELLIBS="$withval"
-		fi
-		LIBS="$LABELLIBS $LIBS"
-		;;
-	esac ],
-	AC_MSG_RESULT(no)
+AC_ARG_WITH([labeled-networking],
+    [AS_HELP_STRING([--without-labeled-networking], [Do not use selinux for labeled networking])],
+    [with_labeled_networking="$withval"],
+    [with_labeled_networking=yes]
 )
+AS_IF([test x"$with_labeled_networking" != "xno"], [
+    PKG_CHECK_MODULES([SELINUX],[libselinux], [
+        AC_DEFINE(LABELED_NET, 1, "")
+    ],[AC_MSG_ERROR([Missing selinux libraries])])
+])
 
 # =========
 # Hardening
@@ -317,6 +300,7 @@ Build configuration:
 	debug:              ${enable_debug}
 	werror:             ${enable_werror}
 	howl:               ${with_howl}
+	labeled-networking: ${with_labeled_networking}
 	libwrap:            ${with_libwrap}
 	loadavg:            ${with_loadavg}
 	HARDEN_CFLAGS:      ${HARDEN_CFLAGS}
