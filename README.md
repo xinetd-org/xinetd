@@ -13,12 +13,6 @@ There are a number of differences between xinetd and inetd.  The
 largest difference to the end user is the config file.  xinetd's 
 config file format is more C like, and somewhat similar to bind 8's.
 
-*** NOTE ***
-xinetd's reconfig signal is now SIGHUP.  SIGUSR2 still works for now,
-but should be considered deprecated.  The state dump signal is now
-SIGUSR1.
-***      ***
-
 # There are a couple of compile time options to xinetd
 
 --with-libwrap  : This option to the configure script tells xinetd
@@ -67,24 +61,28 @@ that are in .synack.net domain, are matched.
 For libwrap access control, the access control is done by the
 server name for the service.  So, if you have an entry like this:
 service telnet
+~~~
 {
-     ...
-	 server = /usr/sbin/in.telnetd
-	 ...
+	...
+	server = /usr/sbin/in.telnetd
+	...
 }
+~~~
 Your corresponding hosts.{allow|deny} entry would look something
 like this:
 in.telnetd: ALL
 
 However, many services don't have a "server".  Internal services
 and redirection services don't have a "server" line in the configuration
-file.  For these services, the service name is used.  For example:
+file.  Fma these services, the service name is used.  For example:
+~~~
 server telnet
 {
 	...
 	redirect = 10.0.0.1 23
 	...
 }
+~~~
 Your hosts.{allow|deny} entry would look something like this:
 telnet: ALL
 
@@ -106,14 +104,14 @@ It handles tcpd correctly, warns on the use of rpc services,
 sets the REUSE flag, and handles groups properly if your inetd.conf file 
 supports them.
 
+# History
+
 xinetd was originally written by panos@cs.colorado.edu.  At least one other
 version of xinetd has been seen floating around the net.  This version is
 being maintained by Rob Braun (bbraun@synack.net) and bug reports for this
 version should be directed there.
 
-Known bugs: On some BSD's, you may need to set 'groups = yes' in your services.
-If you need this, and you don't specify 'groups = yes', you'll get a log 
-message telling you it is needed, when you connect to a service.
+# Issues
 
 Bug reports/comments/suggestions/flames for this version should be sent
-to bbraun@synack.net
+to https://github.com/openSUSE/xinetd/issues/
