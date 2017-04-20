@@ -1,7 +1,17 @@
 # see travis-ci.org for details
 
+sudo: false
+
 language: c
 
 compiler:
   - clang
   - gcc
+
+install: make get-deps
+
+script:
+        sh autogen.sh
+        ./configure
+        make
+        make distcheck
