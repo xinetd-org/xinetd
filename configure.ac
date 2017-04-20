@@ -94,10 +94,8 @@ AC_ARG_ENABLE(debug,
 	[enable_debug=no]
 )
 AS_IF([test "x$enable_debug" != "xno"], [
-	CFLAGS="$CFLAGS -g"
-], [
-	AC_DEFINE([NDEBUG], [], [Disable debugging information])
-])
+	CFLAGS="$CFLAGS -ggdb"
+], [])
 
 AC_ARG_ENABLE([werror],
 	[AS_HELP_STRING([--enable-werror], [Treat all warnings as errors, useful for development])],
