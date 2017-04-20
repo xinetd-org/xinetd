@@ -141,6 +141,7 @@ struct service_config
    rlim_t               sc_rlim_as;
    rlim_t               sc_rlim_cpu;
    rlim_t               sc_rlim_data;
+   rlim_t               sc_rlim_files;
    rlim_t               sc_rlim_rss;
    rlim_t               sc_rlim_stack;
    mode_t               sc_umask;
@@ -189,6 +190,7 @@ struct service_config
 #define SC_RLIM_AS( scp )        (scp)->sc_rlim_as
 #define SC_RLIM_CPU( scp )       (scp)->sc_rlim_cpu
 #define SC_RLIM_DATA( scp )      (scp)->sc_rlim_data
+#define SC_RLIM_FILES( scp )     (scp)->sc_rlim_files
 #define SC_RLIM_RSS( scp )       (scp)->sc_rlim_rss
 #define SC_RLIM_STACK( scp )     (scp)->sc_rlim_stack
 #define SC_TYPE( scp )           (scp)->sc_type

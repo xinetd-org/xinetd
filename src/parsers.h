@@ -57,6 +57,9 @@ status_e rlim_cpu_parser(pset_h, struct service_config *, enum assign_op) ;
 #ifdef RLIMIT_DATA
 status_e rlim_data_parser(pset_h, struct service_config *, enum assign_op) ;
 #endif
+#ifdef RLIMIT_NOFILE
+status_e rlim_files_parser(pset_h, struct service_config *, enum assign_op) ;
+#endif
 #ifdef RLIMIT_RSS
 status_e rlim_rss_parser(pset_h, struct service_config *, enum assign_op) ;
 #endif
