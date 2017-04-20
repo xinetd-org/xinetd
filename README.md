@@ -74,6 +74,7 @@ maintained by Rob Braun (bbraun@synack.net) and bug reports for that
 version should be directed to https://github.com/xinetd-org/xinetd/.
 
 This version is simple collection of patches contained over Rob Brauns version that were present in all major distributions.
+Plans are to include fixes as required for keeping it workable in openSUSE and also to merge commits from the above github branch.
 
 # Issues
 
