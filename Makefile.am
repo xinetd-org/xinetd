@@ -71,8 +71,7 @@ libmisc_la_SOURCES = \
 	src/misc/misc.h
 libportable_la_SOURCES = \
 	src/portable/cvt.c \
-	src/portable/libportable.h \
-	src/portable/strcasecmp.c
+	src/portable/libportable.h
 libpset_la_SOURCES = \
 	src/pset/ops.c \
 	src/pset/pset.c \
