@@ -32,7 +32,6 @@ xinetconf_DATA = \
 man_MANS = \
 	man/itox.8 \
 	man/m_env.3 \
-	man/misc.3 \
 	man/pset.3 \
 	man/psi.3 \
 	man/sio.3 \
