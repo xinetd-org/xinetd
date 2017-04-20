@@ -169,8 +169,8 @@ void conn_free( connection_s *cp, int release_mem )
 
    if( cp == NULL )
       return;
-      if( debug.on )
-         msg( LOG_INFO, "conn_free", "freeing connection") ;
+   if( debug.on )
+      msg( LOG_INFO, "conn_free", "freeing connection") ;
 
    sp = cp->co_sp ;
 
