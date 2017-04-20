@@ -422,41 +422,6 @@ static sio_status_e init_output_stream( __sio_od_t *odp, int fd,
 }
 
 
-#ifndef HAVE_ISATTY
-
-#ifdef HAVE_SYSVTTY
-
-#include <termio.h>
-
-static int isatty( int fd )
-{
-   struct termio t ;
-
-   if ( ioctl( fd, TCGETA, &t ) == -1 && errno == ENOTTY )
-      return( FALSE ) ;
-   else
-      return( TRUE ) ;
-}
-#endif   /* HAVE_SYSVTTY */
-
-#ifdef HAVE_BSDTTY
-
-#include <sgtty.h>
-
-static int isatty( int fd )
-{
-   struct sgttyb s ;
-
-   if ( ioctl( fd, TIOCGETP, &s ) == -1 && errno == ENOTTY )
-      return( FALSE ) ;
-   else
-      return( TRUE ) ;
-}
-#endif   /* HAVE_BSDTTY */
-
-#endif   /* ! HAVE_ISATTY */
-
-
 /*
  * Initialize stream I/O for a file descriptor.
  *

@@ -14,10 +14,7 @@
 #include <sys/time.h>
 #include <syslog.h>
 #include <errno.h>
-
-#ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
-#endif
 
 #include "udpint.h"
 #include "intcommon.h"

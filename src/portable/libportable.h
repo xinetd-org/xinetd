@@ -15,31 +15,6 @@
 #define NI_MAXHOST 1025
 #endif
 
-#ifndef HAVE_DIFFTIME
-double difftime( time_t, time_t );
-#endif
-
-#ifndef HAVE_STRCASECMP
-int strcasecmp(const char *s1, const char *s2);
-#endif
-
-#ifndef HAVE_STRERROR
-char * strerror(int);
-#endif
-
-#ifdef NO_INET_ATON
-int inet_aton(const char *cp, struct in_addr *addr);
-#endif
-
-#ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-                size_t hostlen, char *serv, size_t servlen, int flags);
-#endif
-
-#ifndef HAVE_INET_NTOP
-const char *inet_ntop(int, const void *, char *, size_t);
-#endif
-
 #ifndef APPEND
 #define APPEND(a, b) APPEND2 (a, b)
 #endif
@@ -54,18 +29,6 @@ const char *inet_ntop(int, const void *, char *, size_t);
 
 #ifndef FUNC_PREFIX
 #define FUNC_PREFIX 
-#endif
-
-#ifndef HAVE_FCVT
-int APPEND(FUNC_PREFIX,fcvt_r)(FLOAT_TYPE value,int ndigit,int *decpt,int *sign,char *buf,size_t len);
-char *APPEND(FUNC_PREFIX,fcvt)(FLOAT_TYPE value,int ndigit,int *decpt,int *sign);
-#endif
-#ifndef HAVE_ECVT
-char *APPEND(FUNC_PREFIX,ecvt)(FLOAT_TYPE value,int ndigit,int *decpt,int *sign);
-int APPEND(FUNC_PREFIX,ecvt_r)(FLOAT_TYPE value,int ndigit,int *decpt,int *sign,char *buf,size_t len);
-#endif
-#ifndef HAVE_GCVT
-char *APPEND(FUNC_PREFIX,gcvt)(FLOAT_TYPE value,int ndigit,char *buf);
 #endif
 
 /* from OpenSSH's fake-socket.h */

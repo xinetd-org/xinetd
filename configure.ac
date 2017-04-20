@@ -30,56 +30,27 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 PKG_PROG_PKG_CONFIG([0.20])
+AC_CHECK_LIB([m], [log10], [
+	LIBM_LIBS="-lm"
+], [
+	AC_MSG_ERROR([Unable to find working libm.so])
+])
+AC_SUBST([LIBM_LIBS])
+AC_CHECK_LIB([crypt], [main], [
+	CRYPTO_LIBS="-lcrypto"
+	AC_DEFINE([HAVE_LIBCRYPT], [1], [Have libcrypt.so present])
+], [
+	AC_MSG_ERROR([Unable to find working libcrypto.so])
+])
+AC_SUBST([CRYPTO_LIBS])
+PKG_CHECK_MODULES([TIRPC],[libtirpc], [],[AC_MSG_ERROR([Missing libtirpc libraries])])
 
 # ======================================
 # Check for various headers and settings
 # ======================================
-AC_CHECK_FUNCS(getnameinfo inet_ntop)
-AC_CHECK_FUNCS(difftime, ,
-   AC_CHECK_LIB(m, difftime))
-AC_CHECK_FUNCS(fcvt, ,
-   AC_CHECK_LIB(m, fcvt))
-AC_CHECK_FUNCS(ecvt, ,
-   AC_CHECK_LIB(m, ecvt))
-AC_CHECK_FUNCS(gcvt, ,
-   AC_CHECK_LIB(m, gcvt))
-AC_CHECK_FUNC(strerror, [AC_DEFINE(HAVE_STRERROR, 1, "")])
-AC_CHECK_FUNC(strcasecmp, [AC_DEFINE(HAVE_STRCASECMP, 1, "")])
-AC_CHECK_FUNC(socket, ,
-   AC_CHECK_LIB(socket, socket, ,
-      AC_CHECK_LIB(nsl, socket)))
-AC_CHECK_FUNC(inet_aton, ,
-	AC_CHECK_LIB(nsl, inet_aton, ,
-		AC_CHECK_LIB(socket, inet_aton, ,
-			AC_CHECK_LIB(resolv, inet_aton, ,[AC_DEFINE(NO_INET_ATON, 1, "")]))))
-AC_CHECK_FUNC(setenv,[AC_DEFINE(HAVE_SETENV, 1, "")])
-AC_CHECK_FUNC(strsignal, [AC_DEFINE(HAVE_STRSIGNAL, 1, "")])
-AC_CHECK_LIB(c, sys_siglist, [AC_DEFINE(HAVE_SYS_SIGLIST, 1, "")])
-AC_CHECK_FUNC(gai_strerror,[AC_DEFINE(HAVE_GAI_STRERROR, 1, "")])
-AC_CHECK_FUNC(freeaddrinfo,[AC_DEFINE(HAVE_FREEADDRINFO, 1, "")])
-AC_CHECK_FUNC(getaddrinfo,[AC_DEFINE(HAVE_GETADDRINFO, 1, "")])
-AC_CHECK_HEADERS(sys/types.h sys/termios.h termios.h sys/ioctl.h sys/select.h rpc/rpc.h rpc/rpcent.h sys/file.h ftw.h machine/reg.h netdb.h)
-AC_CHECK_HEADER(sys/resource.h, [AC_DEFINE(HAVE_SYS_RESOURCE_H, 1, "")])
-AC_CHECK_HEADER(arpa/inet.h, [AC_DEFINE(HAVE_ARPA_INET_H, 1, "")])
-AC_CHECK_HEADER(grp.h, [AC_DEFINE(HAVE_GRP_H, 1, "")])
-AC_CHECK_HEADER(rpc/pmap_clnt.h, [AC_DEFINE(HAVE_RPC_PMAP_CLNT_H, 1, "")])
-AC_CHECK_HEADER(sys/socket.h, [AC_DEFINE(HAVE_SYS_SOCKET_H, 1, "")])
-AC_CHECK_HEADER(sys/signal.h, [AC_DEFINE(HAVE_SYS_SIGNAL_H, 1, "")])
-AC_CHECK_HEADER(crypt.h, [AC_DEFINE(HAVE_CRYPT_H, 1, "")])
-AC_CHECK_HEADER(stdint.h, [AC_DEFINE(HAVE_STDINT_H, 1, "")])
-AC_CHECK_HEADER(stdbool.h, [AC_DEFINE(HAVE_STDBOOL_H, 1, "")])
+AC_FUNC_MMAP
 AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H, 1, "")])
 AC_CHECK_HEADER(DNSServiceDiscovery/DNSServiceDiscovery.h, [AC_DEFINE(HAVE_DNSREGISTRATION, 1, "") AC_DEFINE(HAVE_MDNS, 1, "")])
-AC_FUNC_MMAP
-AC_CHECK_FUNCS(isatty)
-AC_CHECK_FUNCS(memcpy)
-AC_CHECK_FUNCS(waitpid)
-AC_CHECK_FUNCS(sigvec)
-AC_CHECK_FUNCS(setsid)
-AC_CHECK_FUNCS(strftime)
-AC_CHECK_LIB(c, crypt, [:], [AC_CHECK_LIB(crypt, crypt, [LIBS="-lcrypt $LIBS" AC_DEFINE(HAVE_LIBCRYPT, 1, "") ], []) ])
-AC_CHECK_LIB(m, log10, [ LIBS="-lm $LIBS" ], [])
-AC_CHECK_LIB(crypt, main)
 
 # ======
 # Switch

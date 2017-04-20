@@ -7,9 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
-#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
-#endif
 #include <sys/wait.h>
 #include <netinet/in.h>
 #include <errno.h>
@@ -21,12 +19,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <netinet/tcp.h>
-#ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
-#endif
-#ifdef HAVE_SYS_SIGNAL_H
 #include <sys/signal.h>
-#endif
 
 #include "redirect.h"
 #include "service.h"

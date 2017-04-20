@@ -14,9 +14,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdarg.h>
-#ifdef HAVE_NETDB_H
 #include <netdb.h>
-#endif
 
 #include "str.h"
 #include "log.h"

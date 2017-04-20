@@ -24,7 +24,6 @@
 #include "xmdns.h"
 #endif
 #ifndef NO_RPC
- #ifdef HAVE_RPC_PMAP_CLNT_H
   #ifdef __sun
    #include <rpc/types.h>
    #include <rpc/auth.h>
@@ -34,13 +33,9 @@
   #include <rpc/auth.h>
   #include <rpc/clnt.h>
   #include <rpc/pmap_clnt.h>
- #endif
  #include <rpc/rpc.h>
 #endif
-
-#ifdef HAVE_SYS_FILE_H
 #include <sys/file.h>
-#endif
 
 #include "sio.h"
 #include "service.h"

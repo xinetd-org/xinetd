@@ -10,9 +10,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
-#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
-#endif
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <netinet/in.h>
@@ -25,12 +23,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#if defined (HAVE_GRP_H)
 #include <grp.h>
-#endif
-#ifdef HAVE_NETDB_H
 #include <netdb.h>
-#endif
 #ifdef LABELED_NET
 #include <selinux/selinux.h>
 #include <selinux/flask.h>
@@ -175,13 +169,7 @@ void exec_server( const struct server *serp )
    (void) Sclose( descriptor ) ;
 
 #ifndef solaris
-#if !defined(HAVE_SETSID)
-   msg_resume();
-#endif
    no_control_tty() ;
-#if !defined(HAVE_SETSID)
-   msg_suspend();
-#endif
 #endif
 
    (void) execve( server, SC_SERVER_ARGV( scp ),
@@ -397,7 +385,6 @@ void child_process( struct server *serp )
       }
       else
       {
-#if defined(HAVE_SETENV)
          char buff[1024];
 
          strx_sprint(buff, sizeof(buff)-1, "REMOTE_HOST=%s", conn_addrstr(cp));
@@ -405,7 +392,6 @@ void child_process( struct server *serp )
             msg( LOG_ERR, func, "Error adding REMOTE_HOST variable for %s: %m", SC_NAME(scp) );
             _exit( 1 ) ;
          }
-#endif
          exec_server( serp ) ;
       }
    }
@@ -470,22 +456,10 @@ void child_exit(void)
       pid_t pid ;
       struct server *serp ;
       
-#ifdef HAVE_WAITPID
       pid = waitpid( -1, &status, WNOHANG ) ;
-#else
-#if defined( sun ) && defined( lint )
-      pid = wait3( (union wait *)&status, WNOHANG, RUSAGE_NULL ) ;
-#else
-      pid = wait3( &status, WNOHANG, RUSAGE_NULL ) ;
-#endif
-#endif
 
       if ( debug.on )
-#ifdef HAVE_WAITPID
          msg( LOG_DEBUG, func, "waitpid returned = %d", pid ) ;
-#else
-         msg( LOG_DEBUG, func, "wait3 returned = %d", pid ) ;
-#endif
       
       if ( pid == -1 ) {
          if ( errno == EINTR )

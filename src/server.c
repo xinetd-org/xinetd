@@ -15,10 +15,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#ifdef HAVE_SYS_FILE_H
 #include <sys/file.h>
-#endif
 
 #include "pset.h"
 #include "sio.h"

@@ -16,9 +16,7 @@
 #include <syslog.h>
 #include <stdlib.h>
 #include <unistd.h>
-#ifdef HAVE_NETDB_H
 #include <netdb.h>
-#endif
 
 #include "str.h"
 #include "pset.h"
@@ -237,18 +235,10 @@ static void daytime_protocol( char *buf, unsigned int *buflen )
    time_t      now ;
    struct tm   *tmp ;
    int         size = *buflen ;
-#ifdef HAVE_STRFTIME
    int      cc ;
-#endif
 
    (void) time( &now ) ;
    tmp = localtime( &now ) ;
-#ifndef HAVE_STRFTIME
-   strx_print( buflen, buf, size,
-      "%02d %s %d %02d:%02d:%02d %s\r\n",
-         tmp->tm_mday, month_name[ tmp->tm_mon ], 1900 + tmp->tm_year,
-            tmp->tm_hour, tmp->tm_min, tmp->tm_sec, tmp->tm_zone ) ;
-#else
    cc = strx_nprint( buf, size,
       "%02d %s %d %02d:%02d:%02d",
          tmp->tm_mday, month_name[ tmp->tm_mon ], 1900 + tmp->tm_year,
@@ -259,7 +249,6 @@ static void daytime_protocol( char *buf, unsigned int *buflen )
       cc = strftime( &buf[ *buflen ], (size_t)size, " %Z\r\n", tmp ) ;
       *buflen += cc ;
    }
-#endif
 }
 
 

@@ -20,9 +20,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <sys/time.h>
-#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
-#endif
 #include "libportable.h"
 
 #include "pset.h"

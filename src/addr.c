@@ -19,13 +19,9 @@
 #include <unistd.h>
 #include <sys/param.h>
 #include <string.h>
-#ifdef HAVE_NETDB_H
 #include <netdb.h>
-#endif
 
-#if defined(HAVE_ARPA_INET_H)
 #include <arpa/inet.h>
-#endif
 #include <netinet/in.h>
 
 #include "sio.h"

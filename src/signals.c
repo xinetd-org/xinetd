@@ -7,9 +7,7 @@
 
 
 #include "config.h"
-#if defined(HAVE_STRSIGNAL)
 #define _GNU_SOURCE
-#endif
 #include <sys/types.h>
 #include <sys/time.h>
 #include <signal.h>
@@ -338,18 +336,10 @@ char *sig_name( int sig )
 {
    static char signame_buf[ 30 ] ;
 
-#if defined(HAVE_STRSIGNAL)
    /* Use strsignal and remove the old sys_siglist stuff */
    if ( sig < NSIG )
       return( strx_sprint( signame_buf, sizeof( signame_buf ) - 1,
                "%d (%s)", sig, strsignal(sig) ) ) ;
-#else
-#if defined(HAVE_SYS_SIGLIST)
-   if ( sig < NSIG )
-      return( strx_sprint( signame_buf, sizeof( signame_buf ) - 1,
-               "%d (%s)", sig, sys_siglist[sig] ) ) ;
-#endif
-#endif
    return( strx_sprint( signame_buf, sizeof( signame_buf ) - 1, "%d", sig ) ) ;
 }
 

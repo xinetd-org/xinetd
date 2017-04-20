@@ -148,13 +148,9 @@ ssize_t __sio_more( __sio_id_t *idp, int fd ) ;
 sio_status_e __sio_switch( __sio_id_t *idp, int fd ) ;
 
 
-#ifdef HAVE_MEMCPY
 #include <memory.h>
 #define sio_memcopy( from, to, nbytes )	(void) memcpy( to, from, nbytes )
 #define sio_memscan( from, nbytes, ch )   memchr( from, ch, nbytes )
-#else
-#define sio_memcopy( from, to, nbytes )      (void) bcopy( from, to, nbytes )
-#endif
 
 #ifndef sio_memcopy
 #define sio_memcopy		__sio_memcopy

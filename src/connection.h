@@ -15,9 +15,7 @@
 #include "config.h"
 #include <sys/types.h>
 #include <netinet/in.h>
-#if defined( HAVE_ARPA_INET_H )
 #include <arpa/inet.h>
-#endif
 #include <string.h>
 
 #include "mask.h"

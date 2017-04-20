@@ -11,30 +11,19 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
-#if defined (HAVE_SYS_SOCKET_H)
 #include <sys/socket.h>
-#endif
 /*
  * The following ifdef is for TIOCNOTTY
  */
 #ifndef NO_TERMIOS
-#ifdef HAVE_SYS_TERMIOS_H
 #include <sys/termios.h>
-#endif
-#ifdef HAVE_TERMIOS_H
 #include <termios.h>
-#endif
 #else
 #include <sys/ioctl.h>
 #endif
 #include <fcntl.h>
-#ifdef HAVE_SYS_FILE_H
 #include <sys/file.h>
-#endif
-
-#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
-#endif
 
 #include <memory.h>
 #include <syslog.h>
@@ -174,22 +163,7 @@ status_e copy_pset( const pset_h from, pset_h *to, unsigned size )
  */
 void no_control_tty(void)
 {
-#if !defined(HAVE_SETSID)
-   int fd ;
-   const char *func = "no_control_tty" ;
-
-   if ( ( fd = open( "/dev/tty", O_RDWR ) ) == -1 )
-      msg( LOG_WARNING, func, "open of /dev/tty failed: %m" ) ;
-   else
-   {
-      if ( ioctl( fd, TIOCNOTTY, (caddr_t)0 ) == -1 )
-         msg( LOG_WARNING, func, "ioctl on /dev/tty failed: %m" ) ;
-      (void) Sclose( fd ) ;
-   }
-   (void) setpgrp( getpid(), 0 ) ;
-#else
    (void) setsid() ;
-#endif
 }
 
 

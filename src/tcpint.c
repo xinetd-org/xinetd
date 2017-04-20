@@ -16,10 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
-#endif
 
 #include "tcpint.h"
 #include "intcommon.h"

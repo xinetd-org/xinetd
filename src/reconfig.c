@@ -16,7 +16,6 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #ifndef NO_RPC
- #ifdef HAVE_RPC_PMAP_CLNT_H
   #ifdef __sun
    #include <rpc/types.h>
    #include <rpc/auth.h>
@@ -26,7 +25,6 @@
   #include <rpc/auth.h>
   #include <rpc/clnt.h>
   #include <rpc/pmap_clnt.h>
- #endif
  #include <rpc/rpc.h>
 #endif
 

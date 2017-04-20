@@ -34,15 +34,6 @@
  *			HAVE_ATEXIT
  *			HAVE_ONEXIT
  *			HAVE_OTHER_FINALIZER	(must define macros)
- *
- *			HAVE_MEMCPY
- *			HAVE_BCOPY 			(HAVE_MEMCPY will be preferred if both are defined)
- *
- *	At least one of the following flags must be defined. The 2nd and 3rd
- * flags are incompatible.
- *			HAVE_ISATTY
- *			HAVE_SYSVTTY
- *			HAVE_BSDTTY
  */
 
 /*
@@ -134,46 +125,6 @@
 #endif	/* HAVE_ATEXIT */
 
 #endif	/* HAVE_ONEXIT || HAVE_ATEXIT || HAVE_FINALIZER */
-
-
-/*
- * HAVE_MEMCPY should be defined if your OS supports the mem* functions
- * (memcpy etc). If not, then you can define HAVE_BCOPY if your OS supports 
- * bcopy.
- */
-#if defined( HAVE_MEMCPY ) && defined( HAVE_BCOPY )
-#undef HAVE_BCOPY
-#endif
-
-
-/*
- * Support for the isatty(3) function. This function identifies if a 
- * descriptor refers to a terminal.
- *
- * Case 1: isatty(3) is in the C library
- *		--> define HAVE_ISATTY
- *	Case 2: no isatty(3), BSD 4.3 tty handling
- *		--> define HAVE_BSDTTY
- * Case 3: no isatty(3), System V tty handling
- *		--> define HAVE_SYSVTTY
- *
- * The following code checks:
- *		1) that at least one of the flags is defined
- *		2) only one of the BSD, SYS V flags is defined
- */
-#if !defined(HAVE_ISATTY) && !defined(HAVE_BSDTTY) && !defined(HAVE_SYSVTTY)
- #error function_isatty_not_available ;
-#endif
-
-#ifdef HAVE_ISATTY
-#undef HAVE_BSDTTY
-#undef HAVE_SYSVTTY
-#endif
-
-#if defined(HAVE_BSDTTY) && defined(HAVE_SYSVTTY)
- #error HAVE_BSDTTY_and_HAVE_SYSVTTY_both_defined ;
-#endif
-
 
 
 /*

@@ -9,9 +9,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/stat.h>
-#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
-#endif
 #include <syslog.h>
 #include <fcntl.h>
 #include <unistd.h>

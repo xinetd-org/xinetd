@@ -70,17 +70,9 @@ libmisc_la_SOURCES = \
 	src/misc/misc.c \
 	src/misc/misc.h
 libportable_la_SOURCES = \
-	src/portable/compat.h \
 	src/portable/cvt.c \
-	src/portable/difftime.c \
-	src/portable/fake-getaddrinfo.c \
-	src/portable/fake-getaddrinfo.h \
-	src/portable/fake-getnameinfo.c \
-	src/portable/inet_aton.c \
-	src/portable/inet_ntop.c \
 	src/portable/libportable.h \
-	src/portable/strcasecmp.c \
-	src/portable/strerror.c
+	src/portable/strcasecmp.c
 libpset_la_SOURCES = \
 	src/pset/ops.c \
 	src/pset/pset.c \
@@ -122,7 +114,8 @@ sbin_PROGRAMS = xinetd
 xinetd_CFLAGS = \
 	$(HOWL_CFLAGS) \
 	$(HARDEN_CFLAGS) \
-	$(SELINUX_CFLAGS)
+	$(SELINUX_CFLAGS) \
+	$(TIRPC_CFLAGS)
 xinetd_SOURCES = \
 	src/access.c \
 	src/access.h \
@@ -217,7 +210,8 @@ xinetd_LDADD = \
 	libxlog.la \
 	$(HOWL_LIBS) \
 	$(WRAP_LIBS) \
-	$(SELINUX_LIBS)
+	$(SELINUX_LIBS) \
+	$(TIRPC_LIBS)
 
 distclean-local:
 	rm -rf *.cache *~

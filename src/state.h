@@ -16,14 +16,9 @@
 #include <setjmp.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
-#endif
 #include "libportable.h"
-
-#ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
-#endif
 
 #include "xlog.h"
 #include "pset.h"
