@@ -17,12 +17,12 @@ compiler:
   - gcc
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libavahi-compat-howl-dev libtirpc-dev libwrap0-dev libselinux-dev ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libtirpc-dev libwrap0-dev libselinux-dev ; fi
 
 script:
   - sh autogen.sh
   - ./configure --without-libwrap --without-labeled-networking --without-loadavg
   - make
   - make distcheck
-  - ./configure --with-howl --with-libwrap --with-loadavg --with-labeled-networking
+  - ./configure --with-libwrap --with-loadavg --with-labeled-networking
   - make
