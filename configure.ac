@@ -36,13 +36,6 @@ AC_CHECK_LIB([m], [log10], [
 	AC_MSG_ERROR([Unable to find working libm.so])
 ])
 AC_SUBST([LIBM_LIBS])
-AC_CHECK_LIB([crypt], [main], [
-	CRYPTO_LIBS="-lcrypto"
-	AC_DEFINE([HAVE_LIBCRYPT], [1], [Have libcrypt.so present])
-], [
-	AC_MSG_ERROR([Unable to find working libcrypto.so])
-])
-AC_SUBST([CRYPTO_LIBS])
 PKG_CHECK_MODULES([TIRPC],[libtirpc], [],[AC_MSG_ERROR([Missing libtirpc libraries])])
 
 # ======================================
