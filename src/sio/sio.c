@@ -359,32 +359,6 @@ int Sbuftype( int fd, int type )
 }
 
 
-#ifndef sio_memscan
-
-static char *sio_memscan( const char *from, size_t how_many, char ch )
-{
-   char *p ;
-   char *last = from + how_many ;
-
-   for ( p = from ; p < last ; p++ )
-      if ( *p == ch )
-         return( p ) ;
-      return( 0 ) ;
-}
-
-#endif	/* sio_memscan */
-
-
-#ifdef NEED_MEMCOPY
-
-void __sio_memcopy( const char *from, char *to, size_t nbytes )
-{
-   while ( nbytes-- )
-      *to++ = *from++ ;
-}
-
-#endif /* NEED_MEMCOPY */
-
 int sio_setup(int fd, __sio_descriptor_t **dp, unsigned int type)
 {
    if ( fd >= __sio_n_descriptors ) {

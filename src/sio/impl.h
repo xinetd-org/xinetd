@@ -152,15 +152,5 @@ sio_status_e __sio_switch( __sio_id_t *idp, int fd ) ;
 #define sio_memcopy( from, to, nbytes )	(void) memcpy( to, from, nbytes )
 #define sio_memscan( from, nbytes, ch )   memchr( from, ch, nbytes )
 
-#ifndef sio_memcopy
-#define sio_memcopy		__sio_memcopy
-#define NEED_MEMCOPY
-void __sio_memcopy() ;
-#endif
-
-#ifndef sio_memscan
-char *sio_memscan() ;
-#endif
-
 #endif /* SIO_BUFFER_SIZE */
 

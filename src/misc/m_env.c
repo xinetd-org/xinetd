@@ -230,18 +230,3 @@ int env_addstr( env_h env, char *var_string )
 
    return( addstring( env, var_string, (unsigned int)(p-var_string) ) ) ;
 }
-
-
-#ifdef notdef
-static int comparator( char **p1, char **p2 )
-{
-   return( strcmp( *p1, *p2 ) ) ;
-}
-
-
-void env_sort( env_h env )
-{
-   qsort( (char *)env->vars, env->n_vars, sizeof( char * ), comparator ) ;
-}
-#endif
-
