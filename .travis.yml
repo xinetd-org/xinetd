@@ -8,10 +8,6 @@ os:
   - linux
   - osx
 
-matrix:
-  allow_failures:
-    - os: osx
-
 compiler:
   - clang
   - gcc
@@ -23,6 +19,4 @@ script:
   - sh autogen.sh
   - ./configure --without-libwrap --without-labeled-networking --without-loadavg
   - make
-  - make distcheck
-  - ./configure --with-libwrap --with-loadavg --with-labeled-networking
-  - make
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make distcheck ; fi
