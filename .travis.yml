@@ -8,10 +8,8 @@ compiler:
   - clang
   - gcc
 
-install:
-  - libtirpc-dev
-  - libwrap0-dev
-  - libselinux-dev
+before_install:
+  - sudo apt-get install -y libtirpc-dev libwrap0-dev libselinux-dev
 
 script:
   - sh autogen.sh
