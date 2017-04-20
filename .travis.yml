@@ -1,6 +1,6 @@
 # see travis-ci.org for details
 
-sudo: false
+sudo: required
 
 language: c
 
