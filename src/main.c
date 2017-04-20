@@ -77,13 +77,10 @@ int main( int argc, char *argv[] )
 #ifdef HAVE_HOWL
    "howl "
 #endif
-#ifdef HAVE_DNSREGISTRATION
-   "rendezvous "
-#endif
 #ifdef LABELED_NET
    "labeled-networking "
 #endif
-#if !defined(LIBWRAP) && !defined(HAVE_LOADAVG) && !defined(HAVE_MDNS) && !defined(HAVE_HOWL) && !defined(HAVE_DNSREGISTRATION) && !defined(LABELED_NET)
+#if !defined(LIBWRAP) && !defined(HAVE_LOADAVG) && !defined(HAVE_MDNS) && !defined(HAVE_HOWL) && !defined(LABELED_NET)
    "no "
 #endif
    "options compiled in."

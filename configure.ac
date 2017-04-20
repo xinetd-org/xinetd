@@ -49,8 +49,7 @@ PKG_CHECK_MODULES([TIRPC],[libtirpc], [],[AC_MSG_ERROR([Missing libtirpc librari
 # Check for various headers and settings
 # ======================================
 AC_FUNC_MMAP
-AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H, 1, "")])
-AC_CHECK_HEADER(DNSServiceDiscovery/DNSServiceDiscovery.h, [AC_DEFINE(HAVE_DNSREGISTRATION, 1, "") AC_DEFINE(HAVE_MDNS, 1, "")])
+AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE(HAVE_SYS_FILIO_H, 1, "Have FreeBSD filio.h")])
 
 # ======
 # Switch

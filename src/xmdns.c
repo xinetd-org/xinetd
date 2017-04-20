@@ -9,23 +9,11 @@
 #include "server.h"
 #include "sconf.h"
 #include "pset.h"
-
-#ifdef HAVE_DNSREGISTRATION
-#include <DNSServiceDiscovery/DNSServiceDiscovery.h>
-#endif
-
 #ifdef HAVE_HOWL
 #include <howl.h>
 #endif
 
 extern struct program_state ps ;
-
-#ifdef HAVE_DNSREGISTRATION
-static void mdns_callback(DNSServiceRegistrationReplyErrorType err, void *d)
-{
-   return;
-}
-#endif
 
 #ifdef HAVE_HOWL
 static sw_result howl_callback(sw_discovery discovery, sw_discovery_oid oid, sw_discovery_publish_status status, sw_opaque extra) {
@@ -56,11 +44,6 @@ int xinetd_mdns_deregister(struct service_config *scp) {
    if( debug.on )
       msg(LOG_DEBUG, "xinetd_mdns_deregister", "Deregistering service: %s", SC_ID(scp));
 
-#ifdef HAVE_DNSREGISTRATION
-   DNSServiceDiscoveryDeallocate(  (dns_service_discovery_ref)scp->mdns_state );
-   return 0;
-#endif
-
 #ifdef HAVE_HOWL
    if( !ps.rws.mdns_state ) return 0;
    if( sw_discovery_cancel(*(sw_discovery *)ps.rws.mdns_state, *(sw_discovery_oid *)scp->mdns_state) != SW_OKAY )
@@ -82,10 +65,6 @@ int xinetd_mdns_register(struct service_config *scp) {
    if( debug.on )
       msg(LOG_DEBUG, "xinetd_mdns_register", "Registering service: %s (%s)", SC_MDNS_NAME(scp), SC_ID(scp));
 
-#ifdef HAVE_DNSREGISTRATION
-   scp->mdns_state = DNSServiceRegistrationCreate("", SC_MDNS_NAME(scp), "", htons(SC_PORT(scp)), "", mdns_callback, NULL);
-#endif
-
 #ifdef HAVE_HOWL
    sw_discovery_publish(*(sw_discovery *)ps.rws.mdns_state, 0, SC_ID(scp), SC_MDNS_NAME(scp), NULL, NULL, SC_PORT(scp), NULL, 0, howl_callback, NULL, (sw_discovery_oid *)scp->mdns_state);
    return 0;
@@ -95,11 +74,6 @@ int xinetd_mdns_register(struct service_config *scp) {
 }
 
 int xinetd_mdns_init(void) {
-#ifdef HAVE_DNSREGISTRATION
-   ps.rws.mdns_state = (char *)1;
-   return 0;
-#endif
-
 #ifdef HAVE_HOWL
    ps.rws.mdns_state = malloc(sizeof(sw_discovery));
    if( !ps.rws.mdns_state )
@@ -115,10 +89,6 @@ int xinetd_mdns_init(void) {
 }
 
 int xinetd_mdns_svc_init(struct service_config *scp) {
-#ifdef HAVE_DNSREGISTRATION
-//   scp->mdns_state = malloc(sizeof(dns_service_discovery_ref));
-#endif
-
 #ifdef HAVE_HOWL
    scp->mdns_state = malloc(sizeof(sw_discovery_oid));
 #endif
@@ -129,11 +99,6 @@ int xinetd_mdns_svc_init(struct service_config *scp) {
 }
 
 int xinetd_mdns_svc_free(struct service_config *scp) {
-#ifndef HAVE_DNSREGISTRATION
-   if(scp->mdns_state)
-      free(scp->mdns_state);
-   scp->mdns_state = NULL;
-#endif
    return 0;
 }
 
