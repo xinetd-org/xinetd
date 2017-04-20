@@ -174,7 +174,8 @@ xinetd_LDADD = \
 	libsio.la \
 	libstr.la \
 	libxlog.la \
-	$(HOWL_LIBS)
+	$(HOWL_LIBS) \
+	$(WRAP_LIBS)
 
 distclean-local:
 	rm -rf *.cache *~

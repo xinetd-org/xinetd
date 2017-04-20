@@ -206,41 +206,22 @@ AS_IF([test x"$with_loadavg" != "xno"], [
     AC_DEFINE(HAVE_LOADAVG, 1, "")
 ])
 
-AC_MSG_CHECKING(whether to use libwrap)
-AC_ARG_WITH(libwrap,
-[  --with-libwrap[=PATH]   Compile in libwrap (tcp_wrappers) support.],
-[ case "$withval" in
-	no)
-		AC_MSG_RESULT(no)
-		;;
-	yes)
-		AC_MSG_RESULT(yes)
-		AC_CHECK_LIB(wrap, request_init, [
-			AC_DEFINE(LIBWRAP, 1, "")
-			WRAPLIBS="-lwrap"
-			AC_DEFINE(HAVE_LIBWRAP, 1, "") ])
-		AC_CHECK_LIB(nsl, yp_get_default_domain, [ 
-			WRAPLIBS="$WRAPLIBS -lnsl" ])
-		LIBS="$WRAPLIBS $LIBS"
-		;;
-	*)
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(LIBWRAP, 1, "")
-		if test -d "$withval"; then
-			WRAPLIBS="-L$withval -lwrap"
-		else
-			WRAPLIBS="$withval"
-		fi
-		AC_CHECK_LIB(nsl, yp_get_default_domain, [ 
-			WRAPLIBS="$WRAPLIBS -lnsl" ])
-		OLDLIBS="$LIBS"
-		LIBS="$WRAPLIBS $LIBS"
-		AC_TRY_LINK([ int allow_severity; int deny_severity; ], 
-			[ hosts_access(); ], [], [ AC_MSG_ERROR(Could not find the $withval library.  You must first install tcp_wrappers.) ])
-		;;
-	esac ],
-	AC_MSG_RESULT(no)
+AC_ARG_WITH([libwrap],
+    [AS_HELP_STRING([--without-libwrap], [Do not use libwrap tcp_wrappers support])],
+    [with_libwrap="$withval"],
+    [with_libwrap=yes]
 )
+AS_IF([test x"$with_libwrap" != "xno"], [
+    AC_CHECK_LIB(wrap, request_init, [
+        AC_DEFINE(LIBWRAP, 1, "")
+        WRAP_LIBS="-lwrap"
+        AC_DEFINE(HAVE_LIBWRAP, 1, "")
+    ],[
+        AC_MSG_ERROR([Missing libwrap from tcp_wrappers])
+    ])
+    AC_CHECK_LIB(nsl, yp_get_default_domain, [WRAP_LIBS="$WRAP_LIBS -lnsl" ])
+    AC_SUBST([WRAP_LIBS])
+])
 
 AC_MSG_CHECKING(whether to use labeled-networking)
 AC_ARG_WITH(labeled-networking,
@@ -312,6 +293,7 @@ check_link_flag([-Wl,-z,relro],
 check_link_flag([-Wl,-z,now], [HARDEN_LDFLAGS="$HARDEN_LDFLAGS -Wl,-z,now"])])
 AC_SUBST([HARDEN_CFLAGS])
 AC_SUBST([HARDEN_LDFLAGS])
+AC_SUBST([CFLAGS])
 
 # ==============
 # Setup config.h
@@ -335,6 +317,7 @@ Build configuration:
 	debug:              ${enable_debug}
 	werror:             ${enable_werror}
 	howl:               ${with_howl}
+	libwrap:            ${with_libwrap}
 	loadavg:            ${with_loadavg}
 	HARDEN_CFLAGS:      ${HARDEN_CFLAGS}
 	HARDEN_LDFLAGS:     ${HARDEN_LDFLAGS}
