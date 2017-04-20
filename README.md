@@ -31,19 +31,9 @@ this is a change from previous behaviour.
 --with-loadavg  : This option to the configure script tells xinetd
 to compile in support for the max_load configuration option.  This
 option allows you to have certain services disabled when the system
-load gets above a specified level.  This is highly operating system
-specific.  It currently has been tested on linux, and there is
-developmental support for solaris 2.6 and higher.
+load gets above a specified level.
 
---with-inet6    : Services default to IPv6 (PF_INET6) sockets.
-Now that IPv6 support is fully integrated into xinetd, this option
-is almost meaningless.  IPv6 sockets are available with the "IPv6"
-service flag, even without this option.
-
---with-howl=PATH: Adds howl mdns advertising support to xinetd.
-PATH is the prefix where howl is installed, such as /usr/local,
-/usr, etc.  PATH is not optional.  configure will not automatically
-detect howl's installed location.
+--with-howl: Adds howl mdns advertising support to xinetd.
 
 Access Control:
 --------------------------------------------------------------------------
