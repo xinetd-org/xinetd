@@ -936,3 +936,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 	Restructure the repository for saner file locations
 	Redo buildsystem for proper autotools
 	Include patches from SUSE, Debian, and Fedora from their packages
+	Remove HOWL support completely
+	Remove deprecated compatibility detections that are mostly true
+	Enable travis build to see if we build on osx (bsd) and linux
+	Add possibility to use POLL instead of FD code to alocate
