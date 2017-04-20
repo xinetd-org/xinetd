@@ -6,6 +6,8 @@ EXTRA_DIST = \
 	CHANGELOG \
 	$(bin_SCRIPTS)
 
+AM_LDFLAGS = $(LDFLAGS) $(HARDEN_LDFLAGS)
+AM_CFLAGS = $(CFLAGS) $(HARDEN_CFLAGS)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/misc \
@@ -78,7 +80,8 @@ bin_SCRIPTS = src/xconv.pl
 
 sbin_PROGRAMS = xinetd
 xinetd_CFLAGS = \
-	$(HOWL_CFLAGS)
+	$(HOWL_CFLAGS) \
+	$(HARDEN_CFLAGS)
 xinetd_SOURCES = \
 	src/access.c \
 	src/access.h \
