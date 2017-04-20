@@ -149,11 +149,6 @@ struct service_config
                                                  -1: forever
                                                   0: never
                                                   X: X minutes          */
-#ifdef HAVE_MDNS
-   char                *sc_mdns_name;
-   boolean_e            sc_mdns;
-   void                *mdns_state;
-#endif
 #ifdef LIBWRAP
    char                *sc_libwrap;
 #endif

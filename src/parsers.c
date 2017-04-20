@@ -250,27 +250,6 @@ status_e wait_parser( pset_h values,
    return( OK ) ;
 }
 
-#ifdef HAVE_MDNS
-status_e mdns_parser( pset_h values, 
-                      struct service_config *scp, 
-                      enum assign_op op )
-{
-   char *val = (char *) pset_pointer( values, 0 ) ;
-   const char *func = "mdns_parser" ;
-
-   if ( EQ( val, "yes" ) )
-      SC_MDNS(scp) = YES ;
-   else if ( EQ( val, "no" ) )
-      SC_MDNS(scp) = NO ;
-   else
-   {
-      parsemsg( LOG_ERR, func, "Bad value for mdns: %s", val ) ;
-      return( FAILED );
-   }
-   return( OK ) ;
-}
-#endif
-
 status_e user_parser( pset_h values, 
                       struct service_config *scp, 
                       enum assign_op op )

@@ -24,7 +24,6 @@
 #include "sconf.h"
 #include "xtimer.h"
 #include "sensor.h"
-#include "xmdns.h"
 #ifdef HAVE_POLL
 #include "xpoll.h"
 #endif
@@ -51,9 +50,6 @@ int main( int argc, char *argv[] )
    const char            *func = "main" ;
 
    init_daemon( argc, argv ) ;
-#ifdef HAVE_MDNS
-   xinetd_mdns_init();
-#endif
    init_services() ;
 
    /* Do the chdir after reading the config file.  Relative path names
@@ -74,16 +70,10 @@ int main( int argc, char *argv[] )
 #ifdef HAVE_LOADAVG
    "loadavg "
 #endif
-#ifdef HAVE_MDNS
-   "mdns "
-#endif
-#ifdef HAVE_HOWL
-   "howl "
-#endif
 #ifdef LABELED_NET
    "labeled-networking "
 #endif
-#if !defined(LIBWRAP) && !defined(HAVE_LOADAVG) && !defined(HAVE_MDNS) && !defined(HAVE_HOWL) && !defined(LABELED_NET)
+#if !defined(LIBWRAP) && !defined(HAVE_LOADAVG) && !defined(LABELED_NET)
    "no "
 #endif
    "options compiled in."
@@ -198,12 +188,6 @@ static void main_loop(void)
             if ( --n_active == 0 )
                continue ;
       }
-#endif
-
-#ifdef HAVE_MDNS
-      if( xinetd_mdns_poll() == 0 )
-         if ( --n_active == 0 )
-            continue ;
 #endif
 
       for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ )

@@ -108,7 +108,6 @@ bin_SCRIPTS = src/xconv.pl
 
 sbin_PROGRAMS = xinetd
 xinetd_CFLAGS = \
-	$(HOWL_CFLAGS) \
 	$(HARDEN_CFLAGS) \
 	$(SELINUX_CFLAGS) \
 	$(TIRPC_CFLAGS)
@@ -193,8 +192,6 @@ xinetd_SOURCES = \
 	src/util.c \
 	src/util.h \
 	src/xconfig.h \
-	src/xmdns.c \
-	src/xmdns.h \
 	src/xpoll.h \
 	src/xtimer.c \
 	src/xtimer.h
@@ -205,7 +202,6 @@ xinetd_LDADD = \
 	libsio.la \
 	libstr.la \
 	libxlog.la \
-	$(HOWL_LIBS) \
 	$(WRAP_LIBS) \
 	$(SELINUX_LIBS) \
 	$(TIRPC_LIBS)

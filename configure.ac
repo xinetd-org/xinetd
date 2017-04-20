@@ -72,18 +72,6 @@ AS_IF([test x"$GCC" = xyes], [
 	CFLAGS="$CFLAGS -Wall -Wextra -pedantic"
 ])
 
-AC_ARG_WITH([howl],
-    [AS_HELP_STRING([--with-howl], [Build with howl support.])],
-    [with_howl="$withval"],
-    [with_howl=no]
-)
-AS_IF([test x"$with_howl" != "xno"], [
-    PKG_CHECK_MODULES([HOWL],[howl], [
-        AC_DEFINE(HAVE_HOWL, 1, "")
-        AC_DEFINE(HAVE_MDNS, 1, "")
-    ],[AC_MSG_ERROR([Missing how library, probably missing mdns-compat avahi development package])])
-])
-
 AC_ARG_WITH([loadavg],
     [AS_HELP_STRING([--without-loadavg], [Do not use loadavg for balancing])],
     [with_loadavg="$withval"],
@@ -118,7 +106,7 @@ AC_ARG_WITH([labeled-networking],
 AS_IF([test x"$with_labeled_networking" != "xno"], [
     PKG_CHECK_MODULES([SELINUX],[libselinux], [
         AC_DEFINE(LABELED_NET, 1, "")
-    ],[AC_MSG_ERROR([Missing selinux libraries])])
+    ],[])
 ])
 
 # =========

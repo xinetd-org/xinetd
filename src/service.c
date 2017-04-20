@@ -20,9 +20,6 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>
-#ifdef HAVE_MDNS
-#include "xmdns.h"
-#endif
 #ifndef NO_RPC
   #ifdef __sun
    #include <rpc/types.h>
@@ -430,10 +427,6 @@ status_e svc_activate( struct service *sp )
       return( FAILED ) ;
    }
 
-#ifdef HAVE_MDNS
-   xinetd_mdns_register(scp);
-#endif
-
    if ( log_start( sp, &SVC_LOG(sp) ) == FAILED )
    {
       deactivate( sp ) ;
@@ -475,10 +468,6 @@ static void deactivate( const struct service *sp )
    SVC_FD( sp ) = 0;
 #else      
    FD_CLR( SVC_FD( sp ), &ps.rws.socket_mask ) ;
-#endif
-
-#ifdef HAVE_MDNS
-   xinetd_mdns_deregister(SVC_CONF(sp));
 #endif
 
    if (debug.on)
