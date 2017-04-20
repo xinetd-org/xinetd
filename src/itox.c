@@ -5,8 +5,6 @@
  * and conditions for redistribution.
  */
 
-static char RCSid[] = "$Id$" ;
-
 #include "config.h"
 #define EQ( s1, s2 )				( strcmp( s1, s2 ) == 0 )
 
