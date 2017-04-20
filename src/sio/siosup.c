@@ -765,7 +765,6 @@ int Sdone( int fd )
                                           mdp->second_unit.mapped_bytes ) ;
                idp->memory_mapped = FALSE ;
             }
-            else
 #endif   /* HAVE_MMAP */
                free( idp->buf - idp->buffer_size ) ;
                idp->nextb = idp->end = NULL ;
