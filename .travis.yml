@@ -4,12 +4,20 @@ sudo: required
 
 language: c
 
+os:
+  - linux
+  - osx
+
+matrix:
+  allow_failures:
+    - os: osx
+
 compiler:
   - clang
   - gcc
 
 before_install:
-  - sudo apt-get install -y libtirpc-dev libwrap0-dev libselinux-dev
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libtirpc-dev libwrap0-dev libselinux-dev ; fi
 
 script:
   - sh autogen.sh
