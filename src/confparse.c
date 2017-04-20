@@ -764,7 +764,7 @@ static status_e check_entry( struct service_config *scp,
           if ( SC_SPECIFIED( scp, A_PROTOCOL ) )
           {
              sep = getservbyname( SC_NAME(scp), SC_PROTONAME(scp) ) ;
-             if ( (sep == NULL) )
+             if ( sep == NULL )
              {
                 msg( LOG_ERR, func, 
                    "service/protocol combination not in /etc/services: %s/%s",

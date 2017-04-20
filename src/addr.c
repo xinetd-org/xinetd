@@ -136,7 +136,7 @@ int addrlist_match( const pset_h addr_list,
       if ( cap == NULL )
          continue ;
  
-      if( (cap->addr_type == HOST_ADDR) ) 
+      if( cap->addr_type == HOST_ADDR )
       {
          char *tmpname = NULL;
          if ( hname[0] == 0 ) 
@@ -157,7 +157,7 @@ int addrlist_match( const pset_h addr_list,
          if( cap->name[0] == '.' )
          {
             tmpname = str_casefind( hname, cap->name );
-            if( tmpname != NULL ) 
+            if( tmpname != NULL )
 	    {
                if( strlen(cap->name) == strlen(tmpname) )
                   return( u+1 );

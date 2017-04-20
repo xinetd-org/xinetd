@@ -252,7 +252,7 @@ static status_e activate_normal( struct service *sp )
    brd_str = getenv("XINETD_BIND_DELAY");
    if (brd_str) {
       bind_retry_delay = atoi(brd_str);
-      if (bind_retry_delay < 0 || bind_retry_delay > 500000) {
+      if (bind_retry_delay > 500000) {
          bind_retry_delay = 0;
       }
    }
