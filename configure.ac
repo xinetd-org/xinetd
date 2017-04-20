@@ -34,7 +34,6 @@ PKG_PROG_PKG_CONFIG([0.20])
 # ======================================
 # Check for various headers and settings
 # ======================================
-AC_CHECK_LIB(compat, main)
 AC_SEARCH_LIBS(gethostbyname, nsl socket resolv)
 AC_SEARCH_LIBS(getnameinfo, nsl socket resolv)
 AC_SEARCH_LIBS(inet_ntop, nsl socket resolv)
