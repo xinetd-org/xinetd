@@ -1,0 +1,11 @@
+[Unit]
+Description=Xinetd A Powerful Replacement For Inetd
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/xinetd -stayalive -dontfork
+ExecReload=/usr/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
