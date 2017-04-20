@@ -11,7 +11,7 @@ compiler:
 install: make get-deps
 
 script:
-        sh autogen.sh
-        ./configure
-        make
-        make distcheck
+  - sh autogen.sh
+  - ./configure
+  - make
+  - make distcheck
