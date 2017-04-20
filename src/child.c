@@ -27,7 +27,6 @@
 #include <netdb.h>
 #ifdef LABELED_NET
 #include <selinux/selinux.h>
-#include <selinux/flask.h>
 #include <selinux/context.h>
 #endif
 
@@ -544,7 +543,7 @@ static int set_context_from_socket( const struct service_config *scp, int fd )
    if (!(new_context = context_str(bcon)))
      goto fail;
    
-   if (security_compute_create(new_context, exec_context, SECCLASS_PROCESS,
+   if (security_compute_create(new_context, exec_context, string_to_security_class ("process"),
                                &new_exec_context) < 0)
      goto fail;
 
