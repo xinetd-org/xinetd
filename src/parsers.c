@@ -1415,32 +1415,9 @@ status_e rlim_data_parser( pset_h values,
 }
 #endif
 
-#ifdef RLIMIT_NOFILE
-status_e rlim_files_parser( pset_h values,
-                         struct service_config *scp,
-                         enum assign_op op )
-{
-   char *mem = (char *) pset_pointer( values, 0 ) ;
-   const char *func = "rlim_files_parser" ;
-
-   if ( EQ( mem, "UNLIMITED" ) )
-      SC_RLIM_FILES(scp) = (rlim_t)RLIM_INFINITY ;
-   else
-   {
-      if ( get_limit ( mem, &SC_RLIM_FILES(scp)) )
-      {
-         parsemsg( LOG_ERR, func,
-            "Max files limit is invalid: %s", mem ) ;
-         return( FAILED ) ;
-      }
-   }
-   return( OK ) ;
-}
-#endif
-
 #ifdef RLIMIT_RSS
 status_e rlim_rss_parser( pset_h values, 
-                          struct service_config *scp,
+                          struct service_config *scp, 
                           enum assign_op op )
 {
    char *mem = (char *) pset_pointer( values, 0 ) ;

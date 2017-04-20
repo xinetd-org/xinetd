@@ -61,13 +61,12 @@
 #define A_DISABLED         43
 #define A_MDNS             44
 #define A_LIBWRAP          45
-#define A_RLIMIT_FILES     46
 
 /*
  * SERVICE_ATTRIBUTES is the number of service attributes and also
  * the number from which defaults-only attributes start.
  */
-#define SERVICE_ATTRIBUTES      ( A_MDNS + 2 )
+#define SERVICE_ATTRIBUTES      ( A_MDNS + 1 )
 
 /*
  * Mask of attributes that must be specified.
