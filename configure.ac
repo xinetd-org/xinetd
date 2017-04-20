@@ -36,7 +36,9 @@ AC_CHECK_LIB([m], [log10], [
 	AC_MSG_ERROR([Unable to find working libm.so])
 ])
 AC_SUBST([LIBM_LIBS])
-PKG_CHECK_MODULES([TIRPC],[libtirpc], [],[AC_MSG_ERROR([Missing libtirpc libraries])])
+PKG_CHECK_MODULES([TIRPC],[libtirpc], [
+	AC_DEFINE([HAVE_RPCENT_H], [1], [Have <rpc/rpcent.h>.])
+], [:])
 
 # ======================================
 # Check for various headers and settings

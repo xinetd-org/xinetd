@@ -14,7 +14,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <rpc/rpc.h>
+#ifdef HAVE_RPCENT_H
 #include <rpc/rpcent.h>
+#endif
 #include <netdb.h>
 
 #include "str.h"
