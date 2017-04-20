@@ -19,11 +19,7 @@
 #include <string.h>
 #include "sio.h"
 #include "str.h"
-#if !defined(linux)
-#include "misc.h"
-#else
 #include <libgen.h>
-#endif
 
 str_h strp ;
 int line_count ;
