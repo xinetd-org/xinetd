@@ -242,7 +242,7 @@ static void find_bad_fd(void)
    const char *func = "find_bad_fd" ;
 
 #ifdef HAVE_POLL
-   for ( fd = 0 ; (unsigned)fd < ps.rws.pfds_last ; fd++ )
+   for ( fd = 0 ; fd < ps.rws.pfds_last ; fd++ )
       if ( ps.rws.pfd_array[fd].revents & ( POLLHUP|POLLNVAL|POLLERR ) )
       {
 #else
