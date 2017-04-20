@@ -22,12 +22,8 @@
 #include "parse.h"
 #include "sio.h"
 
-#if !defined(NAME_MAX)
-   #ifdef FILENAME_MAX
-   #define NAME_MAX FILENAME_MAX
-   #else
+#ifndef NAME_MAX
    #define NAME_MAX 256
-   #endif
 #endif
 
 static int compfunc( const void *_a, const void *_b )

@@ -43,12 +43,8 @@ int allow_severity = LOG_INFO;
 #include "xconfig.h"
 #include "xtimer.h"
 
-#if !defined(NAME_MAX)
-      #ifdef FILENAME_MAX
-      #define NAME_MAX FILENAME_MAX
-      #else
-      #define NAME_MAX 256
-      #endif
+#ifdef NAME_MAX
+   #define NAME_MAX 256
 #endif
 
 const struct name_value access_code_names[] =
