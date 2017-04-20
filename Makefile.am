@@ -3,6 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = \
 	contrib/empty.conf \
 	contrib/xinetd \
+	contrib/xinetd.service \
 	README.md \
 	CHANGELOG \
 	$(bin_SCRIPTS) \
