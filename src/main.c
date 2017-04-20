@@ -251,9 +251,7 @@ static void main_loop(void)
 static void find_bad_fd(void)
 {
    int fd ;
-#ifdef HAVE_POLL
-   const char *reason;
-#else
+#ifndef HAVE_POLL
    struct stat st ;
 #endif
    unsigned bad_fd_count = 0 ;
@@ -263,12 +261,6 @@ static void find_bad_fd(void)
    for ( fd = 0 ; (unsigned)fd < ps.rws.pfds_last ; fd++ )
       if ( ps.rws.pfd_array[fd].revents & ( POLLHUP|POLLNVAL|POLLERR ) )
       {
-         if ( ps.rws.pfd_array[fd].revents & POLLHUP )
-            reason = "hung up";
-         else if ( ps.rws.pfd_array[fd].revents & POLLNVAL )
-            reason = "been closed";
-         else if ( ps.rws.pfd_array[fd].revents & POLLERR )
-            reason = "reported error condition";
 #else
    for ( fd = 0 ; (unsigned)fd < ps.ros.max_descriptors ; fd++ )
       if ( FD_ISSET( fd, &ps.rws.socket_mask ) && fstat( fd, &st ) == -1 )
