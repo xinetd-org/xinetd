@@ -1,11 +1,32 @@
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
-	contrib/ \
+	contrib/empty.conf \
+	contrib/xinetd \
 	README.md \
 	CHANGELOG \
 	$(bin_SCRIPTS) \
-	$(man_MANS)
+	$(man_MANS) \
+	$(sysconf_DATA) \
+	$(xinetconf_DATA)
+
+sysconf_DATA = \
+	contrib/xinetd.conf
+
+xinetconfdir=$(sysconfdir)/xinet.d
+xinetconf_DATA = \
+	contrib/xinetd.d/daytime \
+	contrib/xinetd.d/daytime-udp \
+	contrib/xinetd.d/discard \
+	contrib/xinetd.d/discard-udp \
+	contrib/xinetd.d/echo \
+	contrib/xinetd.d/echo-udp \
+	contrib/xinetd.d/chargen \
+	contrib/xinetd.d/chargen-udp \
+	contrib/xinetd.d/servers \
+	contrib/xinetd.d/services \
+	contrib/xinetd.d/time \
+	contrib/xinetd.d/time-udp
 
 man_MANS = \
 	man/itox.8 \
