@@ -211,7 +211,7 @@ static void si_mux(void)
 #endif
 #ifdef HAVE_POLL
             if ( handle_io( iter, chp, remote_pfd, pfd_array,
-                    &pfds_last, tcp_local_to_remote ) == FAILED )
+                    &pfds_last, tcp_remote_to_local ) == FAILED )
 #else
             if ( handle_io( iter, chp,
                            &socket_mask, tcp_remote_to_local ) == FAILED )
