@@ -1,3 +1,7 @@
+# xinetd #
+
+[![Build Status](https://travis-ci.org/openSUSE/xinetd.svg?branch=master)](https://travis-ci.org/openSUSE/xinetd)
+
 xinetd is a powerful replacement for inetd.
 Original site: http://www.xinetd.org
 xinetd has access control mechanisms, extensive logging capabilities,
@@ -15,8 +19,7 @@ but should be considered deprecated.  The state dump signal is now
 SIGUSR1.
 ***      ***
 
-There are a couple of compile time options to xinetd:  
---------------------------------------------------------------------------
+# There are a couple of compile time options to xinetd
 
 --with-libwrap  : This option to the configure script tells xinetd
 to compile in support for tcp wrappers.  You must already have libwrap
@@ -35,8 +38,8 @@ load gets above a specified level.
 
 --with-howl: Adds howl mdns advertising support to xinetd.
 
-Access Control:
---------------------------------------------------------------------------
+# Access Control
+
 As of xinetd 2.1.8.8pre3 there is a change in the handling of 
 names specified in the access control directives, only_from and
 no_access.  For numerical entries in these fields, nothing has
@@ -59,8 +62,8 @@ file is a '.', then all hosts within that domain are matched.
 For example, if I put .synack.net, all hosts with a reverse mapping
 that are in .synack.net domain, are matched.
 
-libwrap support:
-----------------------------------------------------------------------
+# libwrap support
+
 For libwrap access control, the access control is done by the
 server name for the service.  So, if you have an entry like this:
 service telnet
@@ -91,8 +94,8 @@ a "server" attribute, (internal and redirection services) then access
 control is based on the service name.
 This is only for libwrap access control.
 
-itox:
---------------------------------------------------------------------------
+# itox
+
 I will continue to keep itox in the distribution, and fix any bugs or
 compatibility issues that come to my attention, but I probably won't
 get around to adding features.  If someone else would like to pick this
