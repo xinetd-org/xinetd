@@ -112,6 +112,9 @@ static void si_mux(void)
    if ( iter == NULL )
    {
       msg( LOG_ERR, func, ES_NOMEM ) ;
+#ifdef HAVE_POLL
+      free( pfd_array ) ;
+#endif
       return ;
    }
 
