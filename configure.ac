@@ -39,14 +39,16 @@ AC_CHECK_LIB([m], [log10], [
 AC_SUBST([LIBM_LIBS])
 PKG_CHECK_MODULES([TIRPC],[libtirpc], [
 	AC_DEFINE([HAVE_RPCENT_H], [1], [Have <rpc/rpcent.h>.])
-], [:])
+], [
+	AC_MSG_WARN([Libtirpc not found, will not use <rpc/rpcent.h>])
+])
 
 # ======================================
 # Check for various headers and settings
 # ======================================
 AC_FUNC_MMAP
-AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE([HAVE_SYS_FILIO_H], [1], ["Have FreeBSD filio.h"])])
-AC_CHECK_FUNC(poll, [AC_DEFINE([HAVE_POLL], [1], ["Have available poll function"])])
+AC_CHECK_HEADER(sys/filio.h, [AC_DEFINE([HAVE_SYS_FILIO_H], [1], [Have FreeBSD filio.h])])
+AC_CHECK_FUNC(poll, [AC_DEFINE([HAVE_POLL], [1], [Have available poll function])])
 
 # ======
 # Switch
@@ -76,7 +78,7 @@ AC_ARG_WITH([loadavg],
     [with_loadavg=yes]
 )
 AS_IF([test x"$with_loadavg" != "xno"], [
-    AC_DEFINE([HAVE_LOADAVG], [1], ["Have loadavg for balancing"])
+    AC_DEFINE([HAVE_LOADAVG], [1], [Have loadavg for balancing])
 ])
 
 AC_ARG_WITH([libwrap],
@@ -86,7 +88,7 @@ AC_ARG_WITH([libwrap],
 )
 AS_IF([test x"$with_libwrap" != "xno"], [
     AC_CHECK_LIB(wrap, request_init, [
-        AC_DEFINE([LIBWRAP], [1], ["Have libwrap TCP wrappers present"])
+        AC_DEFINE([LIBWRAP], [1], [Have libwrap TCP wrappers present])
         WRAP_LIBS="-lwrap"
     ],[
         AC_MSG_ERROR([Missing libwrap from tcp_wrappers])
@@ -102,7 +104,7 @@ AC_ARG_WITH([labeled-networking],
 )
 AS_IF([test x"$with_labeled_networking" != "xno"], [
     PKG_CHECK_MODULES([SELINUX],[libselinux], [
-        AC_DEFINE(LABELED_NET, 1, "")
+        AC_DEFINE([LABELED_NET], [1], [Use selinux for network labeling])
     ],[])
 ])
 
