@@ -14,7 +14,7 @@ EXTRA_DIST = \
 sysconf_DATA = \
 	contrib/xinetd.conf
 
-xinetconfdir=$(sysconfdir)/xinet.d
+xinetconfdir=$(sysconfdir)/xinetd.d
 xinetconf_DATA = \
 	contrib/xinetd.d/daytime \
 	contrib/xinetd.d/daytime-udp \
