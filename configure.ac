@@ -174,7 +174,6 @@ AC_MSG_NOTICE([
 Build configuration:
 	debug:              ${enable_debug}
 	werror:             ${enable_werror}
-	howl:               ${with_howl}
 	labeled-networking: ${with_labeled_networking}
 	libwrap:            ${with_libwrap}
 	loadavg:            ${with_loadavg}
