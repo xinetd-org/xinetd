@@ -58,7 +58,7 @@ AC_ARG_ENABLE(debug,
 )
 AS_IF([test "x$enable_debug" != "xno"], [
 	CFLAGS="$CFLAGS -ggdb"
-], [])
+])
 
 AC_ARG_ENABLE([werror],
 	[AS_HELP_STRING([--enable-werror], [Treat all warnings as errors, useful for development])],
@@ -68,10 +68,7 @@ AC_ARG_ENABLE([werror],
 AS_IF([test x"$enable_werror" != "xno"], [
 	CFLAGS="$CFLAGS -Werror"
 ])
-AS_IF([test x"$GCC" = xyes], [
-	# Be tough with warnings and produce less careless code
-	CFLAGS="$CFLAGS -Wall -Wextra -pedantic"
-])
+CFLAGS="$CFLAGS -Wall -Wextra"
 
 AC_ARG_WITH([loadavg],
     [AS_HELP_STRING([--without-loadavg], [Do not use loadavg for balancing])],
@@ -79,7 +76,7 @@ AC_ARG_WITH([loadavg],
     [with_loadavg=yes]
 )
 AS_IF([test x"$with_loadavg" != "xno"], [
-    AC_DEFINE(HAVE_LOADAVG, 1, "")
+    AC_DEFINE([HAVE_LOADAVG], [1], ["Have loadavg for balancing"])
 ])
 
 AC_ARG_WITH([libwrap],
@@ -89,9 +86,8 @@ AC_ARG_WITH([libwrap],
 )
 AS_IF([test x"$with_libwrap" != "xno"], [
     AC_CHECK_LIB(wrap, request_init, [
-        AC_DEFINE(LIBWRAP, 1, "")
+        AC_DEFINE([LIBWRAP], [1], ["Have libwrap TCP wrappers present"])
         WRAP_LIBS="-lwrap"
-        AC_DEFINE(HAVE_LIBWRAP, 1, "")
     ],[
         AC_MSG_ERROR([Missing libwrap from tcp_wrappers])
     ])
