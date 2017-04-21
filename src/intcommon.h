@@ -3,10 +3,17 @@
 
 #include "config.h"
 #include <sys/types.h>
+#ifdef HAVE_POLL
+#include <poll.h>
+#endif
 #include "int.h"
 
 void int_fail(const struct intercept_s *ip,const char *lsyscall);
+#ifdef HAVE_POLL
+int int_poll(int pfds_last, struct pollfd *pfd_array);
+#else
 int int_select(int max,fd_set *read_mask);
+#endif
 #ifdef __GNUC__
 __attribute__ ((noreturn))
 #endif

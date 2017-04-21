@@ -14,9 +14,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
-#ifdef HAVE_POLL
-#include <poll.h>
-#endif
 
 #include "intcommon.h"
 #include "msg.h"

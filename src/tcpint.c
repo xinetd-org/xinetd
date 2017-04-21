@@ -90,7 +90,6 @@ static void si_mux(void)
 #ifdef HAVE_POLL
    struct pollfd        *pfd_array;
    int                   pfds_last = 0;
-   int                   pfds_allocated = MAX_FDS;
 #else
    fd_set                     socket_mask ;
    int                        mask_max ;
