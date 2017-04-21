@@ -7,8 +7,9 @@ AC_PREREQ([2.65])
 # ====================
 m4_define([xinetd_version_major],[2])
 m4_define([xinetd_version_minor],[3])
-m4_define([xinetd_version_micro],[16])
-m4_define([xinetd_version],[xinetd_version_major.xinetd_version_minor.xinetd_version_micro])
+m4_define([xinetd_version_micro],[15])
+m4_define([xinetd_version_nano],[1])
+m4_define([xinetd_version],[xinetd_version_major.xinetd_version_minor.xinetd_version_micro.xinetd_version_nano])
 
 # =============
 # Automake init
