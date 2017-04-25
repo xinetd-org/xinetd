@@ -1,6 +1,7 @@
 # xinetd #
 
 [![Build Status](https://travis-ci.org/openSUSE/xinetd.svg?branch=master)](https://travis-ci.org/openSUSE/xinetd)
+[![Coverity Scan Build](https://scan.coverity.com/projects/opensuse-xinetd/badge.svg)](https://scan.coverity.com/projects/opensuse-xinetd)
 
 xinetd is a powerful replacement for inetd.
 
