@@ -12,7 +12,6 @@ language: c
 
 os:
   - linux
-  - osx
 
 compiler:
   - clang
