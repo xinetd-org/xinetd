@@ -932,7 +932,8 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 	Change version number to 2.3.15devel, indicating an interim
 		developmental source snapshot.
 	Merge patch from Thomas Swan regarding CVE-2012-0862
-2.3.16
+2.3.15.1
+	Remove unused variables a bit
 	Restructure the repository for saner file locations
 	Redo buildsystem for proper autotools
 	Include patches from SUSE, Debian, and Fedora from their packages
