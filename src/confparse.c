@@ -516,10 +516,12 @@ static status_e service_attr_check( struct service_config *scp )
    }
 
    if( SC_IPV4( scp ) && SC_IPV6( scp ) ) {
-      msg( LOG_ERR, func, 
-         "Service %s specified as both IPv4 and IPv6 - DISABLING", 
-	 SC_NAME(scp));
-      return FAILED ;
+      msg( LOG_INFO, func,
+         "Service %s will use IPv6 or fallback to IPv4",
+      SC_NAME(scp));
+      // we only need ipv6 defined and fallback to ipv4 if needed
+      // so clean it up for now
+      M_CLEAR(SC_XFLAGS(scp), SF_IPV4);
    }
    
    /*
