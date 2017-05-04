@@ -23,25 +23,22 @@
 #include "parsesup.h"
 #include "nvlists.h"
 
-static int get_next_inet_entry( int fd, pset_h sconfs, 
-                          struct service_config *defaults);
+static int get_next_inet_entry( int fd, pset_h sconfs);
 
 void parse_inet_conf_file( int fd, struct configuration *confp )
 {
    pset_h sconfs                         = CNF_SERVICE_CONFS( confp );
-   struct service_config *default_config = CNF_DEFAULTS( confp );
    
    line_count = 0;
 
    for( ;; )
    {   
-      if (get_next_inet_entry(fd, sconfs, default_config) == -2)
+      if (get_next_inet_entry(fd, sconfs) == -2)
          break;
    }
 }
 
-static int get_next_inet_entry( int fd, pset_h sconfs, 
-                          struct service_config *defaults)
+static int get_next_inet_entry( int fd, pset_h sconfs)
 {
    char *p;
    str_h strp;
