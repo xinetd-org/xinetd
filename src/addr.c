@@ -37,6 +37,10 @@
 #define COMMA                   ','
 #define DOT                     '.'
 
+#ifndef MAXHOSTNAMELEN
+# define MAXHOSTNAMELEN 255
+#endif
+
 typedef enum { CANT_PARSE, PARSED, ERROR } result_e ;
 typedef enum {   NUMERIC_ADDR, NET_ADDR, HOST_ADDR } address_e ;
 
