@@ -8,6 +8,15 @@ EXTRA_DIST = \
 	CHANGELOG \
 	$(bin_SCRIPTS) \
 	$(man_MANS) \
+	man/m_env.3 \
+	man/pset.3 \
+	man/psi.3 \
+	man/sio.3 \
+	man/xlog.3 \
+	man/Sprint.3 \
+	man/strparse.3 \
+	man/strprint.3 \
+	man/strutil.3 \
 	$(sysconf_DATA) \
 	$(xinetconf_DATA)
 
@@ -31,19 +40,10 @@ xinetconf_DATA = \
 
 man_MANS = \
 	man/itox.8 \
-	man/m_env.3 \
-	man/pset.3 \
-	man/psi.3 \
-	man/sio.3 \
-	man/Sprint.3 \
-	man/strparse.3 \
-	man/strprint.3 \
-	man/strutil.3 \
 	man/xconv.pl.8 \
 	man/xinetd.conf.5 \
 	man/xinetd.log.5 \
-	man/xinetd.8 \
-	man/xlog.3
+	man/xinetd.8
 
 AM_LDFLAGS = $(LDFLAGS) $(HARDEN_LDFLAGS)
 AM_CFLAGS = $(CFLAGS) $(HARDEN_CFLAGS)
