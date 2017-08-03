@@ -108,12 +108,12 @@ specifies string conversion; the argument should be of type
 specifies conversion to the form [-]ddd.dddd. The number
 of digits after the decimal point depends on precision; the default is 6.
 If the precision is 0, the decimal point is not printed (this can
-be overriden with the '#' flag).
+be overridden with the '#' flag).
 .B e,E
 specify conversion to the form [-]ddd.dddd[eE][+-]ddd.
 The number of digits after the decimal point depends on precision;
 the default is 6. If the precision is 0, the decimal point is not printed
-(this can be overriden with the '#' flag).
+(this can be overridden with the '#' flag).
 The exponent is at least 2 digit wide.
 .TP
 .B g,G
@@ -140,7 +140,7 @@ If an unknown conversion character is specified, the percent sign
 followed by that character will be printed.
 .SH RETURN VALUE
 .LP
-If no error occured, \fBSprint()\fR returns the number of characters
+If no error occurred, \fBSprint()\fR returns the number of characters
 printed. In case of error, it returns \fBSIO_ERR\fR.
 .SH BUGS
 .LP
