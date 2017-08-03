@@ -51,7 +51,7 @@
 static void missing_attr_msg(const char *par, const char *item)
 {
        parsemsg( LOG_WARNING, par, 
-          "attribute %s expects at least 1 value and none were given.",
+          "attribute %s expects at least 1 value and none was given.",
 	   item );
 }
 
