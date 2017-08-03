@@ -1,5 +1,5 @@
 .\"(c) Copyright 1992, 1993 by Panagiotis Tsirigotis
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -106,7 +106,7 @@ or macro is a file descriptor. The file descriptor may be used either for
 input or for output but not both. Attempting to use a descriptor for
 both input and output will cause the call to fail. When you are
 done with using a file descriptor, you should inform \fISIO\fR
-by invoking \fBSdone()\fR (unless the program is about to 
+by invoking \fBSdone()\fR (unless the program is about to
 call \fIexit(3)\fR).
 You can also use \fBSdone()\fR if
 you want to perform a different type of operation on the same
@@ -138,7 +138,7 @@ is easy (e.g. just replace \fIread(2)\fR with \fBSread()\fR; the function
 signatures as well as the return values are exactly the same).
 .LP
 .B Sread()
-reads \fInbytes\fR bytes from the stream associated with file 
+reads \fInbytes\fR bytes from the stream associated with file
 descriptor \fIfd\fR into the buffer pointed to by \fIbuf\fR.
 .LP
 .B Sgetc()
@@ -161,7 +161,7 @@ have characters deleted.
 (a macro) returns the length of
 the line returned by the last call to \fBSrdline()\fR
 (the value returned by \fBSIOLINELEN()\fR is valid only after
-\fBSrdline()\fR and as long as no other 
+\fBSrdline()\fR and as long as no other
 \fISIO\fR calls are performed on that file descriptor).
 .LP
 .B Sfetch()
@@ -203,7 +203,7 @@ There is no check on
 whether the last function invoked on \fIfd\fR was one of the above
 and the results are undefined if there is no correspondence
 between the \fItype\fR and the last operation on \fIfd\fR.
-(i.e. the result is undefined if you try \fBSIO_UNDO_CHAR\fR 
+(i.e. the result is undefined if you try \fBSIO_UNDO_CHAR\fR
 and the last operation was not \fBSgetchar()\fR or \fBSgetc()\fR).
 .LP
 .B Stie()
@@ -250,8 +250,8 @@ file descriptors to vary. If that number is increased beyond its initial
 value \fBSIO\fR needs to know in order to allocate more stream descriptors.
 .LP
 .B Sdone()
-flushes any buffered output for \fIfd\fR 
-and releases the \fISIO\fR resources used. \fBSdone()\fR 
+flushes any buffered output for \fIfd\fR
+and releases the \fISIO\fR resources used. \fBSdone()\fR
 is useful in case the program needs to reprocess the
 data of a file descriptor (assuming the file descriptor corresponds
 to a file).  The program can call \fBSdone()\fR,

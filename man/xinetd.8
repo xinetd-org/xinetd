@@ -1,6 +1,6 @@
 .\"(c) Copyright 1992 by Panagiotis Tsirigotis
 .\"(c) Sections Copyright 1998-2001 by Rob Braun
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -77,15 +77,15 @@ default is \fI/etc/xinetd.conf\fP.
 .TP
 .BR \-pidfile " pid_file"
 .br
-The process ID is written to the file. This option is ineffective in debug mode. 
+The process ID is written to the file. This option is ineffective in debug mode.
 .TP
-.BI \-dontfork 
+.BI \-dontfork
 Tells xinetd to stay in the foreground rather than detaching itself, to
-support being run from init or daemontools. This option automatically sets 
+support being run from init or daemontools. This option automatically sets
 .B \-stayalive
 (see below).
 .TP
-.BI \-stayalive 
+.BI \-stayalive
 Tells xinetd to stay running even if no services are specified.
 .TP
 .BI \-limit " proc_limit"
@@ -128,13 +128,13 @@ The actions associated with the specific signals can be redefined
 by editing \fIconfig.h\fP and recompiling.
 .TP 15
 .B SIGHUP
-causes a hard reconfiguration, which means that \fBxinetd\fP re-reads 
-the configuration file and terminates the servers for services that 
-are no longer available. Access control is performed again on 
-running servers by checking the remote location, access times and 
-server instances. If the number of server instances is lowered, some 
-arbitrarily picked servers will be killed to satisfy the limit; this 
-will happen \fIafter\fP any servers are terminated because of failing 
+causes a hard reconfiguration, which means that \fBxinetd\fP re-reads
+the configuration file and terminates the servers for services that
+are no longer available. Access control is performed again on
+running servers by checking the remote location, access times and
+server instances. If the number of server instances is lowered, some
+arbitrarily picked servers will be killed to satisfy the limit; this
+will happen \fIafter\fP any servers are terminated because of failing
 the remote location or access time checks.
 Also, if the
 .B INTERCEPT

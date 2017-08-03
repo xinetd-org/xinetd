@@ -1,5 +1,5 @@
 .\"(c) Copyright 1992, 1993 by Panagiotis Tsirigotis
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -84,7 +84,7 @@ is
 .SM NULL
 the error codes will be placed in \fIstr_errno\fR.
 This is useful only if \fBSTR_RETURN_ERROR\fR is used in \fIflags\fR.
-It is possible that \fIstr\fP is 
+It is possible that \fIstr\fP is
 .SM NULL.
 In this case, a subsequent
 .B str_setstr()
@@ -133,14 +133,14 @@ returns a pointer to the next substring or
 if something goes wrong and \fIflags\fR & \fBSTR_RETURN_ERROR\fR is true.
 .LP
 .B str_setstr()
-returns 
+returns
 .SB STR_OK
 on success or
 .SB STR_ERR
 on failure.
 .LP
 .B str_separator()
-returns 
+returns
 .SB STR_OK
 on success or
 .SB STR_ERR

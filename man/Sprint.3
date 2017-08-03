@@ -1,5 +1,5 @@
 .\"(c) Copyright 1992, 1993 by Panagiotis Tsirigotis
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -38,7 +38,7 @@ prefixes a \fIspace\fR to the number if the number has not a sign
 (therefore the '+' flag overrides this flag).
 .TP
 .B \'#'
-The meaning of '#' depends on the conversion type character: for \fBo\fR 
+The meaning of '#' depends on the conversion type character: for \fBo\fR
 conversions the first digit will be 0; for \fBx\fR or \fBX\fR conversions
 \fB0x\fR or \fB0X\fR respectively will be prefixed to the number (if it
 is not zero); for \fBe\fR, \fBE\fR, \fBf\fR, \fBg\fR, and \fBG\fR conversions
@@ -50,14 +50,14 @@ specifies padding with zeros instead of spaces.
 The field width is specified by a number. This number indicates the
 \fIminimum\fR width for the field. A '*' may be used instead of the number.
 In that case the width is the value of the next argument which should
-be an \fBint\fR. 
+be an \fBint\fR.
 A negative width value specifies left adjustment with a width equal
 to the absolute width value.
 .LP
 A precision is specified by a '.' followed by a number. The meaning of
 the precision depends on the type conversion character. For a string
 conversion, precision determines how many characters are printed from
-the string. For integer conversions, precision determines the 
+the string. For integer conversions, precision determines the
 number of digits used to print the number (zero padding is done if
 the precision exceeds the length of the number). For floating point
 conversions, precision determines the number of digits after the
@@ -85,7 +85,7 @@ specifies unsigned decimal conversion.
 specifies octal conversion.
 .TP
 .B x,X
-specify hexadecimal conversion. For 
+specify hexadecimal conversion. For
 .B x
 the hex digits used are 0123456789abcdef. For
 .B X
@@ -121,7 +121,7 @@ specify a conversion using the
 .B e,E
 format respectively if the
 exponent is less than -4 or greater than or equal to the precision;
-otherwise the 
+otherwise the
 .B f
 format is used.
 .TP
@@ -130,7 +130,7 @@ is used to print pointers (type \fIvoid *\fR,
 or \fIchar *\fR if the compiler does not support the former).
 .TP
 .B n
-expects a \fIint *\fR argument and puts in that integer 
+expects a \fIint *\fR argument and puts in that integer
 the number of characters already printed by this call.
 .TP
 .B %

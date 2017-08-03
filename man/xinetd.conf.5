@@ -1,6 +1,6 @@
 .\"(c) Copyright 1992, by Panagiotis Tsirigotis
 .\"(c) Sections Copyright 1998-2001 by Rob Braun
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -35,16 +35,16 @@ service <service_name>
 .LP
 The assignment operator,
 .I assign_op,
-can be one of 
-.B '=', 
+can be one of
+.B '=',
 .B '+=',
 .B '-='.
 The majority of attributes support only the simple assignment operator,
 .B '='.
 Attributes whose value is a set of values support all assignment operators.
 For such attributes,
-.B '+=' 
-means adding a value to the set and 
+.B '+='
+means adding a value to the set and
 .B '-='
 means removing a value from the set.
 A list of these attributes will be given
@@ -55,7 +55,7 @@ The following is a list of available attributes:
 .TP 17
 .B id
 This attribute is used to uniquely identify a service.
-This is useful because there exist services that can use different 
+This is useful because there exist services that can use different
 protocols and need to be described with different entries in the
 configuration file.
 By default, the service id is the same as the service name.
@@ -76,7 +76,7 @@ if this is a service that will be started according to the RFC 1078 protocol on 
 .B UNLISTED
 if this is a service not listed in a standard system file
 (like
-.I /etc/rpc 
+.I /etc/rpc
 for RPC services, or
 .I /etc/services
 for non\-RPC services).
@@ -114,7 +114,7 @@ TCP_NODELAY flag will be set on the socket.  If the service is not
 a tcp service, this option has no effect.
 .TP
 .B KEEPALIVE
-If the service is a tcp service and the KEEPALIVE flag is set, then 
+If the service is a tcp service and the KEEPALIVE flag is set, then
 the SO_KEEPALIVE socket flag will be set on the socket.  If the service
 is not a tcp service, this option has no effect.
 .TP
@@ -127,16 +127,16 @@ For RPC services using TCP transport, this flag is automatically turned on,
 because xinetd cannot get remote host address information for the rpc port.
 .TP
 .B SENSOR
-This replaces the service with a sensor that detects accesses to the 
-specified port. NOTE: It will NOT detect stealth scans. This flag 
-should be used only on services that you know you don't need. When an 
+This replaces the service with a sensor that detects accesses to the
+specified port. NOTE: It will NOT detect stealth scans. This flag
+should be used only on services that you know you don't need. When an
 access is made to this service's port, the IP Address is added to a global
 no_access list. This causes all subsequent accesses from the originating IP
 address to be denied access until the deny_time setting expires. The amount
 of time spent on this list is configurable as the deny_time attribute. The
 SENSOR flag will also cause xinetd to consider the server attribute to be
 INTERNAL no matter what is typed on the same line. Another important thing
-to remember is that if the socket_type is set to stream, then the wait 
+to remember is that if the socket_type is set to stream, then the wait
 attribute should be set to no.
 .TP
 .B IPv4
@@ -185,33 +185,33 @@ will be used.
 .B wait
 This attribute determines if the service is single\-threaded or
 multi\-threaded and whether or not xinetd accepts the connection or the server
-program accepts the connection. If its value is \fIyes\fP, the service is 
-single\-threaded; this means that \fBxinetd\fP will start the server and then 
+program accepts the connection. If its value is \fIyes\fP, the service is
+single\-threaded; this means that \fBxinetd\fP will start the server and then
 it will stop handling requests for the service until the server dies and that
-the server software will accept the connection. If the attribute value is 
-\fIno\fP, the service is multi\-threaded and \fBxinetd\fP will keep handling 
-new service requests and xinetd will accept the connection. It should be noted 
+the server software will accept the connection. If the attribute value is
+\fIno\fP, the service is multi\-threaded and \fBxinetd\fP will keep handling
+new service requests and xinetd will accept the connection. It should be noted
 that udp/dgram services normally expect the value to be yes since udp is not
 connection oriented, while tcp/stream servers normally expect the value to be
 no.
 .TP
 .B user
-determines the uid for the server process. The user attribute can either 
-be numeric or a name. If a name is given (recommended),  the user name must 
+determines the uid for the server process. The user attribute can either
+be numeric or a name. If a name is given (recommended),  the user name must
 exist in
 .I /etc/passwd.
-This attribute is ineffective if the effective user ID 
+This attribute is ineffective if the effective user ID
 of \fBxinetd\fP is not super\-user.
 .TP
 .B group
 determines the gid for the server process. The group attribute can either
-be numeric or a name. If a name is given (recommended), the group name must 
+be numeric or a name. If a name is given (recommended), the group name must
 exist in
 .I /etc/group.
 If a group is not specified, the group
-of \fIuser\fP will be used (from 
+of \fIuser\fP will be used (from
 .I /etc/passwd).
-This attribute is ineffective if the effective user ID 
+This attribute is ineffective if the effective user ID
 of \fBxinetd\fP is not super\-user and if the \fBgroups\fP attribute
 is not set to 'yes'.
 .TP
@@ -248,8 +248,8 @@ combination of the following ways:
 .RS
 .TP 5
 .B a)
-a numeric address in the form of %d.%d.%d.%d. If the rightmost components are 
-0, they are treated as wildcards 
+a numeric address in the form of %d.%d.%d.%d. If the rightmost components are
+0, they are treated as wildcards
 (for example, 128.138.12.0 matches all hosts on the 128.138.12 subnet).
 0.0.0.0 matches all Internet addresses.  IPv6 hosts may be specified in the form of abcd:ef01::2345:6789.  The rightmost rule for IPv4 addresses does not apply to IPv6 addresses.
 .TP
@@ -281,20 +281,20 @@ without a value makes the service available to nobody.
 determines the remote hosts to which the particular
 service is unavailable. Its value can be specified in the same way as the
 value of the \fBonly_from\fP
-attribute. These two attributes determine the location access control 
+attribute. These two attributes determine the location access control
 enforced by \fBxinetd\fP. If none of the two is specified for a service,
 the service is available to anyone. If both are specified for a service,
 the one that is the better match for
 the address of the remote host determines
-if the service is available to that host (for example, if the 
+if the service is available to that host (for example, if the
 \fBonly_from\fP list contains 128.138.209.0 and the
 \fBno_access\fP list contains 128.138.209.10
 then the host with the address 128.138.209.10 can not access the service).
 .TP
 .B access_times
 determines the time intervals when the service is available. An interval
-has the form \fIhour:min\-hour:min\fP (connections 
-.I will 
+has the form \fIhour:min\-hour:min\fP (connections
+.I will
 be accepted at the bounds of an interval). Hours can range from 0 to 23 and
 minutes from 0 to 59.
 .TP
@@ -332,19 +332,19 @@ level.
 The log output is appended to \fIfile\fP which will be created if it does
 not exist. Two limits on the size of the log file can be optionally specified.
 The first limit is a soft one;
-.B xinetd 
-will log a message the first time this limit is exceeded (if 
 .B xinetd
-logs to syslog, the message will be sent at the 
+will log a message the first time this limit is exceeded (if
+.B xinetd
+logs to syslog, the message will be sent at the
 .I alert
 priority level).
-The second limit is a hard limit; 
-.B xinetd 
+The second limit is a hard limit;
+.B xinetd
 will stop logging for the affected service (if the log file is a
 common log file, then more than one service may be affected)
 and will log a message about this (if
 .B xinetd
-logs to syslog, the message will be sent at the 
+logs to syslog, the message will be sent at the
 .I alert
 priority level).
 If a hard limit is not specified, it defaults to the soft limit
@@ -352,7 +352,7 @@ increased by 1% but the extra size must be within the parameters
 .SM LOG_EXTRA_MIN
 and
 .SM LOG_EXTRA_MAX
-which default to 5K and 20K respectively (these constants are defined in 
+which default to 5K and 20K respectively (these constants are defined in
 \fIxconfig.h\fP).
 .RE
 .TP
@@ -380,7 +380,7 @@ termination signal
 .B PID
 option is used)
 .TP
-.B DURATION 
+.B DURATION
 logs the duration of a service session
 .TP
 .B TRAFFIC
@@ -401,7 +401,7 @@ logs the remote host address.
 .B USERID
 logs the user id of the remote user using the RFC 1413 identification protocol.
 This option is available only for multi\-threaded stream services.
-.TP 
+.TP
 .B ATTEMPT
 logs the fact that a failed attempt was made
 (this option is implied by all others).
@@ -434,7 +434,7 @@ attribute.
 attribute to specify exactly what environment will be passed to the server).
 .TP
 .B port
-determines the service port. If this attribute is specified for a service 
+determines the service port. If this attribute is specified for a service
 listed in
 .I /etc/services,
 it must be equal to the port number listed in that file.
@@ -444,9 +444,9 @@ Allows a tcp service to be redirected to another host.  When xinetd receives
 a tcp connection on this port it spawns a process that establishes a
 connection to the host and port number specified, and forwards all data
 between the two hosts.  This option is useful when your internal machines
-are not visible to the outside world.  Syntax is: redirect = (ip address) 
+are not visible to the outside world.  Syntax is: redirect = (ip address)
 (port).  You can also use a hostname instead of the IP address in this
-field.  The hostname lookup is performed only once, when xinetd is 
+field.  The hostname lookup is performed only once, when xinetd is
 started, and the first IP address returned is the one that is used
 until xinetd is restarted.
 The "server" attribute is not required when this option is specified.  If
@@ -456,14 +456,14 @@ the "server" attribute is specified, this attribute takes priority.
 Allows a service to be bound to a specific interface on the machine.
 This means you can have a telnet server listening on a local, secured
 interface, and not on the external interface.  Or one port on one interface
-can do something, while the same port on a different interface can do 
+can do something, while the same port on a different interface can do
 something completely different.  Syntax: bind = (ip address of interface).
 .TP
 .B interface
 Synonym for bind.
 .TP
 .B banner
-Takes the name of a file to be splatted at the remote host when a 
+Takes the name of a file to be splatted at the remote host when a
 connection to that service is established.  This banner is printed
 regardless of access control.  It should *always* be printed when
 a connection has been made.  \fBxinetd\fP outputs the file as\-is,
@@ -481,7 +481,7 @@ pairs for line termination, you must supply them.
 .TP
 .B banner_fail
 Takes the name of a file to be splatted at the remote host when a
-connection to that service is denied.  This banner is printed 
+connection to that service is denied.  This banner is printed
 immediately upon denial of access.  This is useful for informing
 your users that they are doing something bad and they shouldn't be
 doing it anymore.  \fBxinetd\fP outputs the file as\-is,
@@ -495,7 +495,7 @@ maximum instances of this service per source IP address.  This can
 also be specified in the defaults section.
 .TP
 .B cps
-Limits the rate of incoming connections.  Takes two arguments.  
+Limits the rate of incoming connections.  Takes two arguments.
 The first argument is the number of connections per second to handle.
 If the rate of incoming connections is higher than this, the service
 will be temporarily disabled.  The second argument is the number of
@@ -504,7 +504,7 @@ The default for this setting is 50 incoming connections and the interval
 is 10 seconds.
 .TP
 .B max_load
-Takes a floating point value as the load at which the service will 
+Takes a floating point value as the load at which the service will
 stop accepting connections.  For example: 2 or 2.5.  The service
 will stop accepting connections at this load.  This is the one minute
 load average.  This is an OS dependent feature, and currently only
@@ -516,7 +516,7 @@ Takes either "yes" or "no".  If the groups attribute is set to
 "yes", then the server is executed with access to the groups that the
 server's effective UID has access to.  Alternatively, if the \fBgroup\fP
 attribute is set, the server is executed with access to the groups
-specified.  If the groups attribute is set 
+specified.  If the groups attribute is set
 to "no", then the server runs with no supplementary groups.  This
 attribute must be set to "yes" for many BSD systems.  This attribute
 can be set in the defaults section as well.
@@ -527,10 +527,10 @@ of services (currently only Mac OS X), this will enable or disable
 registration of the service.  This defaults to "yes".
 .TP
 .B umask
-Sets the inherited umask for the service.  Expects an octal value.  
+Sets the inherited umask for the service.  Expects an octal value.
 This option may be set in the "defaults" section to set a umask
 for all services.  xinetd sets its own umask to the previous umask
-OR'd with 022.  This is the umask that will be inherited by all 
+OR'd with 022.  This is the umask that will be inherited by all
 child processes if the umask option is not used.
 .TP
 .B enabled
@@ -538,27 +538,27 @@ Takes a list of service ID's to enable.  This will enable only the
 services listed as arguments to this attribute; the rest will be
 disabled.  If you have 2 ftp services, you will need to list both of
 their ID's and not just ftp. (ftp is the service name, not the ID. It
-might accidentally be the ID, but you better check.) Note that the 
-service "disable" attribute and "DISABLE" flag can prevent a service 
-from being enabled despite being listed in this attribute. 
+might accidentally be the ID, but you better check.) Note that the
+service "disable" attribute and "DISABLE" flag can prevent a service
+from being enabled despite being listed in this attribute.
 .TP
 .B include
 Takes a filename in the form of "include /etc/xinetd/service".
-The file is then parsed as a new configuration file.  It is not 
-the same thing as pasting the file into xinetd.conf where the 
-include directive is given.  The included file must be in the 
+The file is then parsed as a new configuration file.  It is not
+the same thing as pasting the file into xinetd.conf where the
+include directive is given.  The included file must be in the
 same form as xinetd.conf.  This may not be specified from within
 a service.  It must be specified outside a service declaration.
 .TP
 .B includedir
 Takes a directory name in the form of "includedir /etc/xinetd.d".
 Every file inside that directory, excluding files with names containing
-a dot ('.') or ending with a tilde ('~'), will be parsed as xinetd 
+a dot ('.') or ending with a tilde ('~'), will be parsed as xinetd
 configuration files.  The files will be parsed in alphabetical order
-according to the C locale. This allows you to specify services one 
+according to the C locale. This allows you to specify services one
 per file within a directory.  The
 .B includedir
-directive may not be specified from within a service declaration.  
+directive may not be specified from within a service declaration.
 .TP
 .B rlimit_as
 Sets the Address Space resource limit for the service. One parameter
@@ -660,7 +660,7 @@ operator)
 .PD
 .LP
 These attributes can also appear more than once in a service entry.
-The remaining attributes support only the 
+The remaining attributes support only the
 .B '='
 operator and can appear at most once in a service entry.
 .LP
@@ -692,11 +692,11 @@ don't specify those attributes. Possible default attributes:
 .B log_type
 (cumulative effect)
 .TP
-.B bind 
+.B bind
 .TP
-.B per_source 
+.B per_source
 .TP
-.B umask 
+.B umask
 .TP
 .B log_on_success
 (cumulative effect)
@@ -721,19 +721,19 @@ don't specify those attributes. Possible default attributes:
 .B enabled
 (cumulative effect)
 .TP
-.B banner 
+.B banner
 .TP
-.B banner_success 
+.B banner_success
 .TP
 .B banner_fail
 .TP
-.B per_source 
+.B per_source
 .TP
-.B groups 
+.B groups
 .TP
-.B cps 
+.B cps
 .TP
-.B max_load 
+.B max_load
 .TP
 .RE
 .PD
@@ -751,15 +751,15 @@ specifying disabled services with the
 .I disabled
 attribute instead of commenting them out.
 The value of this attribute is a list of space separated service ids.
-.I enabled 
+.I enabled
 has the same properties as disabled.  The difference being that
-.I enabled 
-is a list of which services are to be enabled.  If 
-.I enabled 
+.I enabled
+is a list of which services are to be enabled.  If
+.I enabled
 is specified, only the services specified are available.  If
-.I enabled 
+.I enabled
 is not specified, all services are assumed to be enabled,
-except those listed in 
+except those listed in
 .I disabled.
 
 .\" *********************** INTERNAL SERVICES ****************************
@@ -776,27 +776,27 @@ and
 These services are under the same access restrictions as all other
 services except for the ones that don't require \fBxinetd\fP to fork
 another process for them. Those ones (\fItime\fP, \fIdaytime\fP,
-and the datagram\-based \fIecho\fP, \fIchargen\fP, and \fIdiscard\fP) 
-have no limitation in the number of 
+and the datagram\-based \fIecho\fP, \fIchargen\fP, and \fIdiscard\fP)
+have no limitation in the number of
 .B instances.
 .LP
 .\" *********************** TCPMUX Services ****************************
 .SH "TCPMUX Services"
 .LP
-\fBxinetd\fP supports TCPMUX services that conform to RFC 1078. These services 
-may not have a well\-known port associated with them, and can be accessed via 
+\fBxinetd\fP supports TCPMUX services that conform to RFC 1078. These services
+may not have a well\-known port associated with them, and can be accessed via
 the TCPMUX well\-known port.
 .LP
 For each service that is to be accessed via TCPMUX, a service entry in
-\fB/etc/xinetd.conf\fP or in a configuration file in an \fBincludedir\fP 
+\fB/etc/xinetd.conf\fP or in a configuration file in an \fBincludedir\fP
 directory must exist.
 .LP
-The \fIservice_name\fP field (as defined above for each service in any 
-\fBxinetd\fP 
-configuration file) must be identical to the string that is passed (according 
-to RFC 1078 protocol) to \fBxinetd\fP when the remote service requestor first 
-makes the connection on the TCPMUX well\-known port.  Private protocols should 
-use a service name that has a high probability of being unique. One way is to 
+The \fIservice_name\fP field (as defined above for each service in any
+\fBxinetd\fP
+configuration file) must be identical to the string that is passed (according
+to RFC 1078 protocol) to \fBxinetd\fP when the remote service requestor first
+makes the connection on the TCPMUX well\-known port.  Private protocols should
+use a service name that has a high probability of being unique. One way is to
 prepend the service name with some form of organization ID.
 .LP
 The \fItype\fP field can be either \fBTCPMUX\fP or \fBTCPMUXPLUS\fP. If the
@@ -812,8 +812,8 @@ not listed in a standard system file
 for RPC services, or
 .I /etc/services
 for non\-RPC services).
-.LP	
-The \fIsocket_type\fP for these services must be \fBstream\fP, and the 
+.LP
+The \fIsocket_type\fP for these services must be \fBstream\fP, and the
 \fIprotocol\fP must be \fBtcp\fP.
 .LP
 Following is a sample TCPMUX service configuration:
@@ -871,7 +871,7 @@ service tcpmux
 }
 .fi
 .RE
-.PD                                                                               
+.PD
 
 
 
@@ -904,26 +904,26 @@ host changes, then access to that host may be denied until
 is reconfigured.
 Whether access is actually denied or not will depend on whether the
 new host IP address is among those allowed access. For example, if
-the IP address of a host changes from 1.2.3.4 to 1.2.3.5 and 
+the IP address of a host changes from 1.2.3.4 to 1.2.3.5 and
 only_from is specified as 1.2.3.0 then access will not be denied.
 .IP 4.
 If the
 .B USERID
-log option is specified and the remote host either does not run an 
+log option is specified and the remote host either does not run an
 identification server or the server sends back a bad reply,
 access will not be denied unless the
 .I IDONLY
 service flag is used.
 .IP 5.
 Interception works by forking a process which acts as a filter
-between the remote host(s) and the local server. 
+between the remote host(s) and the local server.
 This obviously has a performance impact so
 it is up to you to make the compromise between security and performance
 for each service.
 The following tables show the overhead of interception.
 The first table shows the time overhead\-per\-datagram for a UDP\-based service
 using various datagram sizes.
-For TCP\-based services we measured the bandwidth reduction 
+For TCP\-based services we measured the bandwidth reduction
 because of interception while sending
 a certain amount of data from client to server (the time overhead should
 the same as for UDP\-based services but it is "paid" only by the first
@@ -932,7 +932,7 @@ The amount of data is given
 in the table as \fIsystem_calls\fPx\fIdata_sent_per_call\fP, i.e.
 each
 .I "send(2)"
-system call transferred so many bytes of data. 
+system call transferred so many bytes of data.
 The bandwidth reduction is given in terms of bytes per second and as
 a percentage of the bandwidth when interception is not performed.
 All measurements were done on a SparcStation IPC running SunOS 4.1.
@@ -997,12 +997,12 @@ defaults
 = FILE /var/log/servicelog
 .IP log_on_success
 = PID
-.IP log_on_failure 
-= HOST 
+.IP log_on_failure
+= HOST
 .IP only_from
-= 128.138.193.0 128.138.204.0 
+= 128.138.193.0 128.138.204.0
 .IP only_from
-= 128.138.252.1 
+= 128.138.252.1
 .IP instances
 = 10
 .IP disabled
@@ -1050,7 +1050,7 @@ service shell
 .IP server
 = /usr/sbin/in.rshd
 .IP log_on_success
-+= HOST 
++= HOST
 .RE
 }
 
@@ -1237,13 +1237,13 @@ The NOLIBWRAP flag is automatically turned on for RPC services whose
 \fIsocket_type\fP is \fIstream\fP because xinetd cannot determine the
 address of the remote host.
 .LP
-If the 
+If the
 .B INTERCEPT
 flag is not used,
 access control on the address of the remote host for
 services where \fIwait\fP is \fIyes\fP and \fIsocket_type\fP is \fIdgram\fP
 is performed only on the first packet. The server may then accept packets
-from hosts not in the access control list. This can happen with 
+from hosts not in the access control list. This can happen with
 .B RPC
 services.
 .LP

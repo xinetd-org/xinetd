@@ -1,5 +1,5 @@
 .\"(c) Copyright 1992, 1993 by Panagiotis Tsirigotis
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -75,7 +75,7 @@ void *arg ;
 .SH DESCRIPTION
 This library provides functions that handle sets of pointers. Pointers
 can be inserted and deleted from sets and the sets can be enumerated.
-Pointers are inserted in sets in no particular order. However it is 
+Pointers are inserted in sets in no particular order. However it is
 guaranteed
 that a sequence of insertions will result in a set which if enumerated
 will provide the pointers in the same order in which they were inserted
@@ -145,7 +145,7 @@ sorts the pointers in
 .I pset
 using the specified function.
 .I compfunc
-is invoked with 2 arguments that are pointers pointing to pointers stored in 
+is invoked with 2 arguments that are pointers pointing to pointers stored in
 .I pset.
 For example, if the pset holds pointers to objects of type T, then
 the function F whose address is in
@@ -153,8 +153,8 @@ the function F whose address is in
 should be defined as:
 F( T **p1, T **p2 ).
 .br
-.I compfunc 
-should return a negative, zero or positive value 
+.I compfunc
+should return a negative, zero or positive value
 if its first argument is less than, equal to, or greater than its
 second argument.
 .LP
@@ -163,7 +163,7 @@ applies
 .I func
 to all pointers in
 .I pset.
-If 
+If
 .I arg
 is not
 .SM NULL
@@ -173,7 +173,7 @@ the function is invoked as:
 .RE
 where
 .I p
-is a pset pointer.  If 
+is a pset pointer.  If
 .I arg
 is
 .SM NULL
@@ -265,6 +265,6 @@ range.
 .B pset_count(),
 .B pset_clear(),
 .B pset_pointer()
-and 
+and
 .B pset_sort()
 are macros, therefore the \fI&\fR operator cannot be applied to them.

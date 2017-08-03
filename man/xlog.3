@@ -1,5 +1,5 @@
 .\"(c) Copyright 1992, 1993 by Panagiotis Tsirigotis
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -55,10 +55,10 @@ Possible type values are:
 .TP 20
 .SB XLOG_SYSLOG
 Varargs: \fIint facility, int priority\fP.
-The xlog will be connected to 
-.I "syslog(3)." 
+The xlog will be connected to
+.I "syslog(3)."
 .I facility
-determines the syslog facility to use for logged messages and 
+determines the syslog facility to use for logged messages and
 .I priority
 is the default message priority.
 .TP
@@ -72,16 +72,16 @@ argument list of the
 system call.
 .RE
 .LP
-All xlogs have an id, specified by the 
-.I id 
+All xlogs have an id, specified by the
+.I id
 argument. The
 .I flags
 argument is formed by ORing one or more of the following constants:
 .RS
 .TP 20
 .SB XLOG_NO_ERRNO
-do not replace 
-.I "%m" 
+do not replace
+.I "%m"
 with an explanation of the current value of errno.
 .TP
 .SB XLOG_NO_SIZECHECK
@@ -108,7 +108,7 @@ sets default parameters for the specified xlog
 .RS
 .TP 20
 .SB XLOG_SYSLOG
-3 arguments are expected which correspond one-to-one to the arguments of 
+3 arguments are expected which correspond one-to-one to the arguments of
 .I "openlog(3)."
 The defaults, in case this function is not used, are:
 "XLOG", LOG_PID + LOG_NOWAIT, LOG_USER
@@ -156,7 +156,7 @@ This function will be invoked in case of error while writing a log
 entry. It will be given
 3 arguments: the xlog handle, an integer that indicates the type
 of error and the
-.I arg 
+.I arg
 specified in this call. Possible errors include:
 .RS
 .TP 15
@@ -182,12 +182,12 @@ The value of
 (one of those listed before) is set according to
 .I "*value"
 which should be either 0 or 1.
-The old flag value is placed in 
+The old flag value is placed in
 .I "*value."
 .TP
 .SB XLOG_GETFLAG
 Argument list: \fIint flag, int *value\fP.
-The value of 
+The value of
 .I flag
 (one of those listed before) is placed in
 .I "*value."
@@ -260,7 +260,7 @@ is replaced by a string explaining the current value of
 .I errno.
 The
 .I flags
-argument is formed in the same way as in 
+argument is formed in the same way as in
 .B xlog_create().
 One additional constant is available:
 .RS

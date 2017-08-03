@@ -1,5 +1,5 @@
 .\"(c) Copyright 1992 by Panagiotis Tsirigotis
-.\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+.\"All rights reserved.  The file named COPYRIGHT specifies the terms
 .\"and conditions for redistribution.
 .\"
 .\" $Id$
@@ -45,10 +45,10 @@ char **env_getvars( env )
 env_h env ;
 .SH DESCRIPTION
 This library handles environments. An environment is a set of strings
-of the form 
+of the form
 .I "name=value".
 In the following, we will use the term string as a synonym of
-NUL-terminated array of 
+NUL-terminated array of
 .I char.
 .LP
 .B env_create()
@@ -57,7 +57,7 @@ the argument
 .I env
 is not
 .SB ENV_NULL.
-In that case, the new environment will be a duplicate of 
+In that case, the new environment will be a duplicate of
 .I env
 (i.e. they will contain the same strings).
 .LP
@@ -77,7 +77,7 @@ to
 .I env.
 The variable value is obtained from the environment
 .I from_env.
-If the variable exists already in 
+If the variable exists already in
 .I env
 the old value is replaced with the new value.
 .LP
@@ -124,12 +124,12 @@ variable is not in environment
 string is not well-formed (i.e. is not of the form \fIname=value\fR).
 .LP
 .B env_create()
-returns a handle or 
+returns a handle or
 .SM ENV_NULL
 if it fails.
 .LP
 .B env_make()
-returns a handle or 
+returns a handle or
 .SM ENV_NULL
 if it fails.
 .LP
