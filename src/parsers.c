@@ -934,6 +934,11 @@ status_e log_type_parser( pset_h values,
       missing_attr_msg(func, "log_type");
       return( FAILED );
    }
+
+   if ( LOG_GET_TYPE( lp ) != L_NONE) {
+      parsemsg( LOG_ERR, func, "Cannot set more than one log_type attribute");
+      return( FAILED );
+   }
    
    type = (char *) pset_pointer( values, 0 ) ;
 
