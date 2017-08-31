@@ -6,6 +6,7 @@ EXTRA_DIST = \
 	contrib/xinetd.service \
 	README.md \
 	CHANGELOG \
+	COPYRIGHT \
 	$(bin_SCRIPTS) \
 	$(man_MANS) \
 	man/m_env.3 \
