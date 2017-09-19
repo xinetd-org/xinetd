@@ -877,7 +877,7 @@ service tcpmux
 
 .\" *********************** NOTES ****************************
 .SH NOTES
-.IP 1. 4
+.IP 1. 6
 The following service attributes \fIcannot\fP be changed on reconfiguration:
 .B socket_type,
 .B wait,
@@ -892,6 +892,10 @@ are not specified for a service (either directly or via \fIdefaults\fP)
 the address check is considered successful (i.e. access will not be
 denied).
 .IP 3.
+The maximum line length of the configuration file is limited to 16 KiB
+(it might be less on systems without mmap, the length limit is two times the
+optimal I/O blocksize then).
+.IP 4.
 The address check is based on the IP address of the remote host and
 not on its domain address. We do this so that we can avoid
 remote name lookups which may take a long time (since
@@ -906,7 +910,7 @@ Whether access is actually denied or not will depend on whether the
 new host IP address is among those allowed access. For example, if
 the IP address of a host changes from 1.2.3.4 to 1.2.3.5 and
 only_from is specified as 1.2.3.0 then access will not be denied.
-.IP 4.
+.IP 5.
 If the
 .B USERID
 log option is specified and the remote host either does not run an
@@ -914,7 +918,7 @@ identification server or the server sends back a bad reply,
 access will not be denied unless the
 .I IDONLY
 service flag is used.
-.IP 5.
+.IP 6.
 Interception works by forking a process which acts as a filter
 between the remote host(s) and the local server.
 This obviously has a performance impact so
