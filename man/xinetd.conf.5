@@ -152,9 +152,14 @@ The LABELED flag will tell xinetd to change the child processes SE Linux context
 The REUSE flag is deprecated.  All services now implicitly use the REUSE flag.
 .RE
 .TP
+.B v6only
+This is boolean "yes" or "no".  This will result in a service accepting
+only IPv6 connections, instead of both IPv6 and IPv4 connections.  The
+default is determined by the "bindv6only" kernel variable.
+.TP
 .B disable
 This is boolean "yes" or "no".  This will result in the service
-being disabled and not starting.  See the DISABLE flag description.
+being disabled and not starting.
 .RE
 .TP
 .B socket_type
@@ -539,7 +544,7 @@ services listed as arguments to this attribute; the rest will be
 disabled.  If you have 2 ftp services, you will need to list both of
 their ID's and not just ftp. (ftp is the service name, not the ID. It
 might accidentally be the ID, but you better check.) Note that the
-service "disable" attribute and "DISABLE" flag can prevent a service
+service "disable" attribute can prevent a service
 from being enabled despite being listed in this attribute.
 .TP
 .B include
