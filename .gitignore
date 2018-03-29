@@ -1,0 +1,56 @@
+*.orig
+*.rej
+*.o
+*.lo
+*.la
+*~
+*.swp
+
+# Makefiles
+
+Makefile
+Makefile.in
+.deps
+.dirstamp
+
+# http://www.gnu.org/software/autoconf
+
+/autom4te.cache
+/autoscan.log
+/autoscan-*.log
+/aclocal.m4
+/compile
+/config.guess
+/config.h.in
+/config.h
+/config.status
+/config.sub
+/config.log
+/configure
+/configure.scan
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+
+# https://www.gnu.org/software/libtool/
+
+.libs
+/ltmain.sh
+/libtool
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
+
+# http://www.gnu.org/software/texinfo
+
+/texinfo.tex
+
+# output binaries
+xinetd
+itox
+
+# tarballs
+*.tar.*

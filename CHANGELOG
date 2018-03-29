@@ -932,3 +932,12 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 	Change version number to 2.3.15devel, indicating an interim
 		developmental source snapshot.
 	Merge patch from Thomas Swan regarding CVE-2012-0862
+2.3.15.1
+	Remove unused variables a bit
+	Restructure the repository for saner file locations
+	Redo buildsystem for proper autotools
+	Include patches from SUSE, Debian, and Fedora from their packages
+	Remove HOWL support completely
+	Remove deprecated compatibility detections that are mostly true
+	Enable travis build to see if we build on osx (bsd) and linux
+	Add possibility to use POLL instead of FD code to alocate

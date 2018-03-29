@@ -1,0 +1,38 @@
+# see travis-ci.org for details
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "tGETfSCDBHPBdmx3H4G+RI9yLxnoGHvR81TH4hn99zI1lhcUFAZnIy+XEy3VTKqLAQfMecnT0RbizPvzRDS2+sNhbAGLeETImLV9om67tv0UDAQo8y0rIZvOu61zvhvA3pU6UKayWSgALikXFHxxLNAx6vFYcGU5n7yCZ89EG8/oWAWszMZsZplkSArC7A6++vVOGjXREsSo4UFxgUyUACihOpVfTtDCweUxKWpEcWpvwYaOmckdE5MtxCbtsRSZHGF7bctErZQp0tTXbqDMCOJZwL+brYXDeNyrozeDeVhxeNkFSywmbNEw0lwEydyBfKQgAFa4AtwxpwpVlG/mRvs6li34m4/5+A0TNLP2XhbIiDCdpOuQ17pNgQTCnAizjpmeS8BVUgCtxtVtbLrB6mrIlMl3lxgVksrel7U0d6370MbNtD1T5O3T+mjYd0L61QKgAkZIoerruYe2LqjPuUAAdXjlky42rX1jmtGBCeulY9hA53efjXytiw27foDFWRc/V6NnD2sIsQ04+IAzkFzYA2orQCXqVQhUyr7UlZdERkTs4+t0yY+66Rqs/NGblVW3AwKxNz04dI94gmmu+Gza0/2DasbFON96ZVvW3HmlrQPSjgB7r3ls5nGZxgKb/5IPTmj/qg5us2dGbkX7pG/mWVXFOUFtsQC86DNOASk="
+
+sudo: required
+
+language: c
+
+os:
+  - linux
+
+compiler:
+  - clang
+  - gcc
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libtirpc-dev libwrap0-dev libselinux-dev ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca- ; fi
+
+script:
+  - sh autogen.sh
+  - ./configure --without-libwrap --without-labeled-networking --without-loadavg
+  - make
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make distcheck ; fi
+
+addons:
+  coverity_scan:
+    project:
+      name: "openSUSE/xinetd"
+      description: "Build submitted via Travis CI"
+    notification_email: scarabeus@opensuse.org
+    build_command_prepend: "./autogen.sh; ./configure; make clean"
+    build_command:   "make -j4"
+    branch_pattern: coverity_test
