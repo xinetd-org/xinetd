@@ -124,8 +124,9 @@ static status_e remote_address_check(const struct service *sp,
    bool_int   of_matched  = FALSE;
    bool_int   na_matched  = FALSE;
 
+   /* The IP address is unknown. Nothing to reject, so accept it. */
    if (sinp == NULL )
-      return FAILED;
+      return OK;
 
    if ( SC_SENSOR( SVC_CONF(sp) ))
    {   /* They hit a sensor...return FAILED since this isn't a real service */

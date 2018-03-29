@@ -53,17 +53,16 @@ static status_e get_connection( struct service *sp, connection_s *cp )
       } else {
          cp->co_descriptor = accept( SVC_FD( sp ), &(cp->co_remote_address.sa),
                                      &sin_len ) ;
-	 if (cp->co_descriptor != -1)
-             M_SET( cp->co_flags, COF_NEW_DESCRIPTOR ) ;
-      }
-
-      if ( cp->co_descriptor == -1 )
-      {
-	 if ((errno == EMFILE) || (errno == ENFILE))
-	     cps_service_stop(sp, "no available descriptors");
-	 else
-             msg( LOG_ERR, func, "service %s, accept: %m", SVC_ID( sp ) ) ;
-         return( FAILED ) ;
+         if ( cp->co_descriptor == -1 )
+         {
+	    if ((errno == EMFILE) || (errno == ENFILE))
+	        cps_service_stop(sp, "no available descriptors");
+	    else
+                msg( LOG_ERR, func, "service %s, accept: %m", SVC_ID( sp ) ) ;
+            return( FAILED ) ;
+         }
+         M_SET( cp->co_flags, COF_NEW_DESCRIPTOR ) ;
+         M_SET( cp->co_flags, COF_HAVE_ADDRESS ) ;
       }
 
       if( SC_NODELAY( scp ) && (SC_PROTOVAL( scp ) == IPPROTO_TCP) )
@@ -88,8 +87,6 @@ static status_e get_connection( struct service *sp, connection_s *cp )
             if( debug.on ) msg( LOG_WARNING, func, "service %s, IPV6_ADDRFORM setsockopt() failed: %m", SVC_ID( sp) );
          }
       }
-
-      M_SET( cp->co_flags, COF_HAVE_ADDRESS ) ;
    }
    else
    {
@@ -210,7 +207,7 @@ const char *conn_addrstr( const connection_s *cp )
 
    if( getnameinfo( &cp->co_remote_address.sa, len,
          name, NI_MAXHOST, NULL, 0, NI_NUMERICHOST ) ) {
-      return "<no address>";
+      return "<invalid address>";
    }
    return name;
 }

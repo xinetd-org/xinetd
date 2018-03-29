@@ -311,11 +311,6 @@ void child_process( struct server *serp )
    signals_pending[0] = -1;
    signals_pending[1] = -1;
 
-   Sclose(0);
-   Sclose(1);
-   Sclose(2);
-
-
 #ifdef DEBUG_SERVER
    if ( debug.on )
    {
