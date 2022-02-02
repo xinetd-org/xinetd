@@ -7,6 +7,7 @@
 
 
 #include "config.h"
+#include <inttypes.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -221,11 +222,7 @@ void conn_dump( const connection_s *cp, int fd )
 
    tabprint( fd, 1, "service = %s\n", SVC_ID( cp->co_sp ) ) ;
    tabprint( fd, 1, "descriptor = %d\n", cp->co_descriptor ) ;
-#if defined(__GNUC__) && !defined(__arch64__) && !defined(__alpha__)
-   tabprint( fd, 1, "flags = %#llx\n", cp->co_flags ) ;
-#else
-   tabprint( fd, 1, "flags = %#lx\n", cp->co_flags ) ;
-#endif
+   tabprint( fd, 1, "flags = %#" PRIx64 "\n", cp->co_flags ) ;
    tabprint( fd, 1, "remote_address = %s,%d\n", name,
                               ntohs( cp->co_remote_address.sa_in.sin_port ) ) ;
 }
