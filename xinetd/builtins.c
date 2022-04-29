@@ -629,7 +629,7 @@ static void tcpmux_handler( const struct server *serp )
    if( SC_IS_INTERNAL( scp ) ) {
       SC_INTERNAL(scp, nserp);
    } else {
-      exec_server(nserp);
+      child_process(nserp);
    }
 }
 
